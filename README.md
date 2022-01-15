@@ -1,4 +1,4 @@
-# ExcelExporter
+# GDExcelExporter
 
 这个excel表导出工具是为godot项目而开发，当然设计的比较灵活可以定制导出过程用于加工生成任何你想要的数据格式文件（你得自己写python代码去定制）
 
@@ -9,7 +9,7 @@
 pip上安装
 
 ```
-pip install ExcelExporter
+pip install GDExcelExporter
 ```
 
 或者直接git clone 这个项目、下载这个项目，在项目目录下执行
@@ -122,12 +122,12 @@ project_root = ".." # 项目文件夹相对于当前Settings目录的路径
 **custom_generator**
 
 自定义生成脚本路径（用python写），是用来覆盖默认生成逻辑的。
-ExcelExporter默认生成的是GDScript数据文件，如果你有自己的数据文件方案，比如生成json、Resource、乃至C#，又或者其他，你得自己实现。本项目Sample文件夹下有示例。
+GDExcelExporter默认生成的是GDScript数据文件，如果你有自己的数据文件方案，比如生成json、Resource、乃至C#，又或者其他，你得自己实现。本项目Sample文件夹下有示例。
 
 **completed_hook** 
 
 自定义导出结束钩子脚本路径（用python写），用来覆盖导完表后的处理。
-ExcelExporter默认会在这里处理生成一个Settings.gd文件，用来快速读表。
+GDExcelExporter默认会在这里处理生成一个Settings.gd文件，用来快速读表。
 你有自己的需要可以自己实现一个脚本然后路径设置上去覆盖。
 
 **input** 
@@ -166,7 +166,7 @@ output = "../Godot游戏项目/Data"
 project_root = "../Godot游戏项目" # 项目文件夹相对于当前Settings目录的路径
 ```
 
-这样子 ExcelExporter 就能够知道 `../Godot游戏项目` 才是项目根目录，从而生成“res://”路径的时候才能正确截取相对于项目目录的路径塞进去。
+这样子 GDExcelExporter 就能够知道 `../Godot游戏项目` 才是项目根目录，从而生成“res://”路径的时候才能正确截取相对于项目目录的路径塞进去。
 
 ## Excel表格式
 
@@ -183,7 +183,7 @@ project_root = "../Godot游戏项目" # 项目文件夹相对于当前Settings�
 
 上面是示例
 
-ExcelExporter会固定读取头三行数据，第四行开始才算是表具体数据，头三行只是定义描述，ExcelExporter本身不会去根据这些类型作什么处理，会被存到data字典传递给custom_generator脚本供具体使用。
+GDExcelExporter会固定读取头三行数据，第四行开始才算是表具体数据，头三行只是定义描述，GDExcelExporter本身不会去根据这些类型作什么处理，会被存到data字典传递给custom_generator脚本供具体使用。
 
 1. 第一行是用来定义字段类型
 2. 第二行是字段中文描述
@@ -267,7 +267,7 @@ data目录下你可以放你的Excel表
 你会发现在dist目录下生成了 `道具\Item.json`
 数据文件生成路径是跟input目录结构一致的，同时因为一个Excel文件可以有很多张Sheet，所以会以`Excel文件名\<sheet生成名>.<扩展名>`的格式生成。
 
-为什么生成的是json？因为ExcelExporter默认的generator直接把ExcelExporter传过来的data字典对象直接用`json.dump`的方式给转成了json的缘故。
+为什么生成的是json？因为GDExcelExporter默认的generator直接把GDExcelExporter传过来的data字典对象直接用`json.dump`的方式给转成了json的缘故。
 
 我们打开这个josn
 ![](assetsassets/2022-01-15-23-53-22.png)
@@ -369,7 +369,7 @@ gen(data,output)
 ```
 
 这个脚本文件很简单，上面的注释已经讲解了data和output是什么结构。
-而gen函数就是把ExcelExporter传递过来的data直接用json模块dump到output里面而已。而ExcelExporter默认的生成器跟这个一样。
+而gen函数就是把GDExcelExporter传递过来的data直接用json模块dump到output里面而已。而GDExcelExporter默认的生成器跟这个一样。
 
 我们现在试着改这个脚本，改成这样：
 
@@ -405,7 +405,7 @@ output = "dist"
 hello world
 ```
 
-这下你大概明白了，custom_generator就是用来覆盖默认导出逻辑，你需要做的就是去加工ExcelExporter传递过来的data，把它加工成你想要的数据结构然后序列化成目标数据文件的格式。
+这下你大概明白了，custom_generator就是用来覆盖默认导出逻辑，你需要做的就是去加工GDExcelExporter传递过来的data，把它加工成你想要的数据结构然后序列化成目标数据文件的格式。
 
 那么我们要实现把Excel表数据导出成GDScript下一步怎么做？
 
