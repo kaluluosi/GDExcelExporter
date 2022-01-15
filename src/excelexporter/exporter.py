@@ -12,8 +12,6 @@ from .logger import logger
 from toml import load, dump
 
 
-
-
 CFG = {
     "settings":{
         "ignore_sheet_mark": "*",  # 带星号的sheet不会导出
@@ -21,6 +19,7 @@ CFG = {
         "completed_hook": "", # 导表结束后调用脚本
         "input": "data", # 导入目录
         "output":"dist", # 导出目录
+        "project_root":"../" # 导出到项目的路径，比如你的 output="../Godot项目/Scripts/Settings"，那么project_root="../Godot项目"
     }
 }
 
@@ -69,6 +68,8 @@ def on_completed():
         with open(on_complete) as f:
             code = f.read()
             exec(code, globals(), {"CFG":CFG})
+    else:
+        completed_gd()
 
 def excel2dict(workbook:xw.Book) -> dict:
     abspath:str = workbook.fullname
@@ -120,10 +121,80 @@ def excel2dict(workbook:xw.Book) -> dict:
         if custom_generator:
             exec(code, globals(), {"data":data, "output":output})
         else:
-            with open(output+".json",'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
+            gen_godot(data, output)
 
     workbook.close()
+
+
+def gen_godot(data,output):
+    import pprint
+    import textwrap
+
+    # 表格数据脚本模板
+    template = """
+    extends Reference
+
+    static func data():
+        var None = null
+
+        data = \\
+        {data}
+        return data
+    """
+    template = textwrap.dedent(template)
+
+    # 在这里面写你的加工逻辑
+    field_names = data["define"]["name"]
+    table = {}
+    for row in data["table"]:
+        row_data = {}
+        for index,value in enumerate(row):
+            field_name = field_names[index]
+            row_data[field_name] = value
+        table[row_data['id']] = row_data # 我们规定第一个字段是ID字段
+    
+    code = template.format(data=pprint.pformat(table,indent=2))
+
+    code = textwrap.dedent(code)
+    
+    with open(output+".gd", 'w+') as f:
+        f.write(code)
+
+def completed_gd():
+    from glob import glob
+    import os
+    import textwrap
+    output_path = CFG['settings']['output']
+    settings_file_path = os.path.join(output_path,'Settings.gd')
+    project_root = CFG["settings"]["project_root"]
+
+    lines = []
+
+    for path in glob(f'{output_path}/**/*.*', recursive=True):
+        if path == settings_file_path:
+            logger.info("跳过 Settings.gd")
+            continue
+        basename = os.path.basename(path)
+        setting_name = os.path.splitext(basename)[0]
+        relpath = os.path.relpath(path, project_root).replace("\\","/")
+        lines.append(f"const var {setting_name} = preload(f'res://{relpath}')")
+
+    # 去掉缩进
+    code = textwrap.dedent("""
+    class_name Settings
+    extends Object
+
+    {refs_code}
+    """)
+    refs_code = '\n'.join(lines) 
+
+    code = code.format(refs_code=refs_code)
+
+    with open(settings_file_path, 'w') as f:
+        f.write(code)
+
+
+
 
 def gen_all():
     abssource = os.path.abspath(CFG["settings"]["input"])
@@ -139,7 +210,7 @@ def gen_all():
             book = app.books.open(full_path)
             excel2dict(book)
     on_completed()
-
+    app.quit()
 
 
 def gen_one(path):
@@ -147,5 +218,6 @@ def gen_one(path):
     book = app.books.open(path)
     excel2dict(book)
     on_completed()
+    app.quit()
 
 load_toml_config()

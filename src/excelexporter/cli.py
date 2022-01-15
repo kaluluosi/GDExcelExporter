@@ -1,6 +1,6 @@
-from ntpath import realpath
 import click
 import textwrap
+import os
 from . import exporter
 
 
@@ -91,9 +91,11 @@ def create_completed_hook():
 @main.command()
 def init():
     """
-    生成默认导出配置
+    生成默认配置表项目
     """
     exporter.create_toml_config()
+    os.mkdir(exporter.CFG["settings"]["input"])
+    os.mkdir(exporter.CFG["settings"]["output"])
     
 
 @main.command()
