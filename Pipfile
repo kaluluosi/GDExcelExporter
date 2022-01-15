@@ -8,11 +8,12 @@ toml = "*"
 xlwings = "*"
 click = "*"
 jinja2 = "*"
-twine = "*"
 
 [dev-packages]
 setuptools-pipfile = "*"
 build = "*"
+twine = "*"
+pyinstaller = "*"
 
 [requires]
 python_version = "3.8"
