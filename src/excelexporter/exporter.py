@@ -182,7 +182,7 @@ def completed_gd():
     # 去掉缩进
     code = textwrap.dedent("""
     class_name Settings
-    extends Object
+    extends Reference
 
     {refs_code}
     """)
