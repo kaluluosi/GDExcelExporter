@@ -31,7 +31,6 @@ import json
 def gen(data, output):
     import textwrap
     import pprint
-    data_class_url = "res://Data.gd"  # 你的Data类路径
 
     # 表格数据脚本模板
     template = """
@@ -56,7 +55,7 @@ def gen(data, output):
             row_data[field_name] = value
         table[row_data['id']] = row_data # 我们规定第一个字段是ID字段
     
-    code = template.format(data=pprint.pformat(table,indent=2), data_class_url=data_class_url)
+    code = template.format(data=pprint.pformat(table,indent=2))
 
     code = textwrap.dedent(code)
     

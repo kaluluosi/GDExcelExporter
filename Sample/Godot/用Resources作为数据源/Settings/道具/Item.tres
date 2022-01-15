@@ -18,4 +18,4 @@ data = { 1.0: { "desc": "null",
              "overlap": 100.0,
              "sell_price": 1.0,
              "type": "消耗品",
-             "use_effect": 10001.0}}
+             "use_effect": 2.0}}

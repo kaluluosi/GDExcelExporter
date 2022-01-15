@@ -1,0 +1,6 @@
+[settings]
+ignore_sheet_mark = "*"
+custom_generator = "CustomGenerator/generator.py"
+completed_hook = "CustomGenerator/completed_hook.py"
+input = "Excel"
+output = "Settings"

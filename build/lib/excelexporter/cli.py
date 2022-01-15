@@ -66,22 +66,63 @@ def create_completed_hook():
     创建导表完成钩子脚本
     """
     code = """
-    # 钩子脚本组要是用于在导表结束后处理别的事务用
-    # gen-all命令会在所有表导完后调用
-    # gen-one命令会在导完这个表后调用
+    钩子脚本组要是用于在导表结束后处理别的事务用
+    gen-all命令会在所有表导完后调用
+    gen-one命令会在导完这个表后调用
 
-    # 最典型的用法是用来搜集所有配置表生成读表util:
+    最典型的用法是用来搜集所有配置表生成读表util:
 
-    # class_name Settiings
-    # Settings.gd
-    # const var Item = preload("res://Data/Item/Item.gd")
-    # ...
+    class_name Settiings
+    Settings.gd
+    const var Item = preload("res://Data/Item/Item.gd")
+    ...
 
-    # 以后在代码里想要读这个表你可以
-    # Settings.Item.data()
+    以后在代码里想要读这个表你可以
+    Settings.Item.data()
 
-    # todo:具体要怎么实现看自己需求
+    """
 
+    code = """
+    from glob import glob
+    import os
+    import textwrap
+    output_path = CFG['settings']['output']
+    output_dirname = os.path.basename(output_path)
+    
+    absouput_path = os.path.abspath(output_path)
+
+    settings_file_path = os.path.abspath(f'{output_dirname}/Settings.gd')
+
+
+    lines = []
+
+    for full_path in glob(f'{output_path}/**/*.*', recursive=True):
+        full_path = os.path.abspath(full_path)
+        if full_path == settings_file_path:
+            continue
+
+        basename = os.path.basename(full_path)
+        setting_name = os.path.split(basename)[0]
+        os.path.sep = '/'
+        relpath:str = os.path.relpath(full_path, output_path)
+        relpath = relpath.replace('\\\\','/')
+        res_path = f'res://{output_dirname}/{relpath}'
+        lines.append(f"const var {setting_name} = preload(f'{res_path}')")
+
+    # 去掉缩进
+    code = textwrap.dedent(\"\"\"
+    class_name Settings
+    extends Object
+
+    {refs_code}
+    \"\"\")
+    refs_code = '\\n'.join(lines) 
+
+    code = code.format(refs_code=refs_code)
+
+    with open(f'{output_dirname}/Settings.gd', 'w') as f:
+        f.write(code)
+        
     """
     code = textwrap.dedent(code)
     with open("completed_hook.py", 'w+') as f:
