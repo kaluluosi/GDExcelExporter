@@ -38,6 +38,8 @@ def gen(data, output):
 
     static func data():
         var None = null
+        var False = false
+        var True = true
 
         var data = \\
         {data}
