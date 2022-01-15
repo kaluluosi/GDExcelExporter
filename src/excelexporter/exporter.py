@@ -179,7 +179,7 @@ def completed_gd():
         basename = os.path.basename(path)
         setting_name = os.path.splitext(basename)[0]
         relpath = os.path.relpath(path, project_root).replace("\\","/")
-        lines.append(f"const var {setting_name} = preload('res://{relpath}')")
+        lines.append(f"const {setting_name} = preload('res://{relpath}')")
 
     # 去掉缩进
     code = textwrap.dedent("""
