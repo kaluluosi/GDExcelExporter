@@ -1,3 +1,3 @@
-from src.excelexporter.cli import main
+from excelexporter.cli import main
 
 main()
