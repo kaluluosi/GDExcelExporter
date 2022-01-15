@@ -39,7 +39,7 @@ def gen(data, output):
     static func data():
         var None = null
 
-        data = \\
+        var data = \\
         {data}
         return data
     """
