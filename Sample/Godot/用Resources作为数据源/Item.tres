@@ -1,0 +1,21 @@
+
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Data.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+data = { 1.0: { "desc": "null",
+         "id": 1.0,
+         "name": "金币",
+         "overlap": -1.0,
+         "sell_price": "null",
+         "type": "虚拟道具",
+         "use_effect": "null"},
+  10001.0: { "desc": "飞蝗石，可以扔向敌人",
+             "id": 10001.0,
+             "name": "石头",
+             "overlap": 100.0,
+             "sell_price": 1.0,
+             "type": "消耗品",
+             "use_effect": 10001.0}}

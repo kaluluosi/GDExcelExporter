@@ -1,0 +1,6 @@
+[build-system]
+requires = ["setuptools", "wheel", "setuptools-pipfile"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools-pipfile]
+# 默认的情况下Pipfile是不会打到包里，这样导致打轮子的时候这个插件找不到Pipfile，所以要在MANIFEST.in里把Pipfile包含进去。

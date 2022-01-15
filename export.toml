@@ -1,0 +1,6 @@
+[settings]
+ignore_sheet_mark = "*"
+custom_generator = "Sample/Godot/直接用GDScript作为数据源/generator.py"
+input = "test"
+output = "dist"
+completed_hook = ""
