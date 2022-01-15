@@ -9,7 +9,7 @@
 pip上安装
 
 ```
-pip install GDExcelExporter
+pip install gd-excelexporter
 ```
 
 或者直接git clone 这个项目、下载这个项目，在项目目录下执行
