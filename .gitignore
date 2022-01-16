@@ -1,5 +1,5 @@
 dist
-log*
+log.txt
 md5.txt
 *.egg-info
 __pycache__
