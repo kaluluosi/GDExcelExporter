@@ -14,7 +14,7 @@ from toml import load, dump
 
 CFG = {
     "settings":{
-        "ignore_sheet_mark": "*",  # 带星号的sheet不会导出
+        "ignore_sheet_mark": "~",  # 带星号的sheet不会导出
         "custom_generator": "", # 自定义加工脚本,
         "completed_hook": "", # 导表结束后调用脚本
         "input": "data", # 导入目录
