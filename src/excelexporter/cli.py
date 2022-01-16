@@ -99,17 +99,19 @@ def init():
     
 
 @main.command()
-def gen_all():
+@click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
+def gen_all(cwd):
     """
     导出所有表
     """
-    exporter.gen_all()
+    exporter.gen_all(cwd)
         
 @main.command()
+@click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 @click.argument("file", type=click.Path(True))
-def gen_one(file:str):
+def gen_one(file:str,cwd):
     """
     打开并导出整张excel表
     """
-    exporter.gen_one(file)
+    exporter.gen_one(file,cwd)
 

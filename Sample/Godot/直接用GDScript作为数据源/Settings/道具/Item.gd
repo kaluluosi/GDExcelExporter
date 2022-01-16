@@ -3,8 +3,10 @@ extends Reference
 
 static func data():
     var None = null
+    var False = false
+    var True = true
 
-    data = \
+    var data = \
     { 1.0: { 'desc': None,
          'id': 1.0,
          'name': '金币',

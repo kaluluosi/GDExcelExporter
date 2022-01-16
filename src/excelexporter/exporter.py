@@ -198,7 +198,9 @@ def completed_gd():
 
 
 
-def gen_all():
+def gen_all(cwd:str="."):
+    os.chdir(cwd)
+    load_toml_config()
     abssource = os.path.abspath(CFG["settings"]["input"])
     app = xw.App(visible=False)
     exts = [".xlsx", ".xls"]
@@ -215,11 +217,9 @@ def gen_all():
     app.quit()
 
 
-def gen_one(path):
+def gen_one(path, cwd:str="."):
     app = xw.App(visible=False)
     book = app.books.open(path)
     excel2dict(book)
     on_completed()
     app.quit()
-
-load_toml_config()
