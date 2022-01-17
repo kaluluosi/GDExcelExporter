@@ -16,7 +16,10 @@ setuptools-pipfile = "*"
 build = "*"
 twine = "*"
 pyinstaller = "*"
-autopep8 = "*"
+black = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
