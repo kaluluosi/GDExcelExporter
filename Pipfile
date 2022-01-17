@@ -8,12 +8,18 @@ toml = "*"
 xlwings = "*"
 click = "*"
 jinja2 = "*"
+flake8 = "*"
+excelexporter = {editable = true, path = "."}
 
 [dev-packages]
 setuptools-pipfile = "*"
 build = "*"
 twine = "*"
 pyinstaller = "*"
+black = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
