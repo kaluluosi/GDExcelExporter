@@ -31,7 +31,7 @@ def load_toml_config() -> dict:
 
 
 def create_toml_config():
-    with open("export.toml", "w+") as f:
+    with open("export.toml", "w+", newline="\n", encoding='utf-8') as f:
         dump(CFG, f)
 
 
@@ -204,7 +204,7 @@ static func {func_name}(args=[]):
             f"'{func_name}'", f"Function.new('res://{relpath}.gd','{func_name}')"
         )
 
-    with open(output + ".gd", "w+") as f:
+    with open(output + ".gd", "w+", newline="\n", encoding='utf-8') as f:
         f.write(code)
 
 
@@ -241,7 +241,7 @@ def completed_gd():
 
     code = code.format(refs_code=refs_code)
 
-    with open(settings_file_path, "w") as f:
+    with open(settings_file_path, "w", newline="\n", encoding='utf-8') as f:
         f.write(code)
 
 
