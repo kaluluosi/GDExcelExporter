@@ -1,0 +1,9 @@
+[settings]
+ignore_sheet_mark = "~"
+ignore_field_mark = "*"
+custom_generator = ""
+completed_hook = ""
+custom_data_builder = ""
+input = "data"
+output = "dist"
+project_root = "../"
