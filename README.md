@@ -104,6 +104,8 @@ func _ready():
     var item = item.name # => 石头
 ```
 
+
+
 ## exporter.toml讲解
 ```toml
 [settings]
@@ -200,7 +202,10 @@ GDExcelExporter会固定读取头三行数据，第四行开始才算是表具�
 生成文件名是可选的，如果你希望生成的数据文件是别的名字（主要是生成英文文件名），那么你加上，不然Exporter默认传递给custom_generator的output是用中文名。
 
 
-## 进阶学习
+字段类型请看(字段类型支持)https://github.com/kaluluosi/GDExcelExporter/pull/3]
+
+
+## 进阶学习（你只是用在godot项目上，那么你不用看这个）
 
 以godot项目为例
 
