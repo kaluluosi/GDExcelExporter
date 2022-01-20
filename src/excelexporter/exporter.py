@@ -194,7 +194,7 @@ static func {func_name}(args=[]):
     print(table)
     funcs = textwrap.dedent("\n".join(func_codes))
 
-    code = template.format(data=pprint.pformat(table, indent=2, width=100000), funcs=funcs)
+    code = template.format(data=pprint.pformat(table, indent=2, width=10000000), funcs=funcs)
 
     project_root = CFG["settings"]["project_root"]
     relpath = os.path.relpath(output, project_root).replace("\\", "/")
