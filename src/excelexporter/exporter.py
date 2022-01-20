@@ -191,7 +191,7 @@ static func {func_name}(args=[]):
             cvt = converter[field_type] if field_type in converter else converter[""]
             row_data[field_name] = cvt(value, field_name, id)
         table[row_data["id"]] = row_data  # 我们规定第一个字段是ID字段
-    print(table)
+
     funcs = textwrap.dedent("\n".join(func_codes))
 
     code = template.format(data=pprint.pformat(table, indent=2, width=10000000), funcs=funcs)
