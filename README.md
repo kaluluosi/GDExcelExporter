@@ -88,13 +88,14 @@ static func data():
 ```
 
 ```python
+extends Node
 
-class_name Settings
-extends Object
-
-const var Item = preload(f'res://Settings/dist/道具/Item.gd')
+var Item = load(f'res://Settings/dist/道具/Item.gd')
 
 ```
+
+然后把Settings.gd挂到Autoload里面去。
+
 
 这样你就可以快乐的在GDScript代码里这样读表了：
 ```python

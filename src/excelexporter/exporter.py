@@ -194,7 +194,9 @@ static func {func_name}(args=[]):
 
     funcs = textwrap.dedent("\n".join(func_codes))
 
-    code = template.format(data=pprint.pformat(table, indent=2, width=10000000), funcs=funcs)
+    code = template.format(
+        data=pprint.pformat(table, indent=2, width=10000000), funcs=funcs
+    )
 
     project_root = CFG["settings"]["project_root"]
     relpath = os.path.relpath(output, project_root).replace("\\", "/")
@@ -227,13 +229,13 @@ def completed_gd():
         basename = os.path.basename(path)
         setting_name = os.path.splitext(basename)[0]
         relpath = os.path.relpath(path, project_root).replace("\\", "/")
-        lines.append(f"const {setting_name} = preload('res://{relpath}')")
+        lines.append(f"var {setting_name} = load('res://{relpath}')")
 
     # 去掉缩进
     code = textwrap.dedent(
         """
-    class_name Settings
-    extends Reference
+    extends Node
+    # 这个脚本你需要挂到游戏的Autoload才能全局读表
 
     {refs_code}
     """
