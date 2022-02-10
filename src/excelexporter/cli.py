@@ -15,7 +15,9 @@ def main():
 
 
 @main.command()
-@click.argument("filename", nargs=1, type=click.Path(dir_okay=True), default='custom_generator')
+@click.argument(
+    "filename", nargs=1, type=click.Path(dir_okay=True), default="custom_generator"
+)
 def create_generator(filename="custom_generator.py"):
     """
     创建生成器脚本
@@ -56,7 +58,7 @@ def create_generator(filename="custom_generator.py"):
 
     gen(data,output)
     """
-    with open(filename+".py", 'w+', encoding='utf-8') as f:
+    with open(filename + ".py", "w+", encoding="utf-8") as f:
         f.write(textwrap.dedent(code))
 
 
@@ -84,7 +86,7 @@ def create_completed_hook():
 
     """
     code = textwrap.dedent(code)
-    with open("completed_hook.py", 'w+') as f:
+    with open("completed_hook.py", "w+") as f:
         f.write(code)
 
 
@@ -96,7 +98,7 @@ def init():
     exporter.create_toml_config()
     os.mkdir(exporter.CFG["settings"]["input"])
     os.mkdir(exporter.CFG["settings"]["output"])
-    
+
 
 @main.command()
 @click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
@@ -105,13 +107,13 @@ def gen_all(cwd):
     导出所有表
     """
     exporter.gen_all(cwd)
-        
+
+
 @main.command()
 @click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 @click.argument("file", type=click.Path(True))
-def gen_one(file:str,cwd):
+def gen_one(file: str, cwd):
     """
     打开并导出整张excel表
     """
-    exporter.gen_one(file,cwd)
-
+    exporter.gen_one(file, cwd)

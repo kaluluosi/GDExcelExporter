@@ -8,7 +8,6 @@ toml = "*"
 xlwings = "*"
 click = "*"
 jinja2 = "*"
-flake8 = "*"
 excelexporter = {editable = true, path = "."}
 
 [dev-packages]
@@ -17,6 +16,7 @@ build = "*"
 twine = "*"
 pyinstaller = "*"
 black = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.8"
