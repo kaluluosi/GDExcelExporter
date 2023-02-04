@@ -3,7 +3,7 @@ import click
 import textwrap
 import os
 import pkg_resources
-from . import exporter
+import excelexporter.exporter as exporter
 
 
 @click.group()
@@ -137,3 +137,7 @@ def gen_one(file: str, cwd):
     打开并导出整张excel表
     """
     exporter.gen_one(file, cwd)
+
+
+if __name__ == "__main__":
+    main()
