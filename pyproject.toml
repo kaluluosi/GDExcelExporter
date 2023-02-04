@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "gdexcelexporter"
+name = "gd-excelexporter"
 version = "1.0.14"
 description = "Godot Excel导表工具"
 authors = ["kaluluosi <kaluluosi@gamil.com>"]
