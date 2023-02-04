@@ -2,9 +2,13 @@
 
 这个excel表导出工具是为godot项目而开发，当然设计的比较灵活可以定制导出过程用于加工生成任何你想要的数据格式文件（你得自己写python代码去定制）
 
-## 使用方法
+## 环境要求
 
-目前这个导出工具没有独立exe，依赖python 3.8
+pyhton版本：`>=python 3.8.1`
+
+操作系统： windows （依赖的xlwings包只支持windows）
+
+## 使用方法
 
 pip上安装
 
@@ -51,7 +55,7 @@ ee init
 ![](assets/2022-01-16-02-25-13.png)
 
 把你的Excel表放到data目录。
-注意！Excel表有格式要求，你可以直接复制test目录下的范本过去。
+注意！Excel表有格式要求，该目录下默认有个template.xlsx是范本，你可以直接复制这个范本。
 
 然后在这个目录下调用：
 
@@ -94,7 +98,7 @@ var Item = load(f'res://Settings/dist/道具/Item.gd')
 
 ```
 
-然后把Settings.gd挂到Autoload里面去。
+然后把settings.gd挂到Autoload里面去。
 
 
 这样你就可以快乐的在GDScript代码里这样读表了：
@@ -130,7 +134,7 @@ GDExcelExporter默认生成的是GDScript数据文件，如果你有自己的数
 **completed_hook** 
 
 自定义导出结束钩子脚本路径（用python写），用来覆盖导完表后的处理。
-GDExcelExporter默认会在这里处理生成一个Settings.gd文件，用来快速读表。
+GDExcelExporter默认会在这里处理生成一个settings.gd文件，用来快速读表。
 你有自己的需要可以自己实现一个脚本然后路径设置上去覆盖。
 
 **input** 
@@ -144,7 +148,7 @@ GDExcelExporter默认会在这里处理生成一个Settings.gd文件，用来快
 **project_root**
 
 这个比较难理解，简单的说就是你的`Godot游戏项目`对于`Settings目录`的相对路径。
-比如你的`Settings目录`是在`Godot游戏项目目录`下，那么相对路径就是"../"，`Settings目录`的上一级就是`Godot游戏项目目录`。这样`Settings.gd`生成代码里load数据文件的资源url才能正确生成，不然你可能得到的是 “res://dist/道具/Item.gd”，这就不正确了。
+比如你的`Settings目录`是在`Godot游戏项目目录`下，那么相对路径就是"../"，`Settings目录`的上一级就是`Godot游戏项目目录`。这样`settings.gd`生成代码里load数据文件的资源url才能正确生成，不然你可能得到的是 “res://dist/道具/Item.gd”，这就不正确了。
 
 举个例子，你可能想要这样的效果：`Settings目录`跟`Godot游戏项目`平级，然后把数据文件导出到`Godot游戏项目`。你的目录结构是这样的：
 

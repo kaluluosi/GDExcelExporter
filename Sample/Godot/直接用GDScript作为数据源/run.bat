@@ -1,1 +1,0 @@
-ee gen-all
