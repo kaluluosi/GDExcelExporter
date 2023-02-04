@@ -1,9 +1,8 @@
 import os
-from turtle import width
 import xlwings as xw
-import glob
+import textwrap
 
-from typing import Sequence
+from glob import glob
 from .logger import logger
 from toml import load, dump
 
@@ -17,27 +16,37 @@ CFG = {
         "custom_data_builder": "",  # 自定义data加工器
         "input": "data",  # 导入目录
         "output": "dist",  # 导出目录
-        "project_root": "../",  # 导出到项目的路径，比如你的 output="../Godot项目/Scripts/Settings"，那么project_root="../Godot项目"
+        # 导出到项目的路径，比如你的 output="../Godot项目/Scripts/Settings"，
+        # 那么project_root="../Godot项目"
+        "project_root": "../",
     }
 }
 
 
-def load_toml_config() -> dict:
-    local_cfg_path = os.path.abspath("export.toml")
+def load_toml_config(filename: str = "export.toml"):
+    """加载toml配置文件
+
+    Raises:
+        FileNotFoundError: 配置文件不存在的时候抛出
+
+    Returns:
+        dict: 配置数据字典，字段定义看CFG变量
+    """
+
+    local_cfg_path = os.path.abspath(filename)
     if os.path.exists(local_cfg_path):
         cfg_data = load(local_cfg_path)
         CFG["settings"].update(cfg_data["settings"])
     else:
-        logger.warning("没有配置文件，将使用内置默认配置")
+        logger.warning(f"配置文件 {local_cfg_path} 不存在！将使用默认配置尝试导出。")
 
 
-def create_toml_config():
+def create_default_toml_config():
+    """
+    用CFG模板创建一个默认的toml配置文件
+    """
     with open("export.toml", "w+", newline="\n", encoding="utf-8") as f:
         dump(CFG, f)
-
-
-def row2str_arr(row):
-    return [str(cell.value) for cell in row]
 
 
 def on_completed():
@@ -53,7 +62,12 @@ def on_completed():
         completed_gd()
 
 
-def excel2dict(workbook: xw.Book) -> dict:
+def excel2dict(workbook: xw.Book):
+    """Excel表转字典对象
+
+    Args:
+        workbook (xw.Book): 工作簿
+    """
     abspath: str = workbook.fullname
     abssource = os.path.abspath(CFG["settings"]["input"])
     absoutput = os.path.abspath(CFG["settings"]["output"])
@@ -64,15 +78,16 @@ def excel2dict(workbook: xw.Book) -> dict:
         logger.error(f"{abspath} 不是配置表目录下的配置")
         return
 
-    sheets: Sequence[xw.Sheet] = workbook.sheets
-
     # 过滤出不带*的表名
-    sheets = filter(lambda sheet: not sheet.name.startswith(ignore_sheet_mark), sheets)
-
+    sheets = filter[xw.Sheet](
+        lambda sheet: not sheet.name.startswith(ignore_sheet_mark),
+        workbook.sheets
+    )
     custom_generator = CFG["settings"]["custom_generator"]
+    custom_code = ''  # 自定义导出器代码
     if custom_generator:
         with open(custom_generator) as f:
-            code = f.read()
+            custom_code = f.read()
         logger.info(f"使用 {custom_generator} 自定义导出")
 
     for sheet in sheets:
@@ -101,7 +116,7 @@ def excel2dict(workbook: xw.Book) -> dict:
 
         logger.info(f"导出: {abspath}:{sheet.name} => {output}")
         if custom_generator:
-            exec(code, globals(), {"data": data, "output": output})
+            exec(custom_code, globals(), {"data": data, "output": output})
         else:
             gen_godot(data, output)
 
@@ -135,11 +150,13 @@ static func {func_name}(args=[]):
         "float": lambda v, n, id: float(str(v or 0)),
         "bool": lambda v, n, id: v != "FALSE",
         "array": lambda v, n, id: eval(f'[{v.replace("|",",")}]') if v else [],
-        "array_str": lambda v, n, id: ["%s" % e for e in v.split("|")] if v else [],
+        "array_str": lambda v, n, id: ["%s" % e for e in v.split("|")]
+        if v else [],
         "array_bool": lambda v, n, id: [e != "FALSE" for e in v.split("|")]
         if v
         else [],
-        "dict": lambda v, n, id: eval(f'{{{v.replace("|",",")}}}') if v else {},
+        "dict": lambda v, n, id: eval(f'{{{v.replace("|",",")}}}')
+        if v else {},
         "function": lambda v, n, id: make_func(v or "pass", n, id),
     }
 
@@ -188,7 +205,12 @@ static func {func_name}(args=[]):
             field_type = field_types[index]
             if field_name.startswith(CFG["settings"]["ignore_field_mark"]):
                 continue
-            cvt = converter[field_type] if field_type in converter else converter[""]
+
+            if field_type in converter:
+                cvt = converter[field_type]
+            else:
+                cvt = converter[""]
+
             row_data[field_name] = cvt(value, field_name, id)
         table[row_data["id"]] = row_data  # 我们规定第一个字段是ID字段
 
@@ -204,7 +226,8 @@ static func {func_name}(args=[]):
 
     for func_name in func_names:
         code = code.replace(
-            f"'{func_name}'", f"Function.new('res://{relpath}.gd','{func_name}')"
+            f"'{func_name}'",
+            f"Function.new('res://{relpath}.gd','{func_name}')"
         )
 
     with open(output + ".gd", "w+", newline="\n", encoding="utf-8") as f:
@@ -212,9 +235,6 @@ static func {func_name}(args=[]):
 
 
 def completed_gd():
-    from glob import glob
-    import os
-    import textwrap
 
     output_path = CFG["settings"]["output"]
     settings_file_path = os.path.join(output_path, "Settings.gd")
@@ -251,6 +271,7 @@ def completed_gd():
 def gen_all(cwd: str = "."):
     os.chdir(cwd)
     load_toml_config()
+
     abssource = os.path.abspath(CFG["settings"]["input"])
     with xw.App(visible=False) as app:
         exts = [".xlsx", ".xls"]

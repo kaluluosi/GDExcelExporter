@@ -16,11 +16,13 @@ def main():
 
 @main.command()
 @click.argument(
-    "filename", nargs=1, type=click.Path(dir_okay=True), default="custom_generator"
+    "filename", nargs=1,
+    type=click.Path(dir_okay=True),
+    default="custom_generator"
 )
 def create_generator(filename="custom_generator.py"):
     """
-    创建生成器脚本
+    创建自定义生成器脚本
     """
     code = """
     # 传入到此脚本的变量
@@ -35,16 +37,15 @@ def create_generator(filename="custom_generator.py"):
     # }
     # data只是把表转成字典，你要怎么加工这个字典生成你想要数据格式并生成文件需要
     # 你自己在这个脚本里实现
-    # 
-    # output: 导出文件。 
+    #
+    # output: 导出文件。
     # 这个路径只有文件名，没有扩展名，例子： D://dist/道具/item
     # 如果你需要有扩展名，自己加 output+=".gd"，然后自己写入文件。
 
     # CFG 就是export.toml配置字典，你在哪个目录下执行ee命令，那么CFG就读哪个目录的export.toml
     # CFG["settings"]["input"] -- 读取配置表目录路径
-    
     # 内置jinja包，你可以：
-    # import jinja 
+    # import jinja
     # 然后使用jinja模板来生成你的文件
 
     # 下面是示例，直接导出保存成json文件，你可以删掉下面代码用jinja模板工具
@@ -65,7 +66,7 @@ def create_generator(filename="custom_generator.py"):
 @main.command()
 def create_completed_hook():
     """
-    创建导表完成钩子脚本
+    创建自定义导表完成钩子脚本
     """
     code = """
     # 钩子脚本组要是用于在导表结束后处理别的事务用
@@ -95,7 +96,7 @@ def init():
     """
     生成默认配置表项目
     """
-    exporter.create_toml_config()
+    exporter.create_default_toml_config()
     os.mkdir(exporter.CFG["settings"]["input"])
     os.mkdir(exporter.CFG["settings"]["output"])
 
