@@ -43,19 +43,6 @@ def generator(data: dict, CFG: dict):
     # 表格数据脚本模板
     template = """
     extends Reference
-    class Function extends Reference:
-
-        var func_name
-        var script_path
-
-        func _init(script_path, func_name):
-            self.func_name = func_name
-            self.script_path = script_path
-
-        func call(args=[]):
-            var this_script = load(script_path)
-            return this_script.call(self.func_name, args)
-
     var None = null
     var False = false
     var True = true
@@ -103,7 +90,7 @@ def generator(data: dict, CFG: dict):
     for func_name in func_names:
         code = code.replace(
             f"'{func_name}'",
-            f"Function.new(self.get_script().get_path(),'{func_name}')"
+            f"funcref(self,'{func_name}')"
         )
 
     return code, "gd"
