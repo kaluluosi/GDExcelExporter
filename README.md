@@ -311,11 +311,8 @@ FALSE|TRUE|TRUE => [False,True,True]
 导出的函数只有一个 args数组参数，这个参数默认值是`[]`。也就是说args数组哪一位是什么意思调用这个函数的人得自己心知肚明。
 数据表的函数可以访问`autoload`的全局对象，和args传进来的参数对象。
 
-![image](https://user-images.githubusercontent.com/1620585/149778582-cccd09ec-6caa-472f-8c57-00f8e5ec501c.png)
-![image](https://user-images.githubusercontent.com/1620585/149778765-bc4419cc-2387-4518-8f96-d820b8dd99cd.png)
-![image](https://user-images.githubusercontent.com/1620585/149778795-7462bb8a-093d-458c-a2c4-1248a430e8ea.png)
-![image](https://user-images.githubusercontent.com/1620585/149778822-8a962cd5-002b-4c7a-b358-b433d5847255.png)
-![image](https://user-images.githubusercontent.com/1620585/149778886-1c3ee73f-15be-40f4-bd33-c3539b120130.png)
+![](assets/2023-02-07-14-12-42.png)
 
-
-
+![](assets/2023-02-07-14-13-25.png)
+![](assets/2023-02-07-14-13-38.png)
+![](assets/2023-02-07-14-13-48.png)

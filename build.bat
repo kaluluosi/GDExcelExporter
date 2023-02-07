@@ -1,1 +1,1 @@
-pyinstall -F -n ee .\src\excelexporter\__main__.py
+pyinstaller -F -n ee .\src\excelexporter\__main__.py
