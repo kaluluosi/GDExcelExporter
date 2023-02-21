@@ -109,25 +109,12 @@ dist目录下就会生成以下文件
 # 本文件由代码生成，不要手动修改
 
 extends Reference
-class Function extends Reference:
-
-    var func_name
-    var script_path
-
-    func _init(script_path, func_name):
-        self.func_name = func_name
-        self.script_path = script_path
-
-    func call(args=[]):
-        var this_script = load(script_path)
-        return this_script.call(self.func_name, args)
-
 var None = null
 var False = false
 var True = true
 
 var data = \
-{1: {'array': [1, 2, 3, 4, 5], 'array_bool': [True, False], 'array_str': ['a', 'b', 'c'], 'bool': True, 'dict': {'age': 10, 'name': 'Tom'}, 'float ': 1.0, 'function': Function.new(self.get_script().get_path(),'function_1'), 'id': 1, 'int': 1, 'string': '恭喜你！成功配置好了Godot导表项目。'}, 2: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 0, 'function': Function.new(self.get_script().get_path(),'function_2'), 'id': 2, 'int': 0, 'string': 'aa'}, 3: {'array': [1, 2, 3], 'array_bool': [True], 'array_str': ['b', 'c'], 'bool': True, 'dict': {'age': 10, 'name': 'Tom'}, 'float ': 2.0, 'function': Function.new(self.get_script().get_path(),'function_3'), 'id': 3, 'int': 2, 'string': ''}, 4: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 3.01, 'function': Function.new(self.get_script().get_path(),'function_4'), 'id': 4, 'int': 3, 'string': ''}, 5: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 0, 'function': Function.new(self.get_script().get_path(),'function_5'), 'id': 5, 'int': 4, 'string': '你真可悲，你什么都不是，你毫无作为，你无足轻重，你一无是处。\n我，整个城市都是我的。\n等警察抓住你们的时候......你会死的毫无意义。这里是我的地盘。\n你...你....你就是人们要躲避的东西。'}, 6: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 0, 'function': Function.new(self.get_script().get_path(),'function_6'), 'id': 6, 'int': 0, 'string': ''}}
+{1: {'array': [1, 2, 3, 4, 5], 'array_bool': [True, False], 'array_str': ['a', 'b', 'c'], 'bool': True, 'dict': {'age': 10, 'name': 'Tom'}, 'float ': 1.0, 'function': funcref(self,'function_1'), 'id': 1, 'int': 1, 'string': '恭喜你！成功配置好了Godot导表项目。'}, 2: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 0, 'function': funcref(self,'function_2'), 'id': 2, 'int': 0, 'string': 'aa'}, 3: {'array': [1, 2, 3], 'array_bool': [True], 'array_str': ['b', 'c'], 'bool': True, 'dict': {'age': 10, 'name': 'Tom'}, 'float ': 2.0, 'function': funcref(self,'function_3'), 'id': 3, 'int': 2, 'string': ''}, 4: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 3.01, 'function': funcref(self,'function_4'), 'id': 4, 'int': 3, 'string': ''}, 5: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 0, 'function': funcref(self,'function_5'), 'id': 5, 'int': 4, 'string': '你真可悲，你什么都不是，你毫无作为，你无足轻重，你一无是处。\n我，整个城市都是我的。\n等警察抓住你们的时候......你会死的毫无意义。这里是我的地盘。\n你...你....你就是人们要躲避的东西。'}, 6: {'array': [], 'array_bool': [], 'array_str': [], 'bool': True, 'dict': {}, 'float ': 0, 'function': funcref(self,'function_6'), 'id': 6, 'int': 0, 'string': ''}}
 
 
 static func function_1(args=[]):
@@ -152,6 +139,8 @@ static func function_5(args=[]):
 
 static func function_6(args=[]):
     pass
+
+
 ```
 
 *settings.gd*
@@ -173,7 +162,7 @@ var demo = load('res://test/dist/示例/demo.gd').new()
 func _ready():
 	var data = Settings.demo.data
 	print(data[1].string)
-	data[1].function.call(['还可以调用excel里配置的函数！'])
+	data[1].function.func_call(['还可以调用excel里配置的函数！'])
 
 ```
 
