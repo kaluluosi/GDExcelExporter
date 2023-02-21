@@ -162,7 +162,7 @@ var demo = load('res://test/dist/示例/demo.gd').new()
 func _ready():
 	var data = Settings.demo.data
 	print(data[1].string)
-	data[1].function.func_call(['还可以调用excel里配置的函数！'])
+	data[1].function.call_funcv(['还可以调用excel里配置的函数！'])
 
 ```
 
