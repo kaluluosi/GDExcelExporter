@@ -10,7 +10,7 @@ packages = [
 ]
 
 [tool.poetry.scripts]
-ee = "excelexporter:__main__"
+ee = "excelexporter.cli:main"
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.12"
