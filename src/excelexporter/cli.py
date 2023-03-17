@@ -71,7 +71,7 @@ def init(setting_dir: bool):
         default="GDS2.0")
 
     config.custom_generator = generator
-    config.save()
+    config.save(os.path.join(input_dir, "export.toml"))
 
     shutil.copy(template_xlsx_path, input_dir)
     click.echo("配置表项目生成完毕，后续你可以通过修改export.toml调整配置。")
