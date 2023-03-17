@@ -1,11 +1,10 @@
 import shutil
-import sys
 import click
-import winreg
 import logging
 import os
 import pkg_resources
 from excelexporter.config import Configuration
+from .engine import Engine
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +62,15 @@ def init(setting_dir: bool):
     os.mkdir(output_dir)
     config.input = input_dir
     config.output = output_dir
+
+    generator = click.prompt(
+        "使用哪个内置导出器？",
+        type=click.Choice(
+            ["GDS1.0", "GDS2.0", "C#", "Resource", "JSON"]
+        ),
+        default="GDS2.0")
+
+    config.custom_generator = generator
     config.save()
 
     shutil.copy(template_xlsx_path, input_dir)
@@ -84,20 +92,31 @@ def gen_all(cwd):
     """
     导出所有表
     """
-    # exporter.gen_all(cwd)
-    pass
+    os.chdir(cwd)
+    if not os.path.exists("export.toml"):
+        logger.error("目录下没有export.toml配置文件")
+        return
+
+    config = Configuration.load()
+    with Engine(config) as engine:
+        engine.gen_all()
 
 
 @main.command()
-@click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 @click.argument("file", type=click.Path(True))
-def gen_one(file: str, cwd):
+def gen_one(file: str):
     """
     打开并导出整张excel表
     """
-    # exporter.gen_one(file, cwd)
-    click.echo("gen one call")
-    pass
+    dir = os.path.dirname(file)
+    os.chdir(dir)
+    if not os.path.exists("export.toml"):
+        logger.error("目录下没有export.toml配置文件")
+        return
+
+    config = Configuration.load()
+    with Engine(config) as engine:
+        engine.gen_one(file)
 
 
 if __name__ == "__main__":
