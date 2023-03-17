@@ -1,0 +1,5 @@
+Windows Registry Editor Version 5.00
+
+[-HKEY_CLASSES_ROOT\Excel.Sheet.12\shell\export]
+
+[-HKEY_CLASSES_ROOT\Excel.Sheet.12\shell\export\command]
