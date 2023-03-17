@@ -1,10 +1,10 @@
 Windows Registry Editor Version 5.00
 
 [HKEY_CLASSES_ROOT\Directory\shell\exportall]
-@="EEµ¼³öËùÓÐ"
+@="EEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
 
 [HKEY_CLASSES_ROOT\Directory\Background\shell\exportall]
-@="EEµ¼³öËùÓÐ"
+@="EEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
 
 [HKEY_CLASSES_ROOT\Directory\shell\exportall\command]
 @="cmd /c ee gen-all --cwd %V"
