@@ -1,6 +1,7 @@
 import shutil
+import sys
 import click
-import textwrap
+import winreg
 import logging
 import os
 import pkg_resources
@@ -68,7 +69,16 @@ def init(setting_dir: bool):
     click.echo("配置表项目生成完毕，后续你可以通过修改export.toml调整配置。")
 
 
-@main.command()
+@main.command
+def add_context_menu():
+    """
+    添加上下文菜单（通过注册表）
+    """
+    dir = pkg_resources.resource_filename(__package__, "template/reg")
+    os.system(f"start {dir}")
+
+
+@main.command
 @click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 def gen_all(cwd):
     """
@@ -86,6 +96,7 @@ def gen_one(file: str, cwd):
     打开并导出整张excel表
     """
     # exporter.gen_one(file, cwd)
+    click.echo("gen one call")
     pass
 
 
