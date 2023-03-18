@@ -46,9 +46,9 @@ def init(setting_dir: bool):
     output_dir = click.prompt(
         "输入存放导出文件目录名称", default=config.output, show_default=True)
 
-    template_xlsx_path = pkg_resources.resource_filename(
+    template = pkg_resources.resource_filename(
         __package__,
-        "template/示例.xlsx"
+        "template"
     )
 
     if os.path.exists(input_dir) and os.listdir(input_dir):
@@ -71,13 +71,13 @@ def init(setting_dir: bool):
         default="GDS2.0")
 
     config.custom_generator = generator
-    config.save(os.path.join(input_dir, "export.toml"))
+    config.save()
 
-    shutil.copy(template_xlsx_path, input_dir)
+    shutil.copytree(template, os.curdir, dirs_exist_ok=True)
     click.echo("配置表项目生成完毕，后续你可以通过修改export.toml调整配置。")
 
 
-@main.command
+@ main.command
 def add_context_menu():
     """
     添加上下文菜单（通过注册表）
@@ -86,8 +86,8 @@ def add_context_menu():
     os.system(f"start {dir}")
 
 
-@main.command
-@click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
+@ main.command
+@ click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 def gen_all(cwd):
     """
     导出所有表
@@ -109,8 +109,8 @@ def gen_all(cwd):
         engine.gen_all()
 
 
-@main.command()
-@click.argument("file", type=click.Path(True))
+@ main.command()
+@ click.argument("file", type=click.Path(True))
 def gen_one(file: str):
     """
     打开并导出整张excel表
