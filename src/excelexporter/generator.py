@@ -7,7 +7,7 @@ from typing import Any, Callable
 Generator = Callable[[SheetData, Configuration], str]
 CompletedHook = Callable[[Configuration], None]
 
-ConvertFunc = Callable[[Any, str, int], str]
+ConvertFunc = Callable[[Any, str, int, dict], str]
 
 
 class Type:
@@ -26,7 +26,7 @@ class Converter:
 
     _map = {}
 
-    def default(self, v, n, id): return v or 0
+    def default(self, v, fn, id, params): return v or 0
 
     @classmethod
     def register(cls, type: str, cvt_method: ConvertFunc):
@@ -36,10 +36,12 @@ class Converter:
             self,
             type: str,
             value: Any,
-            name: str,
+            field_name: str,
             id: int,
             *args: Any,
             **kwds: Any
     ) -> Any:
-        cvt = self._map.get(type, self.default)
-        return cvt(value, name, id)
+        type_name, params = type.split("#") if "#" in type else (type, None)
+
+        cvt = self._map.get(type_name, self.default)
+        return cvt(value, field_name, id, params)
