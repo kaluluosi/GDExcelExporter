@@ -9,6 +9,6 @@ registers = {}
 registers['GDS1.0'] = godot_script_1
 registers['GDS2.0'] = godot_script_2
 registers['C#'] = csharp
-registers['RESOURCES'] = resource
+registers['RESOURCE'] = resource
 registers['JSON1.0'] = json
 registers['JSON2.0'] = json
