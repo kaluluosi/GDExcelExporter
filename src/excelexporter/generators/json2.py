@@ -86,10 +86,9 @@ def completed_hook(config: Configuration):
 
     loader = textwrap.dedent("""
     static func loader(path:String):
-        var file = File.new()
-        file.open(path,File.READ)
+        var file = FileAccess.open(path,FileAccess.READ)
         var txt = file.get_as_text()
-        var data = JSON.parse(txt)
+        var data = JSON.parse_string(txt)
         file.close()
         return data
     """)
