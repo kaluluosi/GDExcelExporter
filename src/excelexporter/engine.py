@@ -62,14 +62,14 @@ class Engine(xw.App):
                 logger.info(f"使用 {self.config.custom_generator} 自定义导出器")
         else:
             # 没有才用内置的
-            logger.info(f"使用内置导出器 {self.config.custom_generator}")
             module = registers.get(
                 self.config.custom_generator
             )
             if module is None:
                 raise IllegalGenerator(
                     self.config.custom_generator, "不是内置导出器，请检查配置。")
-
+            logger.info(
+                f"使用内置导出器 {self.config.custom_generator} :{module.__name__}")
             self.generator = getattr(module, "generator")
             self.completed_hook = getattr(module, "completed_hook")
             self.extension = getattr(module, "extension")

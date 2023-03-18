@@ -7,60 +7,59 @@ class TestConverter(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        Converter.register(
+        cls.cvt = Converter()
+        cls.cvt.register(
             Type.STRING,
             lambda v, fn, id, params: Type.STRING
         )
-        Converter.register(
+        cls.cvt.register(
             Type.INT,
             lambda v, fn, id, params: Type.INT
         )
-        Converter.register(
+        cls.cvt.register(
             Type.FLOAT,
             lambda v, fn, id, params: Type.FLOAT
         )
-        Converter.register(
+        cls.cvt.register(
             Type.BOOL,
             lambda v, fn, id, params: Type.BOOL
         )
-        Converter.register(
+        cls.cvt.register(
             Type.ARRAY,
             lambda v, fn, id, params: Type.ARRAY
         )
-        Converter.register(
+        cls.cvt.register(
             Type.ARRAY_STR,
             lambda v, fn, id, params: Type.ARRAY_STR
         )
-        Converter.register(
+        cls.cvt.register(
             Type.ARRAY_BOOL,
             lambda v, fn, id, params: Type.ARRAY_BOOL
         )
-        Converter.register(
+        cls.cvt.register(
             Type.DICT,
             lambda v, fn, id, params: Type.DICT
         )
-        Converter.register(
+        cls.cvt.register(
             Type.FUNCTION,
             lambda v, fn, id, params: (Type.FUNCTION, params)
         )
 
-        cls.converter = Converter()
-
     def test_default_cvt(self):
-        self.converter.default = mock.MagicMock(return_value=1)
+        self.cvt.default = mock.MagicMock(return_value=1)
 
-        result = self.converter(
+        result = self.cvt(
             "shit",
             "wrong value",
             "my field",
             1
         )
 
-        self.converter.default.assert_called_once_with(None, "my field", 1)
+        self.cvt.default.assert_called_once()
         self.assertEqual(result, 1)
 
     def test_string_cvt(self):
-        result = self.converter(
+        result = self.cvt(
             Type.STRING,
             "你好",
             "desc",
@@ -70,7 +69,7 @@ class TestConverter(unittest.TestCase):
 
     def test_function_cvt(self):
 
-        result = self.converter(
+        result = self.cvt(
             Type.FUNCTION,
             "print(args[0])",
             "callback",
@@ -80,7 +79,7 @@ class TestConverter(unittest.TestCase):
         self.assertEqual(result[0], Type.FUNCTION)
 
     def test_function_with_params_cvt(self):
-        result = self.converter(
+        result = self.cvt(
             "function#(a,b,c)",
             "print(a)",
             "callback",

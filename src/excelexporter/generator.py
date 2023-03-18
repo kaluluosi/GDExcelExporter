@@ -1,3 +1,4 @@
+import logging
 
 from .sheetdata import SheetData
 from .config import Configuration
@@ -8,6 +9,8 @@ Generator = Callable[[SheetData, Configuration], str]
 CompletedHook = Callable[[Configuration], None]
 
 ConvertFunc = Callable[[Any, str, int, dict], str]
+
+logger = logging.getLogger()
 
 
 class Type:
@@ -24,13 +27,13 @@ class Type:
 
 class Converter:
 
-    _map = {}
+    def __init__(self) -> None:
+        self._map = {}
 
     def default(self, v, fn, id, params): return v or 0
 
-    @classmethod
-    def register(cls, type: str, cvt_method: ConvertFunc):
-        cls._map[type] = cvt_method
+    def register(self, type: str, cvt_method: ConvertFunc):
+        self._map[type] = cvt_method
 
     def __call__(
             self,
@@ -41,7 +44,8 @@ class Converter:
             *args: Any,
             **kwds: Any
     ) -> Any:
+        type = type.strip()
         type_name, params = type.split("#") if "#" in type else (type, None)
-
         cvt = self._map.get(type_name, self.default)
-        return cvt(value, field_name, id, params)
+        result = cvt(value, field_name, id, params)
+        return result
