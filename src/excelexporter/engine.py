@@ -105,7 +105,7 @@ class Engine(xw.App):
 
                 code = self.generator(sheetdata, self.config)
 
-                code = "# 本文件由代码生成，不要手动修改\n"+code
+                # code = "# 本文件由代码生成，不要手动修改\n"+code
                 output = f"{output}.{self.extension}"
                 with open(output, "w", encoding="utf-8", newline="\n") as f:
                     f.write(code)

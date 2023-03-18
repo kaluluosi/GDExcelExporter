@@ -1,0 +1,13 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Directory\shell\exportall]
+@="EE全部导出"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\exportall]
+@="EE全部导出"
+
+[HKEY_CLASSES_ROOT\Directory\shell\exportall\command]
+@="cmd /c ee gen-all --cwd %V"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\exportall\command]
+@="cmd /c ee gen-all --cwd %V"
