@@ -4,7 +4,7 @@ import logging
 import os
 import pkg_resources
 from excelexporter.config import Configuration
-from .engine import Engine
+from excelexporter.engine import Engine
 
 logger = logging.getLogger(__name__)
 
