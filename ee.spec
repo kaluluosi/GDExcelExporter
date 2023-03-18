@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['src\\excelexporter\\__main__.py'],
+    ['src\\excelexporter\\cli.py'],
     pathex=[],
     binaries=[],
     datas=[],
