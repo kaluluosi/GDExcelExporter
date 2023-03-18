@@ -63,7 +63,7 @@ class Engine(xw.App):
         else:
             # 没有才用内置的
             module = registers.get(
-                self.config.custom_generator
+                self.config.custom_generator.upper()
             )
             if module is None:
                 raise IllegalGenerator(
