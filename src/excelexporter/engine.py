@@ -75,14 +75,13 @@ class Engine(xw.App):
             self.extension = getattr(module, "extension")
 
     def _gen(self, excel_file: str):
-
         wb_abs_path: str = os.path.abspath(excel_file)
         abs_input_path: str = os.path.abspath(self.config.input)
         abs_output_path: str = os.path.abspath(self.config.output)
         wb_abs_path_without_ext: str = os.path.splitext(wb_abs_path)[0]
 
         if not wb_abs_path.startswith(abs_input_path):
-            raise IllegalFile(wb_abs_path)
+            raise IllegalFile(wb_abs_path, abs_input_path)
 
         sheet_datas = self._excel2dict(wb_abs_path)
 
@@ -169,7 +168,7 @@ class Engine(xw.App):
                 if filename.startswith("~$"):
                     logger.warning(f"{filename} 不是配置表，跳过！")
                     continue
-                self._gen(filename)
+                self._gen(full_path)
 
         if self.completed_hook:
             self.completed_hook(self.config)

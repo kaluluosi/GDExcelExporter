@@ -95,9 +95,16 @@ def gen_all(cwd):
     os.chdir(cwd)
     if not os.path.exists("export.toml"):
         logger.error("目录下没有export.toml配置文件")
-        return
+        logger.error("尝试向上一层找export.toml")
+        upper_path = os.path.join(os.curdir, os.pardir, "export.toml")
+        if not os.path.exists(upper_path):
+            logger.error("完全不存在export.toml，终止导表")
+        else:
+            # 切换工作目录到上层
+            os.chdir(os.pardir)
 
     config = Configuration.load()
+
     with Engine(config) as engine:
         engine.gen_all()
 
@@ -108,15 +115,19 @@ def gen_one(file: str):
     """
     打开并导出整张excel表
     """
-    dir = os.path.dirname(file)
-    os.chdir(dir)
+    abs_filepath = os.path.abspath(file)
     if not os.path.exists("export.toml"):
-        logger.error("目录下没有export.toml配置文件")
-        return
+        logger.error("当前目录下没有export.toml配置文件")
+        logger.error("尝试往上层找")
+        upper_path = os.path.join(os.curdir, os.pardir, "export.toml")
+        if not os.path.exists(upper_path):
+            logger.error("完全不存在export.toml,终止导表")
+        else:
+            os.chdir(os.pardir)
 
     config = Configuration.load()
     with Engine(config) as engine:
-        engine.gen_one(file)
+        engine.gen_one(abs_filepath)
 
 
 if __name__ == "__main__":
