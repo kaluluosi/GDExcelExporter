@@ -41,16 +41,18 @@ Converter.register(
 )
 Converter.register(
     Type.FUNCTION,
-    lambda v, n, id, p: make_func_agv(v or "pass", n, id)
+    lambda v, n, id, p: make_func(v or "pass", n, id, p)
 )
 
 
-def make_func_agv(v, fn, id):
+def make_func(v, fn, id, p):
     func_name = f"{fn}_{id}"
+
+    params = "(args=[])" if not p else p
 
     func_code = textwrap.dedent(
         f"""
-static func {func_name}(args=[]):
+static func {func_name}{params}:
 {textwrap.indent(v, "    ")}
 """
     )
