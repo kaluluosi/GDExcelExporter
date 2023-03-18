@@ -15,33 +15,38 @@ logger = logging.getLogger(__name__)
 func_names = []
 func_codes = []
 
-Converter.register(Type.STRING, lambda v, n, id: str(v) if v else "")
-Converter.register(Type.INT, lambda v, n, id: int(str(v or 0).split(".")[0]))
-Converter.register(Type.FLOAT, lambda v, n, id: float(str(v or 0)))
-Converter.register(Type.BOOL, lambda v, n, id: v != "FALSE")
+Converter.register(Type.STRING, lambda v, n, id, p: str(v) if v else "")
 Converter.register(
-    Type.ARRAY, lambda v, n, id: eval(f'[{v.replace("|",",")}]') if v else []
+    Type.INT, lambda v, n, id, p: int(str(v or 0).split(".")[0])
+)
+Converter.register(Type.FLOAT, lambda v, n, id, p: float(str(v or 0)))
+Converter.register(Type.BOOL, lambda v, n, id, p: v != "FALSE")
+Converter.register(
+    Type.ARRAY,
+    lambda v, n, id, p: eval(f'[{v.replace("|",",")}]') if v else []
 )
 Converter.register(
     Type.ARRAY_STR,
-    lambda v, n, id: ["%s" %
-                      e for e in v.split("|")]if v else []
+    lambda v, n, id, p: ["%s" %
+                         e for e in v.split("|")]if v else []
 )
 Converter.register(
     Type.ARRAY_BOOL,
-    lambda v, n, id: [e != "FALSE" for e in v.split("|")] if v else []
+    lambda v, n, id, p: [e != "FALSE" for e in v.split("|")] if v else []
 )
 Converter.register(
     Type.DICT,
-    lambda v, n, id: eval(f'{{{v.replace("|",",")}}}')
-    if v else {})
+    lambda v, n, id, p: eval(f'{{{v.replace("|",",")}}}')
+    if v else {}
+)
 Converter.register(
     Type.FUNCTION,
-    lambda v, n, id: make_func(v or "pass", n, id))
+    lambda v, n, id, p: make_func_agv(v or "pass", n, id)
+)
 
 
-def make_func(v, n, id):
-    func_name = f"{n}_{id}"
+def make_func_agv(v, fn, id):
+    func_name = f"{fn}_{id}"
 
     func_code = textwrap.dedent(
         f"""
@@ -58,7 +63,7 @@ def generator(sheetdata: SheetData, config: Configuration):
     # 表格数据脚本模板
     cvt = Converter()
     template = """
-    extends Reference
+    extends RefCounted
     var None = null
     var False = false
     var True = true
@@ -89,7 +94,9 @@ def generator(sheetdata: SheetData, config: Configuration):
     funcs = textwrap.dedent("\n".join(func_codes))
 
     code = template.format(
-        data=pprint.pformat(table, indent=2, width=100000000), funcs=funcs
+        data=pprint.pformat(table, indent=2, width=1000000000,
+                            compact=True, sort_dicts=True),
+        funcs=funcs
     )
 
     code = textwrap.dedent(code)
@@ -132,6 +139,6 @@ def completed_hook(config: Configuration):
 
     code = code.format(refs_code=refs_code)
 
-    with open(settings_file_path, "w") as f:
+    with open(settings_file_path, "w", encoding="utf-8", newline="\n") as f:
         f.write(code)
         logger.info("创建setting.gd")
