@@ -33,7 +33,9 @@ GDExcelExporter只是个搬运工，他把按照他的规格设计的表格读�
 
 ### 系统要求
 Python:^3.8.1
+
 Platform: Windows(xlwings只支持Windows)
+
 Godot版本:^3.4
 
 ### 安装
