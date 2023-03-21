@@ -1,6 +1,6 @@
 import glob
 import os
-from typing import Optional
+from typing import Dict, Optional
 import xlwings as xw
 import logging
 
@@ -113,7 +113,7 @@ class Engine(xw.App):
             except Exception:
                 logger.error(f"{name} 导出失败", exc_info=True)
 
-    def _excel2dict(self, wb_file: str) -> dict[str, SheetData]:
+    def _excel2dict(self, wb_file: str) -> Dict[str, SheetData]:
         """
         workbook解析加工成字典
         """

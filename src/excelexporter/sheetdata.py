@@ -1,11 +1,12 @@
 from dataclasses import dataclass, field
+from typing import List
 
 
 @dataclass
 class Define:
-    type: list[str] = field(default_factory=list)
-    desc: list[str] = field(default_factory=list)
-    name: list[str] = field(default_factory=list)
+    type: List[str] = field(default_factory=list)
+    desc: List[str] = field(default_factory=list)
+    name: List[str] = field(default_factory=list)
 
 
 @dataclass
