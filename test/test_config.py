@@ -16,7 +16,6 @@ class TestConfig(unittest.TestCase):
             ignore_sheet_mark='!',
             ignore_field_mark='*',
             custom_generator='1',
-            completed_hook='2',
             input='a',
             output='b',
             project_root='c',
