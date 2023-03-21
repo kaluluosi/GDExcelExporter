@@ -31,7 +31,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         python -m pip install poetry
         poetry install
-        source $(poetry env info --path)/bin/activate
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -40,6 +39,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with Unittest
       run: |
-        coverage run -m unittest discover test
-        coverage xml
+        poetry run coverage run -m unittest discover test
+        poetry run coverage xml
         
