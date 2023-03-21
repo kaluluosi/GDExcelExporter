@@ -7,12 +7,12 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Configuration:
-    ignore_sheet_mark: str = field(default="~", kw_only=True)
-    ignore_field_mark: str = field(default="*", kw_only=True)
-    custom_generator: str = field(default="GDS2.0", kw_only=True)
-    input: str = field(default="data", kw_only=True)
-    output: str = field(default="dist", kw_only=True)
-    project_root: str = field(default="../", kw_only=True)
+    ignore_sheet_mark: str = field(default="~")
+    ignore_field_mark: str = field(default="*")
+    custom_generator: str = field(default="GDS2.0")
+    input: str = field(default="data")
+    output: str = field(default="dist")
+    project_root: str = field(default="../")
 
     @classmethod
     def load(cls, filename: str = "export.toml") -> 'Configuration':
