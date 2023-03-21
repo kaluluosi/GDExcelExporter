@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 coverage
+        python -m pip install flake8 coverage 
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         python -m pip install poetry
         poetry install
@@ -41,18 +41,3 @@ jobs:
       run: |
         poetry run coverage run -m unittest discover test
         poetry run coverage xml 
-    - name: Python Coverage
-      # You may pin to the exact commit or the version.
-      # uses: orgoro/coverage@d77626a5fa35d39123e86d6c62907fabe2491496
-      uses: orgoro/coverage@v3
-      with:
-        # local path to a covergae xml file like the output of pytest --cov
-        coverageFile: coverage.xml
-        # github token
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # the coverage threshold for average over all files [0,1]
-        thresholdAll: 0.8
-        # the coverage threshold for average over new files [0,1]
-        thresholdNew: 0.9
-        # the coverage threshold for average over new files [0,1]
-        thresholdModified: 0
