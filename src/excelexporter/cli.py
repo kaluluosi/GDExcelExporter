@@ -5,6 +5,7 @@ import os
 import pkg_resources
 from excelexporter.config import Configuration
 from excelexporter.engine import Engine
+from excelexporter.generators import registers
 
 logger = logging.getLogger(__name__)
 
@@ -65,10 +66,9 @@ def init(setting_dir: bool):
 
     generator = click.prompt(
         "使用哪个内置导出器？",
-        type=click.Choice(
-            ["GDS1.0", "GDS2.0", "C#", "Resource", "JSON"]
-        ),
-        default="GDS2.0")
+        type=click.Choice(registers.keys()),
+        default="GDS2.0"
+    )
 
     config.custom_generator = generator
     config.save()
