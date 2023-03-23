@@ -6,7 +6,7 @@ import textwrap
 import re
 from excelexporter.config import Configuration
 from excelexporter.sheetdata import SheetData
-from excelexporter.generator import Converter, Type
+from excelexporter.generator import Converter
 
 
 # 导出格式
@@ -26,31 +26,6 @@ var data = {}
 
 cvt = Converter()
 
-cvt.register(Type.STRING, lambda v, n, id, p: str(v) if v else "")
-cvt.register(
-    Type.INT, lambda v, n, id, p: int(str(v or 0).split(".")[0])
-)
-cvt.register(Type.FLOAT, lambda v, n, id, p: float(str(v or 0)))
-cvt.register(Type.BOOL, lambda v, n, id, p: v != "FALSE")
-cvt.register(
-    Type.ARRAY,
-    lambda v, n, id, p: eval(f'[{v.replace("|",",")}]') if v else []
-)
-cvt.register(
-    Type.ARRAY_STR,
-    lambda v, n, id, p: ["%s" %
-                         e for e in v.split("|")]if v else []
-)
-cvt.register(
-    Type.ARRAY_BOOL,
-    lambda v, n, id, p: [e != "FALSE" for e in v.split("|")] if v else []
-)
-cvt.register(
-    Type.DICT,
-    lambda v, n, id, p: eval(f'{{{v.replace("|",",")}}}')
-    if v else {}
-)
-
 
 def generator(sheetdata: SheetData, config: Configuration):
     # 表格数据脚本模板
@@ -65,7 +40,7 @@ def generator(sheetdata: SheetData, config: Configuration):
     [resource]
     script = ExtResource("1")
     data = {data}
-    """
+    """  # noqa: E501
     template = textwrap.dedent(template)
     field_names = sheetdata.define.name
     field_types = sheetdata.define.type
