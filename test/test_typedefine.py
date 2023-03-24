@@ -1,5 +1,5 @@
 import unittest
-from excelexporter.parser.field_parser import FieldParser, TypeDefine
+from excelexporter.sheetdata import TypeDefine
 
 
 class TestFieldParser(unittest.TestCase):
