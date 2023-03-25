@@ -6,7 +6,6 @@ import textwrap
 import re
 from excelexporter.config import Configuration
 from excelexporter.sheetdata import SheetData
-from excelexporter.generator import Converter, Type
 
 
 # 导出格式
