@@ -38,15 +38,14 @@ def init(setting_dir: bool):
     output_dir = click.prompt(
         "输入存放导出文件目录名称", default=config.output, show_default=True)
 
-    print(__package__)
     template = pkg_resources.resource_filename(
-        "excelexporter",
+        __package__,
         "template"
     )
 
     generator = click.prompt(
         "使用哪个内置导出器？",
-        type=click.Choice(_list()),
+        type=click.Choice(discover_generator().names),
         default="GDS2.0"
     )
 
@@ -86,7 +85,6 @@ def _list():
     if generators.names:
         for gen in generators.names:
             print(gen)
-        return list(generators.names)
 
 
 @ main.command
