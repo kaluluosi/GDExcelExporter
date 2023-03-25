@@ -32,6 +32,7 @@ xlwings = "^0.29.0"
 toml = "^0.10.2"
 jinja2 = "^3.1.2"
 babel = "^2.12.1"
+importlib-metadata = {version = "^6.1.0", python = "38"}
 
 
 [tool.poetry.group.dev.dependencies]

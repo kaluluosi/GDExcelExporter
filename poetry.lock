@@ -646,4 +646,4 @@ reports = ["Jinja2", "pdfrw"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.1,<3.12"
-content-hash = "982ba06aa5a8f19e4240277cd091c1703d7a4bdd6b4d0b0fc8bdd6e96ae8218f"
+content-hash = "22f737091df2d97573504b651a047bc97049f87932b95ebd6e3071ab9e316051"
