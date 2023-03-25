@@ -58,8 +58,6 @@ def init(setting_dir: bool):
         click.echo(f"{output_dir}已经存在并且非空!")
         return
 
-    os.mkdir(input_dir)
-    os.mkdir(output_dir)
     config.input = input_dir
     config.output = output_dir
 
@@ -69,6 +67,8 @@ def init(setting_dir: bool):
         default="GDS2.0"
     )
 
+    os.mkdir(input_dir)
+    os.mkdir(output_dir)
     config.custom_generator = generator
     config.save()
 
