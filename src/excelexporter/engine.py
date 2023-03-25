@@ -5,7 +5,7 @@ import xlwings as xw
 import logging
 
 from excelexporter.sheetdata import SheetData
-from .generator import Generator, CompletedHook
+from .generator import Generator, CompletedHook, Converter, TypeDefine
 from .config import Configuration
 from .generators import registers
 
@@ -85,12 +85,12 @@ class Engine(xw.App):
 
         sheet_datas = self._excel2dict(wb_abs_path)
 
-        for name, sheetdata in sheet_datas.items():
+        for sheet_name, sheetdata in sheet_datas.items():
             try:
-                if "-" in name:
-                    org_name, rename = name.split("-")
+                if "-" in sheet_name:
+                    org_name, rename = sheet_name.split("-")
                 else:
-                    org_name, rename = name, None
+                    org_name, rename = sheet_name, None
 
                 relative_path = os.path.join(
                     wb_abs_path_without_ext.replace(abs_input_path, ""),
@@ -109,9 +109,9 @@ class Engine(xw.App):
                 output = f"{output}.{self.extension}"
                 with open(output, "w", encoding="utf-8", newline="\n") as f:
                     f.write(code)
-                    logger.info(f"导出：{wb_abs_path}:{name} => {output}")
+                    logger.info(f"导出：{wb_abs_path}:{sheet_name} => {output}")
             except Exception:
-                logger.error(f"{name} 导出失败", exc_info=True)
+                logger.error(f"{sheet_name} 导出失败", exc_info=True)
 
     def _excel2dict(self, wb_file: str) -> Dict[str, SheetData]:
         """
@@ -126,8 +126,9 @@ class Engine(xw.App):
             book.sheets
         )
 
-        sheet_data = {}
+        wb_data = {}
 
+        # 先讲sheet转sheet_data
         for sheet in sheets:
 
             data = SheetData()
@@ -149,9 +150,32 @@ class Engine(xw.App):
                     for row in data.table:
                         del row[col]
 
-            sheet_data[sheet.name] = data
+            wb_data[sheet.name] = data
 
-        return sheet_data
+        cvt = Converter()
+        for sheet_name, sheet_data in wb_data.items():
+            field_names = sheet_data.define.name
+            field_types = sheet_data.define.type
+            table = {}
+
+            for row in sheet_data.table:
+                id_type = TypeDefine.from_str(field_types[0])
+                id_name = field_names[0]
+                id_value = row[0]
+                id = cvt(id_value, id_type, id_name, id_value)
+
+                row_data = {}
+
+                for index, value in enumerate(row):
+                    field_name: str = field_names[index]
+                    field_type = TypeDefine.from_str(field_types[index])
+                    row_data[field_name] = cvt(
+                        id, field_type, field_name, value)
+
+                table[id.value] = row_data
+            wb_data[sheet_name] = table
+
+        return wb_data
 
     def gen_one(self, filename: str):
         self._gen(filename)
