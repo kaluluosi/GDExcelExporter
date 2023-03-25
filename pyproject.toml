@@ -12,6 +12,9 @@ packages = [
 [tool.poetry.scripts]
 ee = "excelexporter.cli:main"
 
+[tool.poetry.plugins."excelexporter.generator"]
+"GDS2.0" = "excelexporter.generators.gds2"
+
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.12"
 click = "^8.1.3"

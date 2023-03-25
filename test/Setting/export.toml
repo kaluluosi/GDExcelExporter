@@ -1,0 +1,6 @@
+ignore_sheet_mark = "~"
+ignore_field_mark = "*"
+custom_generator = "GDS2.0"
+input = "data"
+output = "dist"
+project_root = "../"

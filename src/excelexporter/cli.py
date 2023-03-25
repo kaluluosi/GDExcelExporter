@@ -4,8 +4,7 @@ import logging
 import os
 import pkg_resources
 from excelexporter.config import Configuration
-from excelexporter.engine import Engine
-from excelexporter.generators import registers
+from excelexporter.engine import Engine, discover_generator
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +65,7 @@ def init(setting_dir: bool):
 
     generator = click.prompt(
         "使用哪个内置导出器？",
-        type=click.Choice(registers.keys()),
+        type=click.Choice(discover_generator().names),
         default="GDS2.0"
     )
 
