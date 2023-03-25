@@ -101,8 +101,6 @@ def extract_godot_scene(fileobj, keywords: list, comment_tags, options):
     :rtype: iterator
     """
     encoding = options.get('encoding', 'utf-8')
-    cfg_keywords = options.get("keywords", "tr")
-    keywords += cfg_keywords
 
     current_node_type = None
 
@@ -189,8 +187,6 @@ def extract_godot_resource(fileobj, keywords, comment_tags, options):
     :rtype: iterator
     """
     encoding = options.get('encoding', 'utf-8')
-    cfg_keywords = options.get("keywords", "tr")
-    keywords += cfg_keywords
 
     properties_to_translate = {}
     for keyword in keywords:

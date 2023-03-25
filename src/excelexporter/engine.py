@@ -4,7 +4,7 @@ import sys
 import xlwings as xw
 import logging
 from excelexporter.config import Configuration
-from excelexporter.generator import Converter, Generator, CompletedHook
+from excelexporter.generator import Converter, Generator, CompletedHook, Variant
 from excelexporter.sheetdata import SheetData, TypeDefine
 from typing import Dict, Optional
 
@@ -47,6 +47,7 @@ class Engine(xw.App):
         self.completed_hook: Optional[CompletedHook] = None
         self.extension: str = ""
 
+        self.localized_strs = set()
         self.cvt = Converter()
 
         self.init_generator()
@@ -179,13 +180,28 @@ class Engine(xw.App):
                     for index, value in enumerate(row):
                         field_name: str = field_names[index]
                         field_type = TypeDefine.from_str(field_types[index])
-                        row_data[field_name] = cvt(
-                            id.value, field_type, field_name, value)
+                        variant: Variant = cvt(
+                            id.value, field_type, field_name, value
+                        )
+                        row_data[field_name] = variant
+                        self.localized_strs = self.localized_strs.union(
+                            variant.local_strs())
 
                     table[id.value] = row_data
                 wb_data[sheet_name] = table
 
             return wb_data
+
+    def save_lang_file(self):
+
+        with open("language.gd", "w", encoding="utf-8", newline="\n") as f:
+            f.write("func localization():\n")
+            lines = []
+            for txt in self.localized_strs:
+                lines.append(
+                    f"  tr('{txt}')\n"
+                )
+            f.writelines(lines)
 
     def gen_one(self, filename: str):
         self._gen(filename)
@@ -206,3 +222,17 @@ class Engine(xw.App):
 
         if self.completed_hook:
             self.completed_hook(self.config)
+
+    def extract_pot(self):
+        abs_input = os.path.abspath(self.config.input)
+        exts = [".xlsx", ".xls"]
+        for ext in exts:
+            full_paths = glob.glob(f"{abs_input}/**/*{ext}", recursive=True)
+            for full_path in full_paths:
+                filename = os.path.basename(full_path)
+                if filename.startswith("~$"):
+                    logger.warning(f"{filename} 不是配置表，跳过！")
+                    continue
+                self._excel2dict(full_path)  # 直接读所有表，不做转换抽取翻译字符
+                logger.info(f"导出语言表: {full_path}")
+        self.save_lang_file()

@@ -76,7 +76,10 @@ def init(setting_dir: bool):
 
 
 @main.command
-def list_generator():
+def list():
+    """
+    列出支持的导出器插件
+    """
     generators = discover_generator()
     for gen in generators.names:
         print(gen)
@@ -91,6 +94,17 @@ def add_context_menu():
     os.system(f"start {dir}")
 
 
+def _find_config():
+    if not os.path.exists("export.toml"):
+        logger.error("当前目录下没有export.toml配置文件")
+        logger.error("尝试往上层找")
+        upper_path = os.path.join(os.curdir, os.pardir, "export.toml")
+        if not os.path.exists(upper_path):
+            logger.error("完全不存在export.toml,终止导表")
+        else:
+            os.chdir(os.pardir)
+
+
 @ main.command
 @ click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 def gen_all(cwd):
@@ -98,15 +112,7 @@ def gen_all(cwd):
     导出所有表
     """
     os.chdir(cwd)
-    if not os.path.exists("export.toml"):
-        logger.error("目录下没有export.toml配置文件")
-        logger.error("尝试向上一层找export.toml")
-        upper_path = os.path.join(os.curdir, os.pardir, "export.toml")
-        if not os.path.exists(upper_path):
-            logger.error("完全不存在export.toml，终止导表")
-        else:
-            # 切换工作目录到上层
-            os.chdir(os.pardir)
+    _find_config()
 
     config = Configuration.load()
 
@@ -121,18 +127,24 @@ def gen_one(file: str):
     打开并导出整张excel表
     """
     abs_filepath = os.path.abspath(file)
-    if not os.path.exists("export.toml"):
-        logger.error("当前目录下没有export.toml配置文件")
-        logger.error("尝试往上层找")
-        upper_path = os.path.join(os.curdir, os.pardir, "export.toml")
-        if not os.path.exists(upper_path):
-            logger.error("完全不存在export.toml,终止导表")
-        else:
-            os.chdir(os.pardir)
+    _find_config()
 
     config = Configuration.load()
     with Engine(config) as engine:
         engine.gen_one(abs_filepath)
+
+
+@ main.command
+@ click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
+def extract_pot(cwd):
+    """
+    导出多语言表
+    """
+    os.chdir(cwd)
+    _find_config()
+    config = Configuration.load()
+    with Engine(config) as engine:
+        engine.extract_pot()
 
 
 if __name__ == "__main__":

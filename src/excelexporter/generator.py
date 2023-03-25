@@ -16,67 +16,101 @@ logger = logging.getLogger()
 
 @dataclass
 class Variant:
+
     id: int
     type_define: TypeDefine
     field_name: str
     value: Any
 
+    def local_strs(self):
+        return set()
+
 
 class String(Variant):
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = str(v) if v else ""
         return String(id, td, fn, value)
+
+    def local_strs(self):
+        localizeds = set()
+        if self.type_define.is_localization:
+            localizeds.add(self.value)
+        return localizeds
 
 
 class Int(Variant):
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = int(float(v or 0))
         return Int(id, td, fn, value)
 
 
 class Float(Variant):
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = float(v or 0)
         return Float(id, td, fn, value)
 
 
 class Bool(Variant):
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = v != "FALSE"
         return Bool(id, td, fn, value)
 
 
 class Array(Variant):
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = eval(f'[{v.replace("|",",")}]') if v else []
         return Array(id, td, fn, value)
+
+    def local_strs(self):
+        localizeds = set()
+        if self.type_define.is_localization:
+            for e in self.value:
+                if isinstance(e, str):
+                    localizeds.add(e)
+        return localizeds
 
 
 class ArrayStr(Variant):
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = ["%s" % e for e in v.split("|")]if v else []
         return ArrayStr(id, td, fn, value)
+
+    def local_strs(self):
+        localizeds = set()
+        if self.type_define.is_localization:
+            for e in self.value:
+                if isinstance(e, str):
+                    localizeds.add(e)
+        return localizeds
 
 
 class ArrayBool(Variant):
 
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = [e != "FALSE" for e in v.split("|")] if v else []
         return ArrayBool(id, td, fn, value)
 
 
 class Dict(Variant):
     @staticmethod
-    def make(id, td, fn, v):
+    def make(id: Any, td: TypeDefine, fn: str, v: Any):
         value = eval(f'{{{v.replace("|",",")}}}') if v else {}
         return Dict(id, td, fn, value)
+
+    def local_strs(self):
+        localizeds = set()
+        if self.type_define.is_localization:
+            for k, e in self.value.items():
+                if isinstance(e, str):
+                    localizeds.add(e)
+        return localizeds
 
 
 class Type:
