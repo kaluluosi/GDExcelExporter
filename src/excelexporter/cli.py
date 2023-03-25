@@ -75,6 +75,13 @@ def init(setting_dir: bool):
     click.echo("配置表项目生成完毕，后续你可以通过修改export.toml调整配置。")
 
 
+@main.command
+def list_generator():
+    generators = discover_generator()
+    for gen in generators.names:
+        print(gen)
+
+
 @ main.command
 def add_context_menu():
     """

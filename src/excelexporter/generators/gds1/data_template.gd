@@ -1,5 +1,5 @@
 # warnings-disable
-extends RefCounted
+extends Reference
 
 var data = \
 {
