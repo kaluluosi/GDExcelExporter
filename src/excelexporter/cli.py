@@ -5,6 +5,7 @@ import os
 import pkg_resources
 from excelexporter.config import Configuration
 from excelexporter.engine import Engine, discover_generator
+from excelexporter.generators import builtins
 
 logger = logging.getLogger(__name__)
 
@@ -82,8 +83,12 @@ def list():
     列出支持的导出器插件
     """
     generators = discover_generator()
-    for gen in generators.names:
-        print(gen)
+    if generators.names:
+        for gen in generators.names:
+            print(gen)
+    else:
+        for gen in builtins:
+            print(gen)
 
 
 @ main.command
@@ -153,7 +158,7 @@ def extract(cwd):
 
     keyword_args = "".join([f"-k {kw} " for kw in babel_keywords])
     os.system(
-        f"pybabel extract -F babel.cfg {keyword_args} -o {pot_file} {config.project_root}"
+        f"pybabel extract -F babel.cfg {keyword_args} -o {pot_file} {config.project_root}"  # noqa
     )
 
 

@@ -4,7 +4,8 @@ import sys
 import xlwings as xw
 import logging
 from excelexporter.config import Configuration
-from excelexporter.generator import Converter, Generator, CompletedHook, Variant
+from excelexporter.generator import Converter, Generator, CompletedHook, Variant  # noqa
+from excelexporter.generators import builtins
 from excelexporter.sheetdata import SheetData, TypeDefine
 from typing import Dict, Optional
 
@@ -33,9 +34,9 @@ class IllegalGenerator(Exception):
 
 
 def discover_generator():
-    discovered_generators = entry_points(
+    generators = entry_points(
         group="excelexporter.generator")
-    return discovered_generators
+    return generators
 
 
 class Engine(xw.App):
@@ -74,15 +75,21 @@ class Engine(xw.App):
 
                 logger.info(f"使用 {self.config.custom_generator} 自定义导出器")
         else:
-            # 没有才用内置的
+            # 找出插件
             generators = discover_generator()
-            if self.config.custom_generator not in generators.names:
+
+            if self.config.custom_generator in generators.names:
+                module = generators[self.config.custom_generator].load()
+                logger.info(
+                    f"使用插件导出器 {self.config.custom_generator} :{module.__name__}")  # noqa
+            elif self.config.custom_generator in builtins:
+                module = builtins[self.config.custom_generator]
+                logger.info(
+                    f"使用内置导出器 {self.config.custom_generator} :{module.__name__}")  # noqa
+            else:
                 raise IllegalGenerator(
                     self.config.custom_generator, generators.names)
 
-            module = generators[self.config.custom_generator].load()
-            logger.info(
-                f"使用内置导出器 {self.config.custom_generator} :{module.__name__}")
             self.generator = getattr(module, "generator")
             self.completed_hook = getattr(module, "completed_hook")
             self.extension = getattr(module, "extension")
