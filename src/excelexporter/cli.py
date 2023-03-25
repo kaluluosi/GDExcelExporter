@@ -5,7 +5,6 @@ import os
 import pkg_resources
 from excelexporter.config import Configuration
 from excelexporter.engine import Engine, discover_generator
-from excelexporter.generators import builtins
 
 logger = logging.getLogger(__name__)
 
@@ -39,14 +38,15 @@ def init(setting_dir: bool):
     output_dir = click.prompt(
         "输入存放导出文件目录名称", default=config.output, show_default=True)
 
+    print(__package__)
     template = pkg_resources.resource_filename(
-        __package__,
+        "excelexporter",
         "template"
     )
 
     generator = click.prompt(
         "使用哪个内置导出器？",
-        type=click.Choice(discover_generator().names),
+        type=click.Choice(_list()),
         default="GDS2.0"
     )
 
@@ -77,8 +77,8 @@ def init(setting_dir: bool):
     click.echo("配置表项目生成完毕，后续你可以通过修改export.toml调整配置。")
 
 
-@main.command
-def list():
+@main.command(name="list")
+def _list():
     """
     列出支持的导出器插件
     """
@@ -86,9 +86,7 @@ def list():
     if generators.names:
         for gen in generators.names:
             print(gen)
-    else:
-        for gen in builtins:
-            print(gen)
+        return list(generators.names)
 
 
 @ main.command

@@ -5,7 +5,6 @@ import xlwings as xw
 import logging
 from excelexporter.config import Configuration
 from excelexporter.generator import Converter, Generator, CompletedHook, Variant  # noqa
-from excelexporter.generators import builtins
 from excelexporter.sheetdata import SheetData, TypeDefine
 from typing import Dict, Optional
 
@@ -82,10 +81,6 @@ class Engine(xw.App):
                 module = generators[self.config.custom_generator].load()
                 logger.info(
                     f"使用插件导出器 {self.config.custom_generator} :{module.__name__}")  # noqa
-            elif self.config.custom_generator in builtins:
-                module = builtins[self.config.custom_generator]
-                logger.info(
-                    f"使用内置导出器 {self.config.custom_generator} :{module.__name__}")  # noqa
             else:
                 raise IllegalGenerator(
                     self.config.custom_generator, generators.names)
