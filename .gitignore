@@ -5,5 +5,7 @@ md5.txt
 __pycache__
 ~$*
 .*
+!.github
 !.gitignore
 build
+Setting

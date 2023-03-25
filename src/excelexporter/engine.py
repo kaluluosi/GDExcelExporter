@@ -1,13 +1,17 @@
 import glob
 import os
-from typing import Dict, Optional
+import sys
 import xlwings as xw
 import logging
+from excelexporter.config import Configuration
+from excelexporter.generator import Converter, Generator, CompletedHook, Variant
+from excelexporter.sheetdata import SheetData, TypeDefine
+from typing import Dict, Optional
 
-from excelexporter.sheetdata import SheetData
-from .generator import Generator, CompletedHook
-from .config import Configuration
-from .generators import registers
+if sys.version_info < (3, 10):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
 
 # 导表工具引擎
 
@@ -28,6 +32,12 @@ class IllegalGenerator(Exception):
         )
 
 
+def discover_generator():
+    discovered_generators = entry_points(
+        group="excelexporter.generator")
+    return discovered_generators
+
+
 class Engine(xw.App):
 
     def __init__(self, config: Configuration) -> None:
@@ -36,6 +46,9 @@ class Engine(xw.App):
         self.generator: Optional[Generator] = None
         self.completed_hook: Optional[CompletedHook] = None
         self.extension: str = ""
+
+        self.localized_strs = set()
+        self.cvt = Converter()
 
         self.init_generator()
 
@@ -62,12 +75,12 @@ class Engine(xw.App):
                 logger.info(f"使用 {self.config.custom_generator} 自定义导出器")
         else:
             # 没有才用内置的
-            module = registers.get(
-                self.config.custom_generator.upper()
-            )
-            if module is None:
+            generators = discover_generator()
+            if self.config.custom_generator not in generators.names:
                 raise IllegalGenerator(
-                    self.config.custom_generator, "不是内置导出器，请检查配置。")
+                    self.config.custom_generator, generators.names)
+
+            module = generators[self.config.custom_generator].load()
             logger.info(
                 f"使用内置导出器 {self.config.custom_generator} :{module.__name__}")
             self.generator = getattr(module, "generator")
@@ -85,12 +98,12 @@ class Engine(xw.App):
 
         sheet_datas = self._excel2dict(wb_abs_path)
 
-        for name, sheetdata in sheet_datas.items():
+        for sheet_name, sheetdata in sheet_datas.items():
             try:
-                if "-" in name:
-                    org_name, rename = name.split("-")
+                if "-" in sheet_name:
+                    org_name, rename = sheet_name.split("-")
                 else:
-                    org_name, rename = name, None
+                    org_name, rename = sheet_name, None
 
                 relative_path = os.path.join(
                     wb_abs_path_without_ext.replace(abs_input_path, ""),
@@ -109,49 +122,86 @@ class Engine(xw.App):
                 output = f"{output}.{self.extension}"
                 with open(output, "w", encoding="utf-8", newline="\n") as f:
                     f.write(code)
-                    logger.info(f"导出：{wb_abs_path}:{name} => {output}")
+                    logger.info(f"导出：{wb_abs_path}:{sheet_name} => {output}")
             except Exception:
-                logger.error(f"{name} 导出失败", exc_info=True)
+                logger.error(f"{sheet_name} 导出失败", exc_info=True)
 
     def _excel2dict(self, wb_file: str) -> Dict[str, SheetData]:
         """
         workbook解析加工成字典
         """
-        book = self.books.open(wb_file)
+        with self.books.open(wb_file) as book:
+            ignore_sheet_mark = self.config.ignore_sheet_mark
+            # 过滤掉打了忽略标志的sheet
+            sheets = filter(
+                lambda sheet: not sheet.name.startswith(ignore_sheet_mark),
+                book.sheets
+            )
 
-        ignore_sheet_mark = self.config.ignore_sheet_mark
-        # 过滤掉打了忽略标志的sheet
-        sheets = filter(
-            lambda sheet: not sheet.name.startswith(ignore_sheet_mark),
-            book.sheets
-        )
+            wb_data = {}
 
-        sheet_data = {}
+            # 先讲sheet转sheet_data
+            for sheet in sheets:
+                sheet_data = SheetData()
+                row_values = sheet.range("A1").expand().raw_value
 
-        for sheet in sheets:
+                sheet_data.define.type = list(row_values[0])
+                sheet_data.define.desc = list(row_values[1])
+                sheet_data.define.name = list(row_values[2])
 
-            data = SheetData()
+                sheet_data.table = list([list(row) for row in row_values[3:]])
+                # 找出所有被打了忽略标记的字段
+                for col, field in enumerate(sheet_data.define.name):
+                    # 跳过没命令的字段
 
-            row_values = sheet.range("A1").expand().raw_value
+                    if field is None or field.startswith(self.config.ignore_field_mark):  # noqa
+                        del sheet_data.define.type[col]
+                        del sheet_data.define.desc[col]
+                        del sheet_data.define.name[col]
+                        for row in sheet_data.table:
+                            del row[col]
 
-            data.define.type = list(row_values[0])
-            data.define.desc = list(row_values[1])
-            data.define.name = list(row_values[2])
+                wb_data[sheet.name] = sheet_data
 
-            data.table = list([list(row) for row in row_values[3:]])
+            cvt = Converter()
+            for sheet_name, sheet_data in wb_data.items():
+                field_names = sheet_data.define.name
+                field_types = sheet_data.define.type
+                table = {}
 
-            # 找出所有被打了忽略标记的字段
-            for col, field in enumerate(data.define.name):
-                if field.startswith(self.config.ignore_field_mark):
-                    del data.define.type[col]
-                    del data.define.desc[col]
-                    del data.define.name[col]
-                    for row in data.table:
-                        del row[col]
+                for row in sheet_data.table:
+                    id_type = TypeDefine.from_str(field_types[0])
+                    id_name = field_names[0]
+                    id_value = row[0]
+                    id = cvt(id_value, id_type, id_name, id_value)
 
-            sheet_data[sheet.name] = data
+                    row_data = {}
 
-        return sheet_data
+                    for index, value in enumerate(row):
+                        field_name: str = field_names[index]
+                        field_type = TypeDefine.from_str(field_types[index])
+                        variant: Variant = cvt(
+                            id.value, field_type, field_name, value
+                        )
+                        row_data[field_name] = variant
+                        self.localized_strs = self.localized_strs.union(
+                            variant.local_strs())
+
+                    table[id.value] = row_data
+                wb_data[sheet_name] = table
+
+            return wb_data
+
+    def save_lang_file(self):
+
+        with open("language.gd", "w", encoding="utf-8", newline="\n") as f:
+            f.write("func localization():\n")
+            lines = []
+            for txt in self.localized_strs:
+                lines.append(
+                    f"  tr('{txt}')\n"
+                )
+            f.writelines(lines)
 
     def gen_one(self, filename: str):
         self._gen(filename)
@@ -172,3 +222,17 @@ class Engine(xw.App):
 
         if self.completed_hook:
             self.completed_hook(self.config)
+
+    def extract_pot(self):
+        abs_input = os.path.abspath(self.config.input)
+        exts = [".xlsx", ".xls"]
+        for ext in exts:
+            full_paths = glob.glob(f"{abs_input}/**/*{ext}", recursive=True)
+            for full_path in full_paths:
+                filename = os.path.basename(full_path)
+                if filename.startswith("~$"):
+                    logger.warning(f"{filename} 不是配置表，跳过！")
+                    continue
+                self._excel2dict(full_path)  # 直接读所有表，不做转换抽取翻译字符
+                logger.info(f"导出语言表: {full_path}")
+        self.save_lang_file()

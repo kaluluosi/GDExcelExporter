@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+[-HKEY_CLASSES_ROOT\Directory\shell\exportall]
+
+[-HKEY_CLASSES_ROOT\Directory\Background\shell\exportall]
+
+[-HKEY_CLASSES_ROOT\Directory\shell\exportall\command]
+
+[-HKEY_CLASSES_ROOT\Directory\Background\shell\exportall\command]
