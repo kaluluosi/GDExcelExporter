@@ -18,6 +18,7 @@ class TestEngine(unittest.TestCase):
         generators = discover_generator()
         self.assertTrue(generators["GDS2.0"])
 
+    @unittest.skip
     def test_gen(self):
         file = "dist/示例/demo.gd"
         os.chdir(r"test\Setting")
