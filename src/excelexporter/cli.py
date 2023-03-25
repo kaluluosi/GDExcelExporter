@@ -136,9 +136,9 @@ def gen_one(file: str):
 
 @ main.command
 @ click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
-def extract_pot(cwd):
+def extract(cwd):
     """
-    导出多语言表
+    导出多语言表 gd,供 babel生成语言表用
     """
     os.chdir(cwd)
     _find_config()

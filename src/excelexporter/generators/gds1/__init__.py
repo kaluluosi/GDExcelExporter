@@ -24,39 +24,11 @@ def converter(var: Variant):
     type_define = var.type_define
     if type_define.type_name == Type.STRING:
         value = var.value.replace("\n", "\\n")
-        if type_define.is_localization:
-            return f"tr('{value}')"
-        else:
-            return f"'{value}'"
-
-    if type_define.type_name == Type.BOOL:
-        return "true" if var.value else "false"
+        return f"'{value}'"
 
     if type_define.type_name == Type.FUNCTION:
         func_name = f"{var.field_name}_{var.id}"
         return f"funcref(self,'{func_name}')"
-
-    if type_define.type_name == Type.ARRAY_STR:
-        if type_define.is_localization:
-            var.value = [v.replace("\n", "\\n") for v in var.value]
-
-            temp = jinja2.Template(
-                """[{%- for v in var.value %}tr('{{v|safe}}'),{% endfor -%}]"""
-            )
-
-            return temp.render(var=var)
-
-    if type_define.type_name == Type.DICT:
-        if type_define.is_localization:
-
-            for k, v in var.value.items():
-                if isinstance(v, str):
-                    var.value[k] = f"tr('{v}')"
-
-            temp = jinja2.Template(
-                """{% raw %}{{% endraw %}{% for key,value in var.value.items() -%} '{{key}}':{{value}}, {% endfor -%}{% raw %}}{% endraw %}"""  # noqa
-            )
-            return temp.render(var=var)
 
     return var.value
 
