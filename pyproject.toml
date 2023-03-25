@@ -19,6 +19,11 @@ ee = "excelexporter.cli:main"
 "JSON2.0" = "excelexporter.generators.json2"
 "RESOURCE" = "excelexporter.generators.resource"
 
+[tool.poetry.plugins."babel.extractors"]
+"godot_scene" = "excelexporter.babel.godot:extract_godot_scene"
+"godot_resource" = "excelexporter.babel.godot:extract_godot_resource"
+"godot_json" = "excelexporter.babel.json:extract_godot_json"
+
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.12"
 click = "^8.1.3"
