@@ -12,6 +12,7 @@ GDExcelExpoter 是为Godot设计的Excel表格导出数据资源的工具。他�
 2. 通过`entry_points`支持导出器插件，现在可以开发自己的导出器插件
 3. 多语言支持，集成了pybabel多语言方案，直接支持配置表、gd脚本、tscn、tres整个godot项目的多语言文本提取。以后出一个文档单独讲解。
 4. 单元测试用例补充
+5. 悲报：因为pyinstaller不支持 `entry_points` 因此2.1版本之后不提供独立`exe`了。
 
 ## 为什么需要这个工具？
 
