@@ -9,12 +9,12 @@ class TestFieldParser(unittest.TestCase):
         define = TypeDefine.from_str("string")
         self.assertFalse(define.is_localization)
         self.assertEqual(define.type_name, "string")
-        self.assertFalse(define.params)
+        self.assertEqual(define.params, "()")
 
         define = TypeDefine.from_str("#string")
         self.assertTrue(define.is_localization)
         self.assertEqual(define.type_name, "string")
-        self.assertFalse(define.params)
+        self.assertEqual(define.params, "()")
 
         define = TypeDefine.from_str("#string(a,b,c=null)")
         self.assertTrue(define.is_localization)
@@ -24,4 +24,4 @@ class TestFieldParser(unittest.TestCase):
         define = TypeDefine.from_str("#string(a,b,c=null")
         self.assertTrue(define.is_localization)
         self.assertEqual(define.type_name, "string")
-        self.assertFalse(define.params)
+        self.assertEqual(define.params, "()")

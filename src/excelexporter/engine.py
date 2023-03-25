@@ -153,7 +153,7 @@ class Engine(xw.App):
                 for col, field in enumerate(sheet_data.define.name):
                     # 跳过没命令的字段
 
-                    if field is None or field.startswith(self.config.ignore_field_mark):
+                    if field is None or field.startswith(self.config.ignore_field_mark):  # noqa
                         del sheet_data.define.type[col]
                         del sheet_data.define.desc[col]
                         del sheet_data.define.name[col]

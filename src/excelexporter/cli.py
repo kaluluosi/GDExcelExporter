@@ -32,14 +32,6 @@ def init(setting_dir: bool):
     """
     setting_dir_name = "Setting"
 
-    if setting_dir:
-        if os.path.exists(setting_dir_name) and os.listdir(setting_dir_name):
-            click.echo(f"{setting_dir_name} 已经存在并且非空!")
-            return
-
-        os.mkdir(setting_dir_name)
-        os.chdir(setting_dir_name)
-
     config = Configuration()
     input_dir = click.prompt(
         "输入存放excel表格目录名称", default=config.input, show_default=True)
@@ -51,6 +43,19 @@ def init(setting_dir: bool):
         "template"
     )
 
+    generator = click.prompt(
+        "使用哪个内置导出器？",
+        type=click.Choice(discover_generator().names),
+        default="GDS2.0"
+    )
+
+    if setting_dir:
+        if os.path.exists(setting_dir_name) and os.listdir(setting_dir_name):
+            click.echo(f"{setting_dir_name} 已经存在并且非空!")
+            return
+        os.mkdir(setting_dir_name)
+        os.chdir(setting_dir_name)
+
     if os.path.exists(input_dir) and os.listdir(input_dir):
         click.echo(f"{input_dir}已经存在并且非空!")
         return
@@ -60,12 +65,6 @@ def init(setting_dir: bool):
 
     config.input = input_dir
     config.output = output_dir
-
-    generator = click.prompt(
-        "使用哪个内置导出器？",
-        type=click.Choice(discover_generator().names),
-        default="GDS2.0"
-    )
 
     os.mkdir(input_dir)
     os.mkdir(output_dir)

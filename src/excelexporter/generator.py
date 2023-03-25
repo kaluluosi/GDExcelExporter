@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-import re
 import logging
 
-from .sheetdata import SheetData
-from .config import Configuration
+from excelexporter.sheetdata import SheetData, TypeDefine
+from excelexporter.config import Configuration
 from typing import Any, Callable
 
 
@@ -13,34 +12,6 @@ CompletedHook = Callable[[Configuration], None]
 ConvertFunc = Callable[[Any, str, int, dict], str]
 
 logger = logging.getLogger()
-
-
-@dataclass
-class TypeDefine:
-    """
-    # string(params)
-    functioN(params)
-    [#]<type_name>[(params)]
-
-    字段转换器要如何使用这些属性字段全靠他们自己定义了
-    """
-    TYPE_DEFINE_PATTERN = r"(?P<local>#?)(?P<type_name>\w+)(?P<params>\(.*\))?"
-    is_localization: bool  # 是否需要支持多语言，由具体的Parser去决定如何支持
-    type_name: str
-    params: str  # params是(a,b,c=null) 这样的字符串
-
-    @classmethod
-    def from_str(self, define_str: str) -> 'TypeDefine':
-        type_define = define_str.strip()  # 先去头去尾空格
-        m = re.match(self.TYPE_DEFINE_PATTERN, type_define)
-        is_localization = m.group("local")
-        type_name = m.group("type_name")
-        params = m.group("params")
-        return TypeDefine(
-            is_localization,
-            type_name,
-            params
-        )
 
 
 @dataclass

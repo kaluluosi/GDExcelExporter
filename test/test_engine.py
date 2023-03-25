@@ -1,7 +1,7 @@
 import unittest
 import os
 from excelexporter.config import Configuration
-from excelexporter.engine import Engine
+from excelexporter.engine import Engine, discover_generator
 
 
 class TestEngine(unittest.TestCase):
@@ -15,8 +15,7 @@ class TestEngine(unittest.TestCase):
         print(data)
 
     def test_discover_generators(self):
-        engine = Engine(Configuration())
-        generators = engine.discover_generator()
+        generators = discover_generator()
         self.assertTrue(generators["GDS2.0"])
 
     def test_gen(self):
