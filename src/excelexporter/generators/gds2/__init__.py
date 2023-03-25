@@ -1,7 +1,6 @@
 import glob
 import os
 import logging
-import textwrap
 import jinja2
 import pkg_resources
 from excelexporter.config import Configuration
@@ -53,7 +52,7 @@ def converter(var: Variant):
                     var.value[k] = f"tr('{v}')"
 
             temp = jinja2.Template(
-                """{% raw %}{{% endraw %}{% for key,value in var.value.items() -%} '{{key}}':{{value}}, {% endfor -%}{% raw %}}{% endraw %}"""
+                """{% raw %}{{% endraw %}{% for key,value in var.value.items() -%} '{{key}}':{{value}}, {% endfor -%}{% raw %}}{% endraw %}"""  # noqa
             )
             return temp.render(var=var)
 
