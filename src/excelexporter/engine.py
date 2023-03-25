@@ -140,7 +140,8 @@ class Engine(xw.App):
                 sheet_data.table = list([list(row) for row in row_values[3:]])
                 # 找出所有被打了忽略标记的字段
                 for col, field in enumerate(sheet_data.define.name):
-                    if field.startswith(self.config.ignore_field_mark):
+                    # 跳过没命令的字段
+                    if field and field.startswith(self.config.ignore_field_mark):
                         del sheet_data.define.type[col]
                         del sheet_data.define.desc[col]
                         del sheet_data.define.name[col]
@@ -167,7 +168,7 @@ class Engine(xw.App):
                         field_name: str = field_names[index]
                         field_type = TypeDefine.from_str(field_types[index])
                         row_data[field_name] = cvt(
-                            id, field_type, field_name, value)
+                            id.value, field_type, field_name, value)
 
                     table[id.value] = row_data
                 wb_data[sheet_name] = table
