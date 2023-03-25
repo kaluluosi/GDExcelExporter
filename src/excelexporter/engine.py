@@ -1,13 +1,12 @@
 import glob
 import os
-from typing import Dict, Optional
 import xlwings as xw
 import logging
-
-from excelexporter.sheetdata import SheetData
-from .generator import Generator, CompletedHook, Converter, TypeDefine
-from .config import Configuration
-from .generators import registers
+from excelexporter.generators import registers
+from excelexporter.config import Configuration
+from excelexporter.generator import Converter, Generator, CompletedHook
+from excelexporter.sheetdata import SheetData, TypeDefine
+from typing import Dict, Optional
 
 # 导表工具引擎
 
@@ -36,6 +35,8 @@ class Engine(xw.App):
         self.generator: Optional[Generator] = None
         self.completed_hook: Optional[CompletedHook] = None
         self.extension: str = ""
+
+        self.cvt = Converter()
 
         self.init_generator()
 
@@ -117,65 +118,61 @@ class Engine(xw.App):
         """
         workbook解析加工成字典
         """
-        book = self.books.open(wb_file)
+        with self.books.open(wb_file) as book:
+            ignore_sheet_mark = self.config.ignore_sheet_mark
+            # 过滤掉打了忽略标志的sheet
+            sheets = filter(
+                lambda sheet: not sheet.name.startswith(ignore_sheet_mark),
+                book.sheets
+            )
 
-        ignore_sheet_mark = self.config.ignore_sheet_mark
-        # 过滤掉打了忽略标志的sheet
-        sheets = filter(
-            lambda sheet: not sheet.name.startswith(ignore_sheet_mark),
-            book.sheets
-        )
+            wb_data = {}
 
-        wb_data = {}
+            # 先讲sheet转sheet_data
+            for sheet in sheets:
+                sheet_data = SheetData()
+                row_values = sheet.range("A1").expand().raw_value
 
-        # 先讲sheet转sheet_data
-        for sheet in sheets:
+                sheet_data.define.type = list(row_values[0])
+                sheet_data.define.desc = list(row_values[1])
+                sheet_data.define.name = list(row_values[2])
 
-            data = SheetData()
+                sheet_data.table = list([list(row) for row in row_values[3:]])
+                # 找出所有被打了忽略标记的字段
+                for col, field in enumerate(sheet_data.define.name):
+                    if field.startswith(self.config.ignore_field_mark):
+                        del sheet_data.define.type[col]
+                        del sheet_data.define.desc[col]
+                        del sheet_data.define.name[col]
+                        for row in sheet_data.table:
+                            del row[col]
 
-            row_values = sheet.range("A1").expand().raw_value
+                wb_data[sheet.name] = sheet_data
 
-            data.define.type = list(row_values[0])
-            data.define.desc = list(row_values[1])
-            data.define.name = list(row_values[2])
+            cvt = Converter()
+            for sheet_name, sheet_data in wb_data.items():
+                field_names = sheet_data.define.name
+                field_types = sheet_data.define.type
+                table = {}
 
-            data.table = list([list(row) for row in row_values[3:]])
+                for row in sheet_data.table:
+                    id_type = TypeDefine.from_str(field_types[0])
+                    id_name = field_names[0]
+                    id_value = row[0]
+                    id = cvt(id_value, id_type, id_name, id_value)
 
-            # 找出所有被打了忽略标记的字段
-            for col, field in enumerate(data.define.name):
-                if field.startswith(self.config.ignore_field_mark):
-                    del data.define.type[col]
-                    del data.define.desc[col]
-                    del data.define.name[col]
-                    for row in data.table:
-                        del row[col]
+                    row_data = {}
 
-            wb_data[sheet.name] = data
+                    for index, value in enumerate(row):
+                        field_name: str = field_names[index]
+                        field_type = TypeDefine.from_str(field_types[index])
+                        row_data[field_name] = cvt(
+                            id, field_type, field_name, value)
 
-        cvt = Converter()
-        for sheet_name, sheet_data in wb_data.items():
-            field_names = sheet_data.define.name
-            field_types = sheet_data.define.type
-            table = {}
+                    table[id.value] = row_data
+                wb_data[sheet_name] = table
 
-            for row in sheet_data.table:
-                id_type = TypeDefine.from_str(field_types[0])
-                id_name = field_names[0]
-                id_value = row[0]
-                id = cvt(id_value, id_type, id_name, id_value)
-
-                row_data = {}
-
-                for index, value in enumerate(row):
-                    field_name: str = field_names[index]
-                    field_type = TypeDefine.from_str(field_types[index])
-                    row_data[field_name] = cvt(
-                        id, field_type, field_name, value)
-
-                table[id.value] = row_data
-            wb_data[sheet_name] = table
-
-        return wb_data
+            return wb_data
 
     def gen_one(self, filename: str):
         self._gen(filename)
