@@ -78,7 +78,7 @@ def completed_hook(config: Configuration):
 
     lines = []
 
-    for path in glob.glob(f"{output}/**/*.*", recursive=True):
+    for path in glob.glob(f"{output}/**/*.{extension}", recursive=True):
         if path == settings_file_path:
             continue  # 跳过 settings.gd
         basename = os.path.basename(path)

@@ -17,6 +17,7 @@ ee = "excelexporter.cli:main"
 "GDS1.0" = "excelexporter.generators.gds1"
 "JSON1.0" = "excelexporter.generators.json"
 "JSON2.0" = "excelexporter.generators.json2"
+"RESOURCE" = "excelexporter.generators.resource"
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.12"
