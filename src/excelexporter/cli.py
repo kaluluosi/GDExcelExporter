@@ -68,6 +68,7 @@ def init(setting_dir: bool):
 
     os.mkdir(input_dir)
     os.mkdir(output_dir)
+    os.mkdir("lang")
     config.custom_generator = generator
     config.save()
 
@@ -101,6 +102,7 @@ def _find_config():
         upper_path = os.path.join(os.curdir, os.pardir, "export.toml")
         if not os.path.exists(upper_path):
             logger.error("完全不存在export.toml,终止导表")
+            raise FileNotFoundError("完全不存在export.toml,终止导表")
         else:
             os.chdir(os.pardir)
 
@@ -145,6 +147,14 @@ def extract(cwd):
     config = Configuration.load()
     with Engine(config) as engine:
         engine.extract_pot()
+
+    babel_keywords = config.localization["babel_keywords"]
+    pot_file = config.localization["pot_file"]
+
+    keyword_args = "".join([f"-k {kw} " for kw in babel_keywords])
+    os.system(
+        f"pybabel extract -F babel.cfg {keyword_args} -o {pot_file} {config.project_root}"
+    )
 
 
 if __name__ == "__main__":

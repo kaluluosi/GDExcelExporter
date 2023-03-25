@@ -6,6 +6,13 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class Localization:
+    babel_keywords: list = field(
+        default_factory=lambda: ["tr", "Label/text"])
+    pot_file: str = "lang/template.pot"
+
+
+@dataclass
 class Configuration:
     ignore_sheet_mark: str = field(default="~")
     ignore_field_mark: str = field(default="*")
@@ -13,6 +20,7 @@ class Configuration:
     input: str = field(default="data")
     output: str = field(default="dist")
     project_root: str = field(default="../")
+    localization: Localization = field(default_factory=Localization)
 
     @classmethod
     def load(cls, filename: str = "export.toml") -> 'Configuration':
