@@ -152,7 +152,8 @@ class Engine(xw.App):
                 # 找出所有被打了忽略标记的字段
                 for col, field in enumerate(sheet_data.define.name):
                     # 跳过没命令的字段
-                    if field and field.startswith(self.config.ignore_field_mark):
+
+                    if field is None or field.startswith(self.config.ignore_field_mark):
                         del sheet_data.define.type[col]
                         del sheet_data.define.desc[col]
                         del sheet_data.define.name[col]

@@ -20,11 +20,16 @@ class TestEngine(unittest.TestCase):
         self.assertTrue(generators["GDS2.0"])
 
     def test_gen(self):
+        file = "dist/示例/demo.gd"
         os.chdir(r"test\Setting")
         config = Configuration.load()
         engine = Engine(config)
+
+        if os.path.exists(file):
+            os.remove(file)
+
         engine.gen_one(r"data\示例.xlsx")
 
         self.assertTrue(
-            os.path.exists("dist/示例/demo.gd")
+            os.path.exists(file)
         )
