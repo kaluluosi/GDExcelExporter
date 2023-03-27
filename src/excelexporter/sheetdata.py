@@ -23,7 +23,7 @@ class TypeDefine:
         m = re.match(self.TYPE_DEFINE_PATTERN, type_define)
         is_localization = m.group("local")
         type_name = m.group("type_name")
-        params = m.group("params") or "(args)"
+        params = m.group("params") or "(args=[])"
         return TypeDefine(
             is_localization,
             type_name,
