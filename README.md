@@ -77,13 +77,16 @@ pip install gd-excelexporter
 ### 在游戏中读取
 
 首先你需要将`Setting\dist\settings.gd`添加到项目`autoload`
+
 ![图 6](images/a7948c13156531830c77bffe3ba948fe61216238bb9f87b3bf5c498de62c9d35.png)  
 ![图 7](images/6db28a78f21b7ef8af3e6c45cb832ed989f81d1897414dffedc7ec66c2f60dc0.png)  
 
 通过查看`settings.gd`你就知道这个文件是用来统一管理数据源的。这样你就不需要每次想读取数据的时候又要加载数据和解析。
+
 ![图 8](images/8a113f2fe088c91984930b29b6455b762100c57d9d04b07706b414d554eba744.png)  
 
 然后你就可以像下面一样读取数据
+
 ![图 9](images/199603dbc945a0d5fd06ef06232116465db8baa6291e5039c030676ca28ff80c.png)  
 
 ![图 10](images/424edd0793a306bf36e89e35189c706c979d181bd12313fb8c423a08f031e0c8.png)  
