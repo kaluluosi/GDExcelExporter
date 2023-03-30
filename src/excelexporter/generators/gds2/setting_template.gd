@@ -4,4 +4,4 @@ extends Node
 
 {% for line in lines -%}
 {{line}}
-{%- endfor %}
+{% endfor %}
