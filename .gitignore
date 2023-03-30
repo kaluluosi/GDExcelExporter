@@ -8,4 +8,5 @@ __pycache__
 !.github
 !.gitignore
 build
-Setting
+Settings
+settings

@@ -10,7 +10,7 @@ class TestEngine(unittest.TestCase):
 
         engine = Engine(Configuration())
         data = engine._excel2dict(
-            r"test\Setting\data\示例.xlsx"
+            r"test\setting\data\示例.xlsx"
         )
         print(data)
 
@@ -21,7 +21,7 @@ class TestEngine(unittest.TestCase):
     @unittest.skip
     def test_gen(self):
         file = "dist/示例/demo.gd"
-        os.chdir(r"test\Setting")
+        os.chdir(r"test\setting")
         config = Configuration.load()
         engine = Engine(config)
 

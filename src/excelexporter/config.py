@@ -5,10 +5,28 @@ from dataclasses import dataclass, field, asdict
 logger = logging.getLogger(__name__)
 
 
+builtin_kws = [
+    "tr",
+    "Label/text",
+    "Label/tooltip_text",
+    "Button/text",
+    "Button/tooltip_text",
+    "TextEdit/text",
+    "TextEdit/tooltip_text",
+    "TextEdit/placeholder_text",
+    "TextEdit/tooltip_text",
+    "LineEdit/text",
+    "LineEdit/tooltip_text",
+    "LineEdit/placeholder_text",
+    "RichTextLabel/text"
+    "RichTextLabel/tooltip_text"
+]
+
+
 @dataclass
 class Localization:
     babel_keywords: list = field(
-        default_factory=lambda: ["tr", "Label/text"])
+        default_factory=lambda: builtin_kws)
     pot_file: str = "lang/template.pot"
 
 

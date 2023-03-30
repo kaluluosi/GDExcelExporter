@@ -20,19 +20,23 @@ def main():
 
 
 @main.command
-@click.option(
-    "--setting-dir", "-d",
-    is_flag=True,
-    default=True,
-    prompt="创建并放在Setting目录？"
-)
-def init(setting_dir: bool):
+def init():
     """
     生成默认配置表项目
     """
-    setting_dir_name = "Setting"
-
     config = Configuration()
+
+    # 询问数据表存放目录
+    datatable_dir = click.prompt(
+        "输出数据表目录名", default="settings", show_default=True
+    )
+    if os.path.exists(datatable_dir) and os.listdir(datatable_dir):
+        click.echo(f"{datatable_dir} 已经存在并且非空!")
+        return
+
+    os.mkdir(datatable_dir)
+    os.chdir(datatable_dir)
+
     input_dir = click.prompt(
         "输入存放excel表格目录名称", default=config.input, show_default=True)
     output_dir = click.prompt(
@@ -49,26 +53,12 @@ def init(setting_dir: bool):
         default="GDS2.0"
     )
 
-    if setting_dir:
-        if os.path.exists(setting_dir_name) and os.listdir(setting_dir_name):
-            click.echo(f"{setting_dir_name} 已经存在并且非空!")
-            return
-        os.mkdir(setting_dir_name)
-        os.chdir(setting_dir_name)
-
-    if os.path.exists(input_dir) and os.listdir(input_dir):
-        click.echo(f"{input_dir}已经存在并且非空!")
-        return
-    if os.path.exists(output_dir) and os.listdir(output_dir):
-        click.echo(f"{output_dir}已经存在并且非空!")
-        return
-
     config.input = input_dir
     config.output = output_dir
 
     os.mkdir(input_dir)
     os.mkdir(output_dir)
-    os.mkdir("lang")
+    os.mkdir("lang")  # 创建多语言目录
     config.custom_generator = generator
     config.save()
 
