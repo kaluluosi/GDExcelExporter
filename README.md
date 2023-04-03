@@ -1,6 +1,7 @@
 # GDExcelExporter 2.1
 
-GDExcelExpoter 是为Godot设计的Excel表格导出数据资源的工具。他内置了好几种数据表导出和读取方案（导出器），支持Godot3.x、Godot4.x。
+GDExcelExpoter 是为Godot设计的Excel表格导出数据资源的工具。
+它内置了好几种数据表导出和读取方案（导出器），支持Godot3.x、Godot4.x。
 
 下面我们用`ee`代指`GDExcelExporter`。
 
@@ -56,7 +57,10 @@ Godot版本:^3.4
 pip install gd-excelexporter
 ```
 
-或者直接去右边release里下载已经打包好的可执行文件（ee.exe，你需要将这个exe加到环境变量）
+或者直接去右边release里下载已经打包好的可执行文件（ee.exe，你需要将这个exe加到环境变量）。
+
+> **Note** 
+> 2.0开始因为采用了`entry point`实现导出器插件化，而`pyinstaller`不支持`entry point`，所以无法识别内置导出器。将来可能会在2.1尝试解决这个问题。 
 
 ### 创建配置表项目
 
@@ -72,6 +76,7 @@ pip install gd-excelexporter
 * sample —— 里面有excel示例表格
 * export.toml —— 导出配置，定义了`ee`要怎么导出
 * gen_all.bat —— 里面就一行代码`ee gen-all`，主要用于快速导出所有表格不用打开命令行
+* gen_pot.bat —— 提取整个项目多语言文本（将来补充教程）
 
 ### 尝试配置并导出你第一份数据文件
 
@@ -79,7 +84,7 @@ pip install gd-excelexporter
 
 ### 在游戏中读取
 
-首先你需要将`Setting\dist\settings.gd`添加到项目`autoload`
+首先你需要将`Setting\dist\settings.gd`添加到项目`autoload`。
 
 ![图 6](images/a7948c13156531830c77bffe3ba948fe61216238bb9f87b3bf5c498de62c9d35.png)  
 ![图 7](images/6db28a78f21b7ef8af3e6c45cb832ed989f81d1897414dffedc7ec66c2f60dc0.png)  
