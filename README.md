@@ -60,7 +60,7 @@ pip install gd-excelexporter
 或者直接去右边release里下载已经打包好的可执行文件（ee.exe，你需要将这个exe加到环境变量）。
 
 > **Note** 
-> 2.0开始因为采用了`entry point`实现导出器插件化，而`pyinstaller`不支持`entry point`，所以无法识别内置导出器。将来可能会在2.1尝试解决这个问题。 
+> 2.1.4 版本开始exe的打包问题已经解决，后续版本会继续提供`ee.exe`命令行程序。
 
 ### 创建配置表项目
 
