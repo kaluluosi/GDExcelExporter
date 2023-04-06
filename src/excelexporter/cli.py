@@ -3,6 +3,8 @@ import click
 import logging
 import os
 import pkg_resources
+from babel import *  # noqa
+from babel.messages.frontend import *  # noqa
 from excelexporter.config import Configuration
 from excelexporter.engine import Engine, discover_generator
 
@@ -142,9 +144,13 @@ def extract(cwd):
     babel_keywords = config.localization["babel_keywords"]
     pot_file = config.localization["pot_file"]
 
-    keyword_args = "".join([f"-k {kw} " for kw in babel_keywords])
-    os.system(
-        f"pybabel extract -F babel.cfg {keyword_args} -o {pot_file} {config.project_root}"  # noqa
+    keyword_args = [f"-k {kw} " for kw in babel_keywords]
+
+    cfg_file = os.path.abspath("babel.cfg")
+
+    CommandLineInterface().run(  # noqa
+        ["pybabel", "extract", "-F", cfg_file, *keyword_args,
+            "-o", pot_file, config.project_root]
     )
 
 
