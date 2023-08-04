@@ -3,32 +3,31 @@ import logging
 
 from excelexporter.sheetdata import SheetData, TypeDefine
 from excelexporter.config import Configuration
-from typing import Any, Callable
+from typing import Any, Callable, Generic, TypeVar
 
 
 Generator = Callable[[SheetData, Configuration], str]
 CompletedHook = Callable[[Configuration], None]
 
-ConvertFunc = Callable[[Any, str, int, dict], str]
+T = TypeVar("T")
 
 logger = logging.getLogger()
 
 
 @dataclass
-class Variant:
-
+class Variant(Generic[T]):
     id: int
     type_define: TypeDefine
     field_name: str
-    value: Any
+    value: T
 
     def local_strs(self):
         return set()
 
 
-class String(Variant):
+class String(Variant[str]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = str(v) if v else ""
         return String(id, td, fn, value)
 
@@ -39,30 +38,30 @@ class String(Variant):
         return localizeds
 
 
-class Int(Variant):
+class Int(Variant[int]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = int(float(v or 0))
         return Int(id, td, fn, value)
 
 
-class Float(Variant):
+class Float(Variant[float]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = float(v or 0)
         return Float(id, td, fn, value)
 
 
-class Bool(Variant):
+class Bool(Variant[bool]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = v != "FALSE"
         return Bool(id, td, fn, value)
 
 
-class Array(Variant):
+class Array(Variant[list]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = eval(f'[{v.replace("|",",")}]') if v else []
         return Array(id, td, fn, value)
 
@@ -75,10 +74,10 @@ class Array(Variant):
         return localizeds
 
 
-class ArrayStr(Variant):
+class ArrayStr(Variant[list[str]]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
-        value = ["%s" % e for e in v.split("|")]if v else []
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
+        value = ["%s" % e for e in v.split("|")] if v else []
         return ArrayStr(id, td, fn, value)
 
     def local_strs(self):
@@ -90,17 +89,16 @@ class ArrayStr(Variant):
         return localizeds
 
 
-class ArrayBool(Variant):
-
+class ArrayBool(Variant[list[bool]]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = [e != "FALSE" for e in v.split("|")] if v else []
         return ArrayBool(id, td, fn, value)
 
 
-class Dict(Variant):
+class Dict(Variant[dict]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: Any):
+    def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = eval(f'{{{v.replace("|",",")}}}') if v else {}
         return Dict(id, td, fn, value)
 
@@ -146,19 +144,20 @@ class Converter:
         self.register(Type.DICT, Dict.make)
         self.register(Type.FUNCTION, Variant)
 
-    def default(self, id, td, fn, value): return value or 0
+    def default(self, id, td, fn, value):
+        return value or 0
 
-    def register(self, type: str, self_method: ConvertFunc):
+    def register(self, type: str, self_method: Callable):
         self._map[type] = self_method
 
     def __call__(
-            self,
-            id: int,
-            type_define: TypeDefine,
-            field_name: str,
-            value: Any,
-            *args: Any,
-            **kwds: Any
+        self,
+        id: int,
+        type_define: TypeDefine,
+        field_name: str,
+        value: Any,
+        *args: Any,
+        **kwds: Any,
     ) -> Any:
         cvt = self._map.get(type_define.type_name, self.default)
         result = cvt(id, type_define, field_name, value)

@@ -36,17 +36,16 @@ importlib-metadata = {version = "^6.1.0", python = "38"}
 setuptools = "^67.6.1"
 
 
-[tool.poetry.group.dev.dependencies]
-flake8 = "^6.0.0"
-autopep8 = "^2.0.1"
-
-
 [tool.poetry.group.test.dependencies]
 coverage = "^7.2.2"
 
 
 [tool.poetry.group.build.dependencies]
 nuitka = "1.5.4"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
 
 [build-system]
 requires = ["poetry-core"]
