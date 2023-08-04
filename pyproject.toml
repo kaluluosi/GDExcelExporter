@@ -46,6 +46,7 @@ nuitka = "1.5.4"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
+mkdocs-material = "^9.1.21"
 
 
 [tool.poetry.group.docs.dependencies]

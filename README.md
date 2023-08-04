@@ -65,10 +65,10 @@ pip install gd-excelexporter
 ### 创建配置表项目
 
 打开你的Godot游戏项目，项目根目录下右键打开命令行（此处打开powershell）
-![图 1](images/b0e636c8ece81e8d9a81f663e91db7872e8cbd06f97dbd6edae64f15c3d1173b.gif)  
-![图 2](images/939a62bfbaec7d9c2e7d2c75715d3ab53624cb1ecd4006ce7ae3163fbda721fc.gif)  
-![图 3](images/69e876afa54e19f5c9fbd50cc274a1a583a9e4233fa0afcfd6407a6ea683b21f.png)  
-![图 4](images/7658090be99a6b34b8ca397a76eb4a7462adcd5de98fa21f27e944c024123a95.png)  
+![图 1](docs/images/b0e636c8ece81e8d9a81f663e91db7872e8cbd06f97dbd6edae64f15c3d1173b.gif)  
+![图 2](docs/images/939a62bfbaec7d9c2e7d2c75715d3ab53624cb1ecd4006ce7ae3163fbda721fc.gif)  
+![图 3](docs/images/69e876afa54e19f5c9fbd50cc274a1a583a9e4233fa0afcfd6407a6ea683b21f.png)  
+![图 4](docs/images/7658090be99a6b34b8ca397a76eb4a7462adcd5de98fa21f27e944c024123a95.png)  
 
 * data —— 存放你的excel文件
 * dist —— 导出后数据文件存放目录
@@ -80,24 +80,24 @@ pip install gd-excelexporter
 
 ### 尝试配置并导出你第一份数据文件
 
-![图 5](images/d5bfb173724772c097e5dbeb91f430a572b352b34ae7e59a834c9834eadc7b72.gif)  
+![图 5](docs/images/d5bfb173724772c097e5dbeb91f430a572b352b34ae7e59a834c9834eadc7b72.gif)  
 
 ### 在游戏中读取
 
 首先你需要将`Setting\dist\settings.gd`添加到项目`autoload`。
 
-![图 6](images/a7948c13156531830c77bffe3ba948fe61216238bb9f87b3bf5c498de62c9d35.png)  
-![图 7](images/6db28a78f21b7ef8af3e6c45cb832ed989f81d1897414dffedc7ec66c2f60dc0.png)  
+![图 6](docs/images/a7948c13156531830c77bffe3ba948fe61216238bb9f87b3bf5c498de62c9d35.png)  
+![图 7](docs/images/6db28a78f21b7ef8af3e6c45cb832ed989f81d1897414dffedc7ec66c2f60dc0.png)  
 
 通过查看`settings.gd`你就知道这个文件是用来统一管理数据源的。这样你就不需要每次想读取数据的时候又要加载数据和解析。
 
-![图 8](images/8a113f2fe088c91984930b29b6455b762100c57d9d04b07706b414d554eba744.png)  
+![图 8](docs/images/8a113f2fe088c91984930b29b6455b762100c57d9d04b07706b414d554eba744.png)  
 
 然后你就可以像下面一样读取数据
 
-![图 9](images/199603dbc945a0d5fd06ef06232116465db8baa6291e5039c030676ca28ff80c.png)  
+![图 9](docs/images/199603dbc945a0d5fd06ef06232116465db8baa6291e5039c030676ca28ff80c.png)  
 
-![图 10](images/424edd0793a306bf36e89e35189c706c979d181bd12313fb8c423a08f031e0c8.png)  
+![图 10](docs/images/424edd0793a306bf36e89e35189c706c979d181bd12313fb8c423a08f031e0c8.png)  
 
 
 

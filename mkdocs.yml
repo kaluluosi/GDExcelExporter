@@ -1,4 +1,18 @@
 site_name: GDExcelExporter
+site_url: https://kaluluosi.github.io/GDExcelExporter/
+site_description: Document with GDExcelExporter
 
+repo_url: https://github.com/kaluluosi/GDExcelExporter
 
-theme: readthedocs
+nav:
+  - 首页: index.md
+  - 入门: 入门.md
+  - 指南:
+      - 目录: 指南/目录.md
+      - 导出器说明: 指南/导出器说明.md
+      - excel表规范: 指南/excel表规范.md
+      - export.toml配置文件: 指南/export.toml.md
+      - 多语言支持: 指南/多语言支持.md
+
+markdown_extensions:
+  - admonition
