@@ -3,8 +3,9 @@ import click
 import logging
 import os
 import pkg_resources
-from babel import *  # noqa
-from babel.messages.frontend import *  # noqa
+
+# from babel import *  # noqa
+from babel.messages.frontend import CommandLineInterface
 from excelexporter.config import Configuration
 from excelexporter.engine import Engine, discover_generator
 
@@ -29,9 +30,7 @@ def init():
     config = Configuration()
 
     # 询问数据表存放目录
-    datatable_dir = click.prompt(
-        "输出数据表目录名", default="settings", show_default=True
-    )
+    datatable_dir = click.prompt("输出数据表目录名", default="settings", show_default=True)
     if os.path.exists(datatable_dir) and os.listdir(datatable_dir):
         click.echo(f"{datatable_dir} 已经存在并且非空!")
         return
@@ -39,20 +38,15 @@ def init():
     os.mkdir(datatable_dir)
     os.chdir(datatable_dir)
 
-    input_dir = click.prompt(
-        "输入存放excel表格目录名称", default=config.input, show_default=True)
-    output_dir = click.prompt(
-        "输入存放导出文件目录名称", default=config.output, show_default=True)
+    input_dir = click.prompt("输入存放excel表格目录名称", default=config.input, show_default=True)
+    output_dir = click.prompt("输入存放导出文件目录名称", default=config.output, show_default=True)
 
-    template = pkg_resources.resource_filename(
-        __package__,
-        "template"
-    )
+    template = pkg_resources.resource_filename(__package__, "template")
 
     generator = click.prompt(
         "使用哪个内置导出器？",
-        type=click.Choice(discover_generator().names),
-        default="GDS2.0"
+        type=click.Choice(list(discover_generator().names)),
+        default="GDS2.0",
     )
 
     config.input = input_dir
@@ -79,7 +73,7 @@ def _list():
             print(gen)
 
 
-@ main.command
+@main.command
 def add_context_menu():
     """
     添加上下文菜单（通过注册表）
@@ -100,8 +94,8 @@ def _find_config():
             os.chdir(os.pardir)
 
 
-@ main.command
-@ click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
+@main.command
+@click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 def gen_all(cwd):
     """
     导出所有表
@@ -115,8 +109,8 @@ def gen_all(cwd):
         engine.gen_all()
 
 
-@ main.command()
-@ click.argument("file", type=click.Path(True))
+@main.command()
+@click.argument("file", type=click.Path(True))
 def gen_one(file: str):
     """
     打开并导出整张excel表
@@ -129,8 +123,8 @@ def gen_one(file: str):
         engine.gen_one(abs_filepath)
 
 
-@ main.command
-@ click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
+@main.command
+@click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 def extract(cwd):
     """
     导出多语言表 gd,供 babel生成语言表用
@@ -141,16 +135,24 @@ def extract(cwd):
     with Engine(config) as engine:
         engine.extract_pot()
 
-    babel_keywords = config.localization["babel_keywords"]
-    pot_file = config.localization["pot_file"]
+    babel_keywords = config.localization.babel_keywords
+    pot_file = config.localization.pot_file
 
     keyword_args = [f"-k {kw} " for kw in babel_keywords]
 
     cfg_file = os.path.abspath("babel.cfg")
 
     CommandLineInterface().run(  # noqa
-        ["pybabel", "extract", "-F", cfg_file, *keyword_args,
-            "-o", pot_file, config.project_root]
+        [
+            "pybabel",
+            "extract",
+            "-F",
+            cfg_file,
+            *keyword_args,
+            "-o",
+            pot_file,
+            config.project_root,
+        ]
     )
 
 

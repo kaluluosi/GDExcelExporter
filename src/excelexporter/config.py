@@ -18,15 +18,13 @@ builtin_kws = [
     "LineEdit/text",
     "LineEdit/tooltip_text",
     "LineEdit/placeholder_text",
-    "RichTextLabel/text"
-    "RichTextLabel/tooltip_text"
+    "RichTextLabel/text" "RichTextLabel/tooltip_text",
 ]
 
 
 @dataclass
 class Localization:
-    babel_keywords: list = field(
-        default_factory=lambda: builtin_kws)
+    babel_keywords: list = field(default_factory=lambda: builtin_kws)
     pot_file: str = "lang/template.pot"
 
 
@@ -41,7 +39,7 @@ class Configuration:
     localization: Localization = field(default_factory=Localization)
 
     @classmethod
-    def load(cls, filename: str = "export.toml") -> 'Configuration':
+    def load(cls, filename: str = "export.toml") -> "Configuration":
         with open(filename) as f:
             data = toml.load(f)
             config = Configuration(**data)

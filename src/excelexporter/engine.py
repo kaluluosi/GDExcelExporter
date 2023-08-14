@@ -19,33 +19,27 @@ logger = logging.getLogger(__name__)
 
 
 class IllegalFile(Exception):
-
     def __init__(self, filename: str, *args: object) -> None:
         super().__init__(f"{filename} 不是配置表目录下的配置", *args)
 
 
 class IllegalGenerator(Exception):
     def __init__(self, name: str, *args: object) -> None:
-        super().__init__(
-            name,
-            *args
-        )
+        super().__init__(name, *args)
 
 
 def discover_generator():
-    generators = entry_points(
-        group="excelexporter.generator")
+    generators = entry_points(group="excelexporter.generator")
     return generators
 
 
 class Engine(xw.App):
-
     def __init__(self, config: Configuration) -> None:
         super().__init__(visible=False)
         self.config = config
         self.generator: Optional[Generator] = None
         self.completed_hook: Optional[CompletedHook] = None
-        self.extension: str = ""
+        self.extension: str | None = None
 
         self.localized_strs = set()
         self.cvt = Converter()
@@ -53,7 +47,6 @@ class Engine(xw.App):
         self.init_generator()
 
     def init_generator(self):
-
         generator = None
         completed_hook = None
         extension = None
@@ -70,7 +63,8 @@ class Engine(xw.App):
                 if (generator and completed_hook and extension) is False:
                     raise IllegalGenerator(
                         self.config.custom_generator,
-                        "自定义导出器不完整，generator、completed_hook、extension存在没定义。")
+                        "自定义导出器不完整，generator、completed_hook、extension存在没定义。",
+                    )
 
                 logger.info(f"使用 {self.config.custom_generator} 自定义导出器")
         else:
@@ -80,10 +74,10 @@ class Engine(xw.App):
             if self.config.custom_generator in generators.names:
                 module = generators[self.config.custom_generator].load()
                 logger.info(
-                    f"使用插件导出器 {self.config.custom_generator} :{module.__name__}")  # noqa
+                    f"使用插件导出器 {self.config.custom_generator} :{module.__name__}"
+                )  # noqa
             else:
-                raise IllegalGenerator(
-                    self.config.custom_generator, generators.names)
+                raise IllegalGenerator(self.config.custom_generator, generators.names)
 
             self.generator = getattr(module, "generator")
             self.completed_hook = getattr(module, "completed_hook")
@@ -94,6 +88,9 @@ class Engine(xw.App):
         abs_input_path: str = os.path.abspath(self.config.input)
         abs_output_path: str = os.path.abspath(self.config.output)
         wb_abs_path_without_ext: str = os.path.splitext(wb_abs_path)[0]
+
+        if self.generator is None:
+            raise RuntimeError("没有加载任何导出器！")
 
         if not wb_abs_path.startswith(abs_input_path):
             raise IllegalFile(wb_abs_path, abs_input_path)
@@ -109,7 +106,7 @@ class Engine(xw.App):
 
                 relative_path = os.path.join(
                     wb_abs_path_without_ext.replace(abs_input_path, ""),
-                    rename or org_name
+                    rename or org_name,
                 )
                 output = abs_output_path + relative_path
 
@@ -136,8 +133,7 @@ class Engine(xw.App):
             ignore_sheet_mark = self.config.ignore_sheet_mark
             # 过滤掉打了忽略标志的sheet
             sheets = filter(
-                lambda sheet: not sheet.name.startswith(ignore_sheet_mark),
-                book.sheets
+                lambda sheet: not sheet.name.startswith(ignore_sheet_mark), book.sheets
             )
 
             wb_data = {}
@@ -156,7 +152,9 @@ class Engine(xw.App):
                 for col, field in enumerate(sheet_data.define.name):
                     # 跳过没命令的字段
 
-                    if field is None or field.startswith(self.config.ignore_field_mark):  # noqa
+                    if field is None or field.startswith(
+                        self.config.ignore_field_mark
+                    ):  # noqa
                         del sheet_data.define.type[col]
                         del sheet_data.define.desc[col]
                         del sheet_data.define.name[col]
@@ -182,12 +180,11 @@ class Engine(xw.App):
                     for index, value in enumerate(row):
                         field_name: str = field_names[index]
                         field_type = TypeDefine.from_str(field_types[index])
-                        variant: Variant = cvt(
-                            id.value, field_type, field_name, value
-                        )
+                        variant: Variant = cvt(id.value, field_type, field_name, value)
                         row_data[field_name] = variant
                         self.localized_strs = self.localized_strs.union(
-                            variant.local_strs())
+                            variant.local_strs()
+                        )
 
                     table[id.value] = row_data
                 wb_data[sheet_name] = table
@@ -195,14 +192,11 @@ class Engine(xw.App):
             return wb_data
 
     def save_lang_file(self):
-
         with open("language.gd", "w", encoding="utf-8", newline="\n") as f:
             f.write("func localization():\n")
             lines = []
             for txt in self.localized_strs:
-                lines.append(
-                    f"  tr('{txt}')\n"
-                )
+                lines.append(f"  tr('{txt}')\n")
             f.writelines(lines)
 
     def gen_one(self, filename: str):
