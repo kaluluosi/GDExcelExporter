@@ -100,12 +100,8 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#_1" class="nav-link">导出器</a>
+            <li class="nav-item" data-level="1"><a href="#_1" class="nav-link">导出器方案</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#_2" class="nav-link">导出器方案</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
             <li class="nav-item" data-level="2"><a href="#gds10-gds20" class="nav-link">GDS1.0 和 GDS2.0</a>
               <ul class="nav flex-column">
               </ul>
@@ -118,10 +114,6 @@
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#_3" class="nav-link">总结</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
               </ul>
             </li>
         </ul>
@@ -129,11 +121,7 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="_1">导出器</h1>
-<p>Excel表格作为数据源和编辑器编辑好数据表后，我们需要导出生成Godot可以读取的文件。
-在探索最适合Godot的数据表保存方案的过程中，我尝试并实现了以下几种保存方案。</p>
-<hr />
-<h2 id="_2">导出器方案</h2>
+<h1 id="_1">导出器方案</h1>
 <table>
 <thead>
 <tr>
@@ -226,17 +214,12 @@ var data = \
 static func function_1(args=[]):
     print(args)
 </code></pre>
-<p>用GodotScript作为数据源的优点：</p>
-<ol>
-<li>GodotScript脚本除了是源码外，它也是游戏资源，因此直接将数据写到脚本里当数据源可以省略读文件再解析这一步。</li>
-<li>由于是GodotScript脚本，因此编辑器也会发现其语法错误，也会在运行时准确发现数据的错误。</li>
-<li>GodotScript脚本的加载速度十分的快，比用FileAccess打开要快很多倍。</li>
-<li>由于是脚本，因此Excel表中可以配置函数代码，如上面例子，function字段是代码。</li>
-</ol>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p>用GodotScript作为数据源的优点：
+1. GodotScript脚本除了是源码外，它也是游戏资源，因此直接将数据写到脚本里当数据源可以省略读文件再解析这一步。
+2. 由于是GodotScript脚本，因此编辑器也会发现其语法错误，也会在运行时准确发现数据的错误。
+3. GodotScript脚本的加载速度十分的快，比用FileAccess打开要快很多倍。
+4. 用于是脚本，因此Excel表中可以配置代码，如上面例子，function字段是代码。</p>
 <p>GDS1.0和GDS2.0导出器区别不是很大，主要是GodotScript1.0和GodotScript2.0里 Reference和Funcref两个类改名成了RefCounted和Callable，因此分开实现了两个导出器。</p>
-</div>
 <h2 id="resource">RESOURCE</h2>
 <p>这个导出器是以Godot Resource文件作为数据源。</p>
 <pre><code>[gd_resource type=&quot;Resource&quot; script_class=&quot;EEDataTable&quot; load_steps=2 format=3]
@@ -282,14 +265,7 @@ data = {1: {&quot;array&quot;: [1, 2, 3, 4, 5], &quot;array_bool&quot;: [true, f
     &quot;function&quot;: &quot;print(args)&quot;
   },...
 </code></pre>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>由于Godot4.0文件读写和JSON的接口发生变动，导致需要两个JSON导出器来分别对应Godot3.x和Godot4.x。</p>
-</div>
-<hr />
-<h2 id="_3">总结</h2>
-<p>推荐使用GDS1.0/GDS2.0导出器，因为Godot的资源文件读取效率比JSON高，而且GDS1.0/GDS2.0导出器支持配置代码。
-目前暂时未支持C#项目用的数据文件。</p></div>
+<p>由于Godot4.0文件读写和JSON的接口发生变动，导致需要两个JSON导出器来分别对应Godot3.x和Godot4.x。</p></div>
             </div>
         </div>
 
