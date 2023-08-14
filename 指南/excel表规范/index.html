@@ -106,6 +106,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#sheetdict" class="nav-link">sheet导出的dict格式</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#_1" class="nav-link">字段类型介绍</a>
               <ul class="nav flex-column">
               </ul>
@@ -119,7 +123,328 @@
 
 <h1 id="excel">excel表规范</h1>
 <h2 id="sheet">Sheet子表</h2>
-<h2 id="_1">字段类型介绍</h2></div>
+<p>excel文档可以视为一个目录，而它的sheet则是具体的每一个数据文件。
+<code>ee</code>导出excel文档的时候会在<code>output</code>目录创建一个同名目录，然后将每个sheet导出成目标数据文件按sheet名保存。</p>
+<p>例子：</p>
+<p>示例.xlsx，有名为demo的sheet，导出后如下。
+<img alt="" src="../../images/2023-08-14-11-48-39.png" />
+<img alt="" src="../../images/2023-08-14-11-49-30.png" /></p>
+<p><code>ee</code>创建了示例目录，然后将名为demo的sheet导出成demo.gd。</p>
+<h2 id="sheetdict">sheet导出的dict格式</h2>
+<p>加入我们的sheet如下：
+| id   | name | age | sex |
+| ---- | ---- | --- | --- |
+| 1000 | 张三 | 18  | 男  |
+导出后，<code>ee</code>会生成一个名为<code>demo.gd</code>的文件，内容如下：</p>
+<pre><code class="language-json">{
+    &quot;1000&quot;: {
+    &quot;id&quot;:1000,
+    &quot;name&quot;: &quot;张三&quot;,
+    &quot;age&quot;: 18,
+    &quot;sex&quot;: &quot;男&quot;}
+}
+
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>所有的sheet的<code>A</code>列（第一列）都会作为id列，作为导出的<code>dict</code>的<code>key</code>。</p>
+</div>
+<h2 id="_1">字段类型介绍</h2>
+<p><code>ee</code> 支持字段类型有以下</p>
+<p><img alt="" src="../../images/2023-08-14-11-51-54.png" /></p>
+<h3 id="id">id</h3>
+<p>id类型，<code>int</code>类型的别名。是用来做唯一标识的，例如：
+| id |
+| 编号 |
+| ---- |
+| 1    |</p>
+<p>会被导出成:</p>
+<pre><code class="language-go">
+{
+    '1':{'id':1}
+}
+
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>你并不是非得用<code>id</code>类型来作为编号列，你也可以用<code>str</code>类型。
+只要那个类型可以作为字典的<code>key</code>(可hash类型)就可以。不过<code>ee</code>推荐用<code>id</code>类型作为编号列，因为这是业内常用的做法。
+但是如果你的表是一张枚举、常量表，那么用<code>str</code>类型作为编号列是合理的。</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>string</th>
+<th>int</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key</td>
+<td>value</td>
+</tr>
+<tr>
+<td>MAX_HP</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>MAX_MP</td>
+<td>1000</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-json">{
+    'MAX_HP':{'key':'MAX_HP', value':1000},
+    'MAX_MP':{'key':'MAX_MP','value':1000}
+}
+</code></pre>
+<h3 id="int">int</h3>
+<p>整数类型字段，例如：
+| id  | int |
+| --- | --- |
+| id  | age |
+| 1   | 20  |</p>
+<p>会被导出成:</p>
+<pre><code class="language-go">
+{
+    '1':{'id':1,'age':20}
+}
+
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>int</code>类型的特点是会将任何填入的数字转换成整数（取整）</p>
+</div>
+<h3 id="float">float</h3>
+<p>浮点数类型字段，例如：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>float</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>timeout</td>
+</tr>
+<tr>
+<td>1</td>
+<td>20.0</td>
+</tr>
+</tbody>
+</table>
+<p>会被导出成:</p>
+<pre><code class="language-go">{
+    '1':{'id':1,'timeout':20.0}
+}
+
+</code></pre>
+<h3 id="string">string</h3>
+<p>字符串类型，例如：</p>
+<p>|id| string |
+|_| ------ |
+|id|| name   |
+|10| 张三   |</p>
+<p>会被导出成:</p>
+<pre><code class="language-go">
+{
+    id:10,
+    name:&quot;张三&quot;
+}
+
+</code></pre>
+<h3 id="bool">bool</h3>
+<p>布尔类型字段，例如：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>bool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>is_ok</td>
+</tr>
+<tr>
+<td>1</td>
+<td>TRUE</td>
+</tr>
+</tbody>
+</table>
+<p>会被导出成:</p>
+<pre><code class="language-go">{
+    '1':{'id':1,'is_ok':true}
+}
+
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>bool类型字段能够识别excel中的<code>TRUE</code> <code>FALSE</code> 转换成布尔类型。</p>
+</div>
+<h3 id="array">array</h3>
+<p>数组类型字段，用<code>|</code>分隔，例如：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>array</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>list</td>
+</tr>
+<tr>
+<td>1</td>
+<td>20|'2'|3</td>
+</tr>
+<tr>
+<td>会被导出成:</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-go">
+{
+    '1':{'id':1,'list':[20,'2',3]}
+}
+
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>array类型数组是原始数组，支持任何数据类型但是你必须显式的按gds语法写字面量。
+比如： 字符串你必须加双引号 '2' 。
+因为array的导出是粗暴的将字符串 split("|")，然后就直接生成到代码，并没有做任何的转换，他也无法做任何的转换，因为他不知道每个元素具体应该是什么类型。</p>
+</div>
+<h3 id="array_str">array_str</h3>
+<p>数组字符串，用<code>|</code>分隔，例如：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>array_str</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>array_str</td>
+</tr>
+<tr>
+<td>1</td>
+<td>a         | b | c</td>
+</tr>
+</tbody>
+</table>
+<p>会被导出成:</p>
+<pre><code class="language-go">{
+    '1':{'id':1,'array_str':['a','b','c']
+}
+
+</code></pre>
+<p>!!! note: 
+    <code>array_str</code>是为了方便配置字符串数组而特别定义的，他跟<code>array</code>的区别是，<code>array_str</code>配置的字符串可以省略<code>'</code> <code>"</code>。当然你也可以手动加上引号 `a`|`b`|`c`。<code>ee</code> 会自动识别转换。同时这个字段即便配置了数字元素也会被转换成字符串。</p>
+<h3 id="array_bool">array_bool</h3>
+<p>数组布尔类型，用<code>|</code>分隔，例如：
+| id  | array_bool    |
+| --- | ------------- |
+| id  | array_bool    |
+| 1   | TRUE|FALSE| |</p>
+<p>会被导出成:</p>
+<pre><code class="language-go">{
+    '1':{'id':1,'array_bool':[true,false]}
+}
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>array_bool</code>是为了方便配置布尔值数组特别定义的，他会将<code>TRUE</code>和<code>FALSE</code>转换成布尔值。</p>
+</div>
+<h3 id="dict">dict</h3>
+<p>字典类型，用<code>|</code>分隔，例如：
+| id  | dict                   |
+| --- | ---------------------- |
+| id  | dict                   |
+| 1   | "name":"Tom"|"age":10 |</p>
+<p>会被导出成:</p>
+<pre><code class="language-go">{
+    '1':{'id':1,'dict':{'name':'Tom','age':10}}
+}
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>字典类型必须使用python字面量语法定义。因为<code>ee</code>是直接将字典定转写到数据文件，并没有做任何的转换，所以必须使用python语法。</p>
+</div>
+<h3 id="function">function</h3>
+<p>函数类型，例如：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>function</td>
+</tr>
+<tr>
+<td>1</td>
+<td>print(args)</td>
+</tr>
+</tbody>
+</table>
+<p>会被导出成:</p>
+<pre><code class="language-go">{
+    '1':{'id':1,'function':Callable(self,'function_1')}
+}
+
+static def function_1(args=[]):
+    print(args)
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>function类型的参数是<code>args=[]</code>，是个泛用参数列表。这个函数要如何传参，还有位置参数到底如何使用和处理，完全看程序员自己私下的约定。
+可用显式参数列表版本的function类型，来解决这个参数列表的问题。</p>
+</div>
+<p>显式参数函数类型，例如：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>function(a,b=null,c=null)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>function</td>
+</tr>
+<tr>
+<td>1</td>
+<td>print(args)</td>
+</tr>
+</tbody>
+</table>
+<p>会被导出成:</p>
+<pre><code class="language-go">{
+    '1':{'id':1,'function':Callable(self,'function_1')}
+}
+
+static def function_1(a,b=null,c=null):
+    print(a)
+    print(b)
+    print(c)
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>显式参数函数类型，参数列表是显式定义的，Godot编辑器语法检查的时候可以会约束参数列表。相对于泛用参数列表，显式参数可以更容易约束和看出函数参数。</p>
+</div></div>
             </div>
         </div>
 
