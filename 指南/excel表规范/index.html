@@ -131,11 +131,26 @@
 <img alt="" src="../../images/2023-08-14-11-49-30.png" /></p>
 <p><code>ee</code>创建了示例目录，然后将名为demo的sheet导出成demo.gd。</p>
 <h2 id="sheetdict">sheet导出的dict格式</h2>
-<p>加入我们的sheet如下：
-| id   | name | age | sex |
-| ---- | ---- | --- | --- |
-| 1000 | 张三 | 18  | 男  |
-导出后，<code>ee</code>会生成一个名为<code>demo.gd</code>的文件，内容如下：</p>
+<p>加入我们的sheet如下：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>age</th>
+<th>sex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1000</td>
+<td>张三</td>
+<td>18</td>
+<td>男</td>
+</tr>
+</tbody>
+</table>
+<p>导出后，<code>ee</code>会生成一个名为<code>demo.gd</code>的文件，内容如下：</p>
 <pre><code class="language-json">{
     &quot;1000&quot;: {
     &quot;id&quot;:1000,
