@@ -15,7 +15,7 @@ excel文档可以视为一个目录，而它的sheet则是具体的每一个数�
 
 ## sheet导出的dict格式
 
-加入我们的sheet如下：
+假如我们的sheet如下：
 
 | id   | name | age | sex |
 | ---- | ---- | --- | --- |
