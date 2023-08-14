@@ -5,6 +5,8 @@ GDExcelExpoter 是为Godot设计的Excel表格导出数据资源的工具。
 
 下面我们用`ee`代指`GDExcelExporter`。
 
+[在线文档](https://kaluluosi.github.io/GDExcelExporter/)
+
 ## 更新日志
 
 2.1版本
