@@ -1,5 +1,7 @@
 # GDExcelExporter 2.1
 
+[English](README.en.md)
+
 GDExcelExpoter 是为Godot设计的Excel表格导出数据资源的工具。
 它内置了好几种数据表导出和读取方案（导出器），支持Godot3.x、Godot4.x。
 
