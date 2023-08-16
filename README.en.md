@@ -1,7 +1,7 @@
 # GDExcelExporter 2.1
 
-!!! note
-    Translated by chat-gpt3.5
+> **Note**
+> Translated by chat-gpt3.5
 
 GDExcelExporter is a tool for exporting data resources from Excel spreadsheets designed for Godot.
 It comes with several export and read schemes (exporters), supporting both Godot 3.x and 4.x.
