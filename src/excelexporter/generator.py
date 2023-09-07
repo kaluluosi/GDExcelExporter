@@ -55,7 +55,10 @@ class Float(Variant[float]):
 class Bool(Variant[bool]):
     @staticmethod
     def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = v != "FALSE"
+        if isinstance(v, str):  # 检查 v 是否为字符串
+            value = v.lower() != "false"  # 如果是字符串，将 v 转换为小写后进行比较
+        else:
+            value = v != False  # 如果不是字符串，直接与 False 进行比较
         return Bool(id, td, fn, value)
 
 
