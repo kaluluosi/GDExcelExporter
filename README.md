@@ -244,6 +244,32 @@ json方案并没有什么优点，唯一的优点就是json文件打开来后是
 
 由于Godot4.0文件读写和JSON的接口发生变动，导致需要两个JSON导出器来分别对应Godot3.x和Godot4.x。
 
+### 编辑器内使用命令
+在godot中我们可以直接run EditorScript，这样可以快速在表格和编辑器中互相切换，而不用打开资源管理器。tips：打开脚本和运行命令都可以自定义快捷键
+```gdscript
+@tool
+extends EditorScript
+
+func _run() -> void:
+	var output = []
+	# 注意要替换为自己的项目和工具所在目录
+	OS.execute("CMD.exe", ["/c", "cd D:\\YOUR_PROJECT_PATH\\TOOL_PATH&&gen_all.bat"], output)
+	print(output)
+```
+### 热重载
+热重载就是在游戏运行时修改数据，在某些情况下还挺好用的。由于Godot开启速度相当快，不像Unity，因此是否需要热重载看个人需求了。
+目前有两种方式，但都需要我们写一个脚本，当按某个快捷键的时候reload `setting.gd`中的所有数据
+#### 改excel
+这种方式适合同时改几处数据。本来脚本语言是支持的，但是目前有bug，外部修改无法正常触发代码重载，详见[#72825](https://github.com/godotengine/godot/issues/72825#issuecomment-1751707708)。
+但我们可以在修改数据后重新回编辑器保存一下绕开这个限制。
+
+1. 修改 a excel文件，运行工具生成新的`.gd`数据文件。
+2. 在到处目录中找到 a 对应的脚本文件，加个空格并保存
+3. 游戏中调用第一步使用的脚本，此时数据就已经更新了。
+   
+#### 改代码文件
+这个方式是直接改`.gd`数据文件，再用脚本reload即可。问题是后面得自己手动再同步去改excel文件，因此只适合少量且频繁的测试。
+
 ## 最后
 希望这个工具能够给一些独立游戏人或者业余自娱自乐的人一些帮助。
 如果你用上了我的工具，有什么问题最好直接提issue。
