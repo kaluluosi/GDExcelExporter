@@ -3,10 +3,12 @@ import os
 import sys
 import xlwings as xw
 import logging
+from win32com import client
 from excelexporter.config import Configuration
 from excelexporter.generator import Converter, Generator, CompletedHook, Variant  # noqa
 from excelexporter.sheetdata import SheetData, TypeDefine
 from typing import Dict, Optional
+
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
@@ -34,6 +36,9 @@ def discover_generator():
 
 
 class Engine(xw.App):
+    COM_EXCEL = "Excel.Application"
+    COM_WPS = "ket.Application"
+
     def __init__(self, config: Configuration) -> None:
         super().__init__(visible=False)
         self.config = config
@@ -44,7 +49,21 @@ class Engine(xw.App):
         self.localized_strs = set()
         self.cvt = Converter()
 
+        self.setup_com()
         self.init_generator()
+
+    def setup_com(self):
+        try:
+            client.DispatchEx("Excel.Application")
+        except Exception:
+            logger.info("系统中没有安装Excel，尝试改为WPS")
+            try:
+                _wps = client.DispatchEx("ket.Application")
+                _xl = xw._xlwindows.COMRetryObjectWrapper(_wps)
+                impl = xw._xlwindows.App(visible=False, add_book=False, xl=_xl)
+                self.impl = impl
+            except Exception:
+                logger.info("系统中没有安装WPS")
 
     def init_generator(self):
         generator = None
