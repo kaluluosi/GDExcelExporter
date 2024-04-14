@@ -9,7 +9,7 @@ from excelexporter.sheetdata import SheetData
 
 
 # 导出格式
-extension = "tres"
+EXTENSION = "tres"
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +26,7 @@ var data = {}
 def generator(sheetdata: SheetData, config: Configuration):
     # 表格数据脚本模板
     abs_output = os.path.abspath(config.output)
-    relpath = os.path.relpath(
-        abs_output, config.project_root).replace("\\", "/")
+    relpath = os.path.relpath(abs_output, config.project_root).replace("\\", "/")
     template = """
     [gd_resource type="Resource" script_class="EEDataTable" load_steps=2 format=3] 
 
@@ -40,7 +39,7 @@ def generator(sheetdata: SheetData, config: Configuration):
     template = textwrap.dedent(template)
     table = {}
 
-    for id, row in sheetdata.items():
+    for id, row in enumerate(sheetdata.table):
         row_data = {}
 
         for field, var in row.items():
@@ -51,9 +50,9 @@ def generator(sheetdata: SheetData, config: Configuration):
 
     code = template.format(
         data=pprint.pformat(
-            table, indent=2, width=1000000000,
-            compact=True, sort_dicts=True),
-        relpath=relpath
+            table, indent=2, width=1000000000, compact=True, sort_dicts=True
+        ),
+        relpath=relpath,
     )
 
     code = textwrap.dedent(code)
@@ -63,7 +62,6 @@ def generator(sheetdata: SheetData, config: Configuration):
 
 
 def completed_hook(config: Configuration):
-
     output = config.output
     settings_file_path = os.path.join(output, "settings.gd")
     data_class_file_path = os.path.join(output, "ee_data_table.gd")
@@ -71,7 +69,7 @@ def completed_hook(config: Configuration):
 
     lines = []
 
-    for path in glob.glob(f"{output}/**/*.{extension}", recursive=True):
+    for path in glob.glob(f"{output}/**/*.{EXTENSION}", recursive=True):
         if path == settings_file_path:
             continue  # 跳过 settings.gd
         if path == data_class_file_path:

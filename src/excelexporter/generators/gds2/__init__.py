@@ -13,10 +13,9 @@ from excelexporter.generator import Type
 logger = logging.getLogger(__name__)
 
 # 导出格式
-extension = "gd"
+EXTENSION = "gd"
 
-loader = jinja2.FileSystemLoader(
-    pkg_resources.resource_filename(__package__, ""))
+loader = jinja2.FileSystemLoader(pkg_resources.resource_filename(__package__, ""))  # type: ignore
 env = jinja2.Environment(autoescape=False, loader=loader)
 
 
@@ -50,7 +49,7 @@ def completed_hook(config: Configuration):
 
     lines = []
 
-    for path in glob.glob(f"{output}/**/*.{extension}", recursive=True):
+    for path in glob.glob(f"{output}/**/*.{EXTENSION}", recursive=True):
         if path == settings_file_path:
             continue  # 跳过 settings.gd
         basename = os.path.basename(path)

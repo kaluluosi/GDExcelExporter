@@ -8,7 +8,7 @@ from excelexporter.sheetdata import SheetData
 
 
 # 导出格式
-extension = "json"
+EXTENSION = "json"
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ def generator(sheetdata: SheetData, config: Configuration):
 
     table = {}
 
-    for id, row in sheetdata.items():
+    for id, row in enumerate(sheetdata.table):
         row_data = {}
 
         for field, var in row.items():
@@ -42,7 +42,6 @@ def generator(sheetdata: SheetData, config: Configuration):
 
 
 def completed_hook(config: Configuration):
-
     output = config.output
     settings_file_path = os.path.join(output, "settings.gd")
     project_root = config.project_root
@@ -59,7 +58,7 @@ def completed_hook(config: Configuration):
         return data
     """)
 
-    for path in glob.glob(f"{output}/**/*.{extension}", recursive=True):
+    for path in glob.glob(f"{output}/**/*.{EXTENSION}", recursive=True):
         if path == settings_file_path:
             continue  # 跳过 settings.gd
         basename = os.path.basename(path)
