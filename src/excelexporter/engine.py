@@ -44,7 +44,7 @@ class Engine(xw.App):
         self.config = config
         self.generator: Optional[Generator] = None
         self.completed_hook: Optional[CompletedHook] = None
-        self.extension: str | None = None
+        self.extension: Optional[str] = None
 
         self.localized_strs = set()
         self.cvt = Converter()
@@ -171,9 +171,7 @@ class Engine(xw.App):
                 for col, field in enumerate(sheet_data.define.name):
                     # 跳过没命令的字段
 
-                    if field is None or field.startswith(
-                        self.config.ignore_field_mark
-                    ):  # noqa
+                    if field is None or field.startswith(self.config.ignore_field_mark):  # noqa
                         del sheet_data.define.type[col]
                         del sheet_data.define.desc[col]
                         del sheet_data.define.name[col]

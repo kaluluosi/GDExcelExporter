@@ -23,7 +23,7 @@ class TypeDefine:
         type_define = define_str.strip()  # 先去头去尾空格
         m = re.match(cls.TYPE_DEFINE_PATTERN, type_define)
         if m:
-            is_localization = m.group("local") != None
+            is_localization = m.group("local") is not None
             type_name = m.group("type_name")
             params = m.group("params") or "(args=[])"
             return TypeDefine(is_localization, type_name, params)

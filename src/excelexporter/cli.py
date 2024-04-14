@@ -30,7 +30,9 @@ def init():
     config = Configuration()
 
     # 询问数据表存放目录
-    datatable_dir = click.prompt("输出数据表目录名", default="settings", show_default=True)
+    datatable_dir = click.prompt(
+        "输出数据表目录名", default="settings", show_default=True
+    )
     if os.path.exists(datatable_dir) and os.listdir(datatable_dir):
         click.echo(f"{datatable_dir} 已经存在并且非空!")
         return
@@ -38,10 +40,14 @@ def init():
     os.mkdir(datatable_dir)
     os.chdir(datatable_dir)
 
-    input_dir = click.prompt("输入存放excel表格目录名称", default=config.input, show_default=True)
-    output_dir = click.prompt("输入存放导出文件目录名称", default=config.output, show_default=True)
+    input_dir = click.prompt(
+        "输入存放excel表格目录名称", default=config.input, show_default=True
+    )
+    output_dir = click.prompt(
+        "输入存放导出文件目录名称", default=config.output, show_default=True
+    )
 
-    template = pkg_resources.resource_filename(__package__, "template")
+    template = pkg_resources.resource_filename(__package__, "template")  # type: ignore
 
     generator = click.prompt(
         "使用哪个内置导出器？",
@@ -78,7 +84,8 @@ def add_context_menu():
     """
     添加上下文菜单（通过注册表）
     """
-    dir = pkg_resources.resource_filename(__package__, "template/reg")
+
+    dir = pkg_resources.resource_filename(__package__, "template/reg")  # type: ignore
     os.system(f"start {dir}")
 
 

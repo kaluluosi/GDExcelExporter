@@ -3,7 +3,7 @@ import logging
 
 from excelexporter.sheetdata import SheetData, TypeDefine
 from excelexporter.config import Configuration
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Generic, List, TypeVar
 
 
 Generator = Callable[[SheetData, Configuration], str]
@@ -58,7 +58,7 @@ class Bool(Variant[bool]):
         if isinstance(v, str):  # 检查 v 是否为字符串
             value = v.lower() != "false"  # 如果是字符串，将 v 转换为小写后进行比较
         else:
-            value = v != False  # 如果不是字符串，直接与 False 进行比较
+            value = v is not False  # 如果不是字符串，直接与 False 进行比较
         return Bool(id, td, fn, value)
 
 
@@ -77,7 +77,7 @@ class Array(Variant[list]):
         return localizeds
 
 
-class ArrayStr(Variant[list[str]]):
+class ArrayStr(Variant[List[str]]):
     @staticmethod
     def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = ["%s" % e for e in v.split("|")] if v else []
@@ -92,7 +92,7 @@ class ArrayStr(Variant[list[str]]):
         return localizeds
 
 
-class ArrayBool(Variant[list[bool]]):
+class ArrayBool(Variant[List[bool]]):
     @staticmethod
     def make(id: Any, td: TypeDefine, fn: str, v: str):
         value = [e != "FALSE" for e in v.split("|")] if v else []
