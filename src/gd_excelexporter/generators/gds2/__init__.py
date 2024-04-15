@@ -63,4 +63,4 @@ class GDS2Generator(Generator):
 
         with open(settings_file_path, "w", encoding="utf-8", newline="\n") as f:
             f.write(code)
-            logger.info("创建setting.gd")
+            logger.info(f"创建：{settings_file_path}")

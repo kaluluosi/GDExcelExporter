@@ -23,7 +23,7 @@ class TestConverter(unittest.TestCase):
     def test_function_cvt(self):
         result = self.cvt(0, TypeDefine.from_str("function"), "func", "print('hello')")
         self.assertEqual(result.value, "print('hello')")
-        self.assertEqual(result.type_define.params, "(args)")
+        self.assertEqual(result.type_define.params, "(args=[])")
         self.assertEqual(result.type_define.type_name, "function")
 
     def test_function_with_params_cvt(self):

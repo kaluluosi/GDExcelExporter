@@ -58,12 +58,12 @@ class JSON2Generator(Generator):
             # 去掉缩进
         code = textwrap.dedent(
             """
-        extends Node
-        # 这个脚本你需要挂到游戏的Autoload才能全局读表
+            extends Node
+            # 这个脚本你需要挂到游戏的Autoload才能全局读表
 
-        {loader}
-        {refs_code}
-        """
+            {loader}
+            {refs_code}
+            """
         )
         refs_code = "\n".join(lines)
 
@@ -71,4 +71,4 @@ class JSON2Generator(Generator):
 
         with open(settings_file_path, "w", encoding="utf-8", newline="\n") as f:
             f.write(code)
-            logger.info("创建setting.gd")
+            logger.info(f"创建：{settings_file_path}")

@@ -79,6 +79,9 @@ def init():
 
 @cli.command()
 def version():
+    """
+    打印ee版本号
+    """
     print(gd_excelexporter.__version__)  # noqa
 
 
