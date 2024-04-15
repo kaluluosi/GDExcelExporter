@@ -3,26 +3,32 @@ import click
 import logging
 import os
 import pkg_resources
+import gd_excelexporter
+
+from gd_excelexporter import utils
+from gd_excelexporter.engines import XlwingsEngine
 
 # from babel import *  # noqa
 from babel.messages.frontend import CommandLineInterface
-from excelexporter.config import Configuration
-from excelexporter.engine import Engine, discover_generator
+from gd_excelexporter.config import Configuration
+
 
 logger = logging.getLogger(__name__)
 
 
 @click.group
-def main():
+def cli():
     """
     ===============================
-    Excel表导出工具
+
+    Godot Excel表导出工具
+
     ===============================
     """
     pass
 
 
-@main.command
+@cli.command
 def init():
     """
     生成默认配置表项目
@@ -52,7 +58,7 @@ def init():
 
     generator = click.prompt(
         "使用哪个内置导出器？",
-        type=click.Choice(list(discover_generator().names)),
+        type=click.Choice(list(utils.discover_generator().names)),
         default="GDS2.0",
     )
 
@@ -71,18 +77,23 @@ def init():
     click.echo("配置表项目生成完毕，后续你可以通过修改export.toml调整配置。")
 
 
-@main.command(name="list")
+@cli.command()
+def version():
+    print(gd_excelexporter.__version__)  # noqa
+
+
+@cli.command(name="list")
 def _list():
     """
     列出支持的导出器插件
     """
-    generators = discover_generator()
+    generators = utils.discover_generator()
     if generators.names:
         for gen in generators.names:
             print(gen)
 
 
-@main.command
+@cli.command
 def add_context_menu():
     """
     添加上下文菜单（通过注册表）
@@ -104,7 +115,7 @@ def _find_config():
             os.chdir(os.pardir)
 
 
-@main.command
+@cli.command
 @click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 def gen_all(cwd):
     """
@@ -115,11 +126,11 @@ def gen_all(cwd):
 
     config = Configuration.load()
 
-    with Engine(config) as engine:
+    with XlwingsEngine(config) as engine:
         engine.gen_all()
 
 
-@main.command
+@cli.command
 @click.argument("file", type=click.Path(True))
 def gen_one(file: str):
     """
@@ -129,11 +140,11 @@ def gen_one(file: str):
     _find_config()
 
     config = Configuration.load()
-    with Engine(config) as engine:
+    with XlwingsEngine(config) as engine:
         engine.gen_one(abs_filepath)
 
 
-@main.command
+@cli.command
 @click.option("--cwd", default=".", help="工作目录，执行命令所在的目录")
 def extract(cwd):
     """
@@ -142,7 +153,7 @@ def extract(cwd):
     os.chdir(cwd)
     _find_config()
     config = Configuration.load()
-    with Engine(config) as engine:
+    with XlwingsEngine(config) as engine:
         with engine.extract_lang():
             babel_keywords = config.localization.babel_keywords
             pot_file = config.localization.pot_file
@@ -166,4 +177,4 @@ def extract(cwd):
 
 
 if __name__ == "__main__":
-    main()
+    cli()

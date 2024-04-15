@@ -1,7 +1,7 @@
 import unittest
 import os
-from excelexporter.config import Configuration
-from excelexporter.engine import Engine, discover_generator
+from gd_excelexporter.config import Configuration
+from gd_excelexporter.engine import Engine, discover_generator
 
 
 class TestEngine(unittest.TestCase):

@@ -3,7 +3,7 @@ import unittest
 import tempfile
 
 import toml
-from excelexporter.config import Configuration
+from gd_excelexporter.config import Configuration
 
 
 class TestConfig(unittest.TestCase):

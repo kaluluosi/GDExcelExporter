@@ -1,10 +1,10 @@
 import logging
 
 # dataclass在这里我用来作为结构体用
-from dataclasses import dataclass
-from excelexporter.sheetdata import SheetData, TypeDefine
-from excelexporter.config import Configuration
-from typing import Any, Callable, Generic, List, TypeVar
+from pydantic import BaseModel
+from gd_excelexporter.models import SheetData, TypeDefine
+from gd_excelexporter.config import Configuration
+from typing import Any, Callable, Generic, List, Set, TypeVar
 
 
 Generator = Callable[[SheetData, Configuration], str]
@@ -15,22 +15,32 @@ T = TypeVar("T")
 logger = logging.getLogger()
 
 
-@dataclass
-class Variant(Generic[T]):
-    id: int
+# region 类型转换器定义
+class Variant(BaseModel, Generic[T]):
+    id: Any
     type_define: TypeDefine
     field_name: str
     value: T
 
-    def local_strs(self):
+    def local_strs(self) -> Set[str]:
+        """
+        获取本地化字符串
+
+        因为每个字段的本地化字符串是不同的，所以需要子类重写这个方法
+
+        Returns:
+            set[str]: 本地化字符串
+        """
         return set()
 
 
 class String(Variant[str]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = str(v) if v else ""
-        return String(id, td, fn, value)
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        value = str(value) if value else ""
+        return String(
+            id=id, type_define=type_define, field_name=field_name, value=value
+        )
 
     def local_strs(self):
         localizeds = set()
@@ -41,33 +51,39 @@ class String(Variant[str]):
 
 class Int(Variant[int]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = int(float(v or 0))
-        return Int(id, td, fn, value)
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        _value = int(float(value or 0))
+        return Int(id=id, type_define=type_define, field_name=field_name, value=_value)
 
 
 class Float(Variant[float]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = float(v or 0)
-        return Float(id, td, fn, value)
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        _value = float(value or 0)
+        return Float(
+            id=id, type_define=type_define, field_name=field_name, value=_value
+        )
 
 
 class Bool(Variant[bool]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        if isinstance(v, str):  # 检查 v 是否为字符串
-            value = v.lower() != "false"  # 如果是字符串，将 v 转换为小写后进行比较
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        if isinstance(value, str):  # 检查 value 是否为字符串
+            _value = (
+                value.lower() != "false"
+            )  # 如果是字符串，将 value 转换为小写后进行比较
         else:
-            value = v is not False  # 如果不是字符串，直接与 False 进行比较
-        return Bool(id, td, fn, value)
+            _value = value is not False  # 如果不是字符串，直接与 False 进行比较
+        return Bool(id=id, type_define=type_define, field_name=field_name, value=_value)
 
 
 class Array(Variant[list]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = eval(f'[{v.replace("|",",")}]') if v else []
-        return Array(id, td, fn, value)
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        _value = eval(f'[{value.replace("|",",")}]') if value else []
+        return Array(
+            id=id, type_define=type_define, field_name=field_name, value=_value
+        )
 
     def local_strs(self):
         localizeds = set()
@@ -80,9 +96,11 @@ class Array(Variant[list]):
 
 class ArrayStr(Variant[List[str]]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = ["%s" % e for e in v.split("|")] if v else []
-        return ArrayStr(id, td, fn, value)
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        _value = ["%s" % e for e in value.split("|")] if value else []
+        return ArrayStr(
+            id=id, type_define=type_define, field_name=field_name, value=_value
+        )
 
     def local_strs(self):
         localizeds = set()
@@ -95,16 +113,18 @@ class ArrayStr(Variant[List[str]]):
 
 class ArrayBool(Variant[List[bool]]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = [e != "FALSE" for e in v.split("|")] if v else []
-        return ArrayBool(id, td, fn, value)
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        _value = [e != "FALSE" for e in value.split("|")] if value else []
+        return ArrayBool(
+            id=id, type_define=type_define, field_name=field_name, value=_value
+        )
 
 
 class Dict(Variant[dict]):
     @staticmethod
-    def make(id: Any, td: TypeDefine, fn: str, v: str):
-        value = eval(f'{{{v.replace("|",",")}}}') if v else {}
-        return Dict(id, td, fn, value)
+    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
+        _value = eval(f'{{{value.replace("|",",")}}}') if value else {}
+        return Dict(id=id, type_define=type_define, field_name=field_name, value=_value)
 
     def local_strs(self):
         localizeds = set()
@@ -113,6 +133,9 @@ class Dict(Variant[dict]):
                 if isinstance(e, str):
                     localizeds.add(e)
         return localizeds
+
+
+# endregion
 
 
 class Type:
@@ -148,7 +171,7 @@ class Converter:
         self.register(Type.DICT, Dict.make)
         self.register(Type.FUNCTION, Variant)
 
-    def default(self, id, td, fn, value):
+    def default(self, id, type_define, field_name, value):
         return value or 0
 
     def register(self, type: str, self_method: Callable):
@@ -164,5 +187,5 @@ class Converter:
         **kwds: Any,
     ) -> Any:
         cvt = self._map.get(type_define.type_name, self.default)
-        result = cvt(id, type_define, field_name, value)
+        result = cvt(id=id, type_define=type_define, field_name=field_name, value=value)
         return result

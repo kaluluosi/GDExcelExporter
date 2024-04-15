@@ -5,9 +5,9 @@ import sys
 import xlwings as xw
 import logging
 from win32com import client
-from excelexporter.config import Configuration
-from excelexporter.generator import Converter, Generator, CompletedHook, Variant  # noqa
-from excelexporter.sheetdata import SheetData, TypeDefine
+from gd_excelexporter.config import Configuration
+from gd_excelexporter.converter import Converter, Generator, CompletedHook, Variant  # noqa
+from gd_excelexporter.models import SheetData, TypeDefine
 from typing import Dict, Optional
 
 
@@ -35,7 +35,7 @@ class IllegalGenerator(Exception):
 
 
 def discover_generator():
-    generators = entry_points(group="excelexporter.generator")
+    generators = entry_points(group="gd_excelexporter.generator")
     return generators
 
 
@@ -70,41 +70,19 @@ class Engine(xw.App):
                 logger.info("系统中没有安装WPS")
 
     def init_generator(self):
-        generator = None
-        completed_hook = None
-        extension = None
+        generators = discover_generator()
 
-        # 如果有自定义导出器就优先用自定义导出器
-        if self.config.custom_generator.endswith(".py"):
-            with open(self.config.custom_generator) as f:
-                code = f.read()
-                exec(code)
-                self.generator = generator
-                self.completed_hook = completed_hook
-                self.extension = extension
-
-                if (generator and completed_hook and extension) is False:
-                    raise IllegalGenerator(
-                        self.config.custom_generator,
-                        "自定义导出器不完整，generator、completed_hook、extension存在没定义。",
-                    )
-
-                logger.info(f"使用 {self.config.custom_generator} 自定义导出器")
+        if self.config.custom_generator in generators.names:
+            module = generators[self.config.custom_generator].load()
+            logger.info(
+                f"使用插件导出器 {self.config.custom_generator} :{module.__name__}"
+            )  # noqa
         else:
-            # 找出插件
-            generators = discover_generator()
+            raise IllegalGenerator(self.config.custom_generator, generators.names)
 
-            if self.config.custom_generator in generators.names:
-                module = generators[self.config.custom_generator].load()
-                logger.info(
-                    f"使用插件导出器 {self.config.custom_generator} :{module.__name__}"
-                )  # noqa
-            else:
-                raise IllegalGenerator(self.config.custom_generator, generators.names)
-
-            self.generator = getattr(module, "generator")
-            self.completed_hook = getattr(module, "completed_hook")
-            self.extension = getattr(module, "EXTENSION")
+        self.generator = getattr(module, "generator")
+        self.completed_hook = getattr(module, "completed_hook")
+        self.extension = getattr(module, "EXTENSION")
 
     def _gen(self, excel_file: str):
         wb_abs_path: str = os.path.abspath(excel_file)

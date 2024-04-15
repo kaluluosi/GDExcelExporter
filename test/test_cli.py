@@ -10,7 +10,7 @@ import unittest
 import os
 import shutil
 import tempfile
-from excelexporter.cli import main
+from gd_excelexporter.cli import cli
 from click.testing import CliRunner
 
 
@@ -29,7 +29,7 @@ class TestCli(unittest.TestCase):
         """
         测试项目初始化
         """
-        res = self.runner.invoke(main, ["init"], input="\n\n\n\n")
+        res = self.runner.invoke(cli, ["init"], input="\n\n\n\n")
 
         self.assertFalse(res.exception)
 
@@ -45,7 +45,7 @@ class TestCli(unittest.TestCase):
         self.test_init()
         os.chdir("settings")
         shutil.copy("sample/示例.xlsx", "data/示例.xlsx")
-        res = self.runner.invoke(main, ["gen-all"])
+        res = self.runner.invoke(cli, ["gen-all"])
         if res.exception:
             self.fail(res.exception.with_traceback(None))
 
@@ -59,7 +59,7 @@ class TestCli(unittest.TestCase):
         os.chdir("settings")
         shutil.copy("sample/示例.xlsx", "data/示例.xlsx")
         self.test_gen_all()
-        res = self.runner.invoke(main, ["extract"])
+        res = self.runner.invoke(cli, ["extract"])
         if res.exception:
             self.fail(res.exception.with_traceback(None))
 
@@ -84,7 +84,7 @@ class GeneratorTest(unittest.TestCase):
         """
         测试项目初始化
         """
-        res = self.runner.invoke(main, ["init"], input=f"\n\n\n{generator}\n")
+        res = self.runner.invoke(cli, ["init"], input=f"\n\n\n{generator}\n")
 
         self.assertFalse(res.exception)
 
@@ -105,7 +105,7 @@ class GeneratorTest(unittest.TestCase):
         """
 
         with self._init("GDS1.0"):
-            res = self.runner.invoke(main, ["gen-all"])
+            res = self.runner.invoke(cli, ["gen-all"])
             self.assertFalse(res.exception)
 
     def test_gen_gds2(self):
@@ -114,7 +114,7 @@ class GeneratorTest(unittest.TestCase):
         """
 
         with self._init("GDS2.0"):
-            res = self.runner.invoke(main, ["gen-all"])
+            res = self.runner.invoke(cli, ["gen-all"])
             self.assertFalse(res.exception)
 
     def test_gen_json1(self):
@@ -123,7 +123,7 @@ class GeneratorTest(unittest.TestCase):
         """
 
         with self._init("JSON1.0"):
-            res = self.runner.invoke(main, ["gen-all"])
+            res = self.runner.invoke(cli, ["gen-all"])
             self.assertFalse(res.exception)
 
     def test_gen_json2(self):
@@ -132,7 +132,7 @@ class GeneratorTest(unittest.TestCase):
         """
 
         with self._init("JSON2.0"):
-            res = self.runner.invoke(main, ["gen-all"])
+            res = self.runner.invoke(cli, ["gen-all"])
             self.assertFalse(res.exception)
 
     def test_gen_resource(self):
@@ -141,5 +141,5 @@ class GeneratorTest(unittest.TestCase):
         """
 
         with self._init("RESOURCE"):
-            res = self.runner.invoke(main, ["gen-all"])
+            res = self.runner.invoke(cli, ["gen-all"])
             self.assertFalse(res.exception)
