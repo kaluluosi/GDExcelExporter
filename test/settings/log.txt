@@ -1,9 +1,0 @@
-asyncio-DEBUG:Using proactor: IocpProactor
-excelexporter.engine-INFO:使用插件导出器 GDS2.0 :excelexporter.generators.gds2
-excelexporter.engine-INFO:抽出多语言: C:\Users\kalul\Documents\GitHub\GDExcelExporter\test\settings\data\示例.xlsx
-excelexporter.engine-INFO:生成配置语言辅助文件(跳过空字符): lang/.settings
-babel-INFO:extracting messages from ..\settings\dist\settings.gd (encoding="utf-8")
-babel-INFO:extracting messages from ..\settings\dist\示例\demo.gd (encoding="utf-8")
-babel-INFO:extracting messages from ..\settings\dist\示例\demo2.gd (encoding="utf-8")
-babel-INFO:extracting messages from ..\settings\lang\.settings (encoding="utf-8")
-babel-INFO:writing PO template file to lang/template.pot
