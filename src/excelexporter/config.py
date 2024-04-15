@@ -1,7 +1,7 @@
 import logging
 from typing import ClassVar
 import toml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)
 
