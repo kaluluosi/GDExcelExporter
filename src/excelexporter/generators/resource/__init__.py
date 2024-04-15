@@ -5,7 +5,6 @@ import logging
 import textwrap
 import re
 from excelexporter.config import Configuration
-from excelexporter.sheetdata import SheetData
 
 
 # 导出格式
@@ -23,7 +22,7 @@ var data = {}
 """
 
 
-def generator(sheetdata: SheetData, config: Configuration):
+def generator(table: dict, config: Configuration):
     # 表格数据脚本模板
     abs_output = os.path.abspath(config.output)
     relpath = os.path.relpath(abs_output, config.project_root).replace("\\", "/")
@@ -37,20 +36,20 @@ def generator(sheetdata: SheetData, config: Configuration):
     data = {data}
     """  # noqa
     template = textwrap.dedent(template)
-    table = {}
+    new_table = {}
 
-    for id, row in enumerate(sheetdata.table):
+    for id, row in table.items():
         row_data = {}
 
         for field, var in row.items():
             field_name: str = field
             row_data[field_name] = var.value
 
-        table[id] = row_data
+        new_table[id] = row_data
 
     code = template.format(
         data=pprint.pformat(
-            table, indent=2, width=1000000000, compact=True, sort_dicts=True
+            table, indent=4, width=1000000000, compact=True, sort_dicts=True
         ),
         relpath=relpath,
     )

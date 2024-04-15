@@ -4,7 +4,6 @@ import os
 import logging
 import textwrap
 from excelexporter.config import Configuration
-from excelexporter.sheetdata import SheetData
 
 
 # 导出格式
@@ -22,20 +21,22 @@ var data = {}
 """
 
 
-def generator(sheetdata: SheetData, config: Configuration):
+def generator(table: dict, config: Configuration):
     # 表格数据脚本模板
 
-    table = {}
-    for id, row in enumerate(sheetdata.table):
+    # 由于json不支持int做key，所以这里需要转换一下
+    new_table = {}
+    logger.debug(table)
+    for id, row in table.items():
         row_data = {}
 
         for field, var in row.items():
             field_name: str = field
             row_data[field_name] = var.value
 
-        table[id] = row_data
+        new_table[id] = row_data
 
-    code = json.dumps(sheetdata.table, ensure_ascii=False, indent=2)
+    code = json.dumps(new_table, ensure_ascii=False, indent=2)
 
     return code
 
