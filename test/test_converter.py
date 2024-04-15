@@ -1,10 +1,9 @@
 import unittest
 from unittest import mock
-from excelexporter.generator import Converter, TypeDefine
+from gd_excelexporter.converter import Converter, TypeDefine
 
 
 class TestConverter(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.cvt = Converter()
@@ -22,15 +21,15 @@ class TestConverter(unittest.TestCase):
         self.assertEqual(result.value, "Tom")
 
     def test_function_cvt(self):
-        result = self.cvt(0, TypeDefine.from_str(
-            "function"), "func", "print('hello')")
+        result = self.cvt(0, TypeDefine.from_str("function"), "func", "print('hello')")
         self.assertEqual(result.value, "print('hello')")
-        self.assertEqual(result.type_define.params, "(args)")
+        self.assertEqual(result.type_define.params, "(args=[])")
         self.assertEqual(result.type_define.type_name, "function")
 
     def test_function_with_params_cvt(self):
-        result = self.cvt(0, TypeDefine.from_str(
-            "function(a,b,c)"), "func", "print('hello')")
+        result = self.cvt(
+            0, TypeDefine.from_str("function(a,b,c)"), "func", "print('hello')"
+        )
         self.assertEqual(result.value, "print('hello')")
         self.assertEqual(result.type_define.params, "(a,b,c)")
         self.assertEqual(result.type_define.type_name, "function")

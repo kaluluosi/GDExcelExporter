@@ -1,2 +1,0 @@
-ee gen-all
-pause

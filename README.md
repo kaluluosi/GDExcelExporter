@@ -58,7 +58,7 @@ Godot版本:^3.4
 ### 安装
 通过pip （建议）
 ```
-pip install gd-excelexporter
+pip install gd-gd_excelexporter
 ```
 
 或者直接去右边release里下载已经打包好的可执行文件（ee.exe，你需要将这个exe加到环境变量）。

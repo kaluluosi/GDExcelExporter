@@ -1,20 +1,18 @@
 import unittest
-from excelexporter.generator import TypeDefine
+from gd_excelexporter.converter import TypeDefine
 
 
 class TestFieldParser(unittest.TestCase):
-
     def test_parse_valid_field_define(self):
-
         define = TypeDefine.from_str("string")
         self.assertFalse(define.is_localization)
         self.assertEqual(define.type_name, "string")
-        self.assertEqual(define.params, "(args)")
+        self.assertEqual(define.params, "(args=[])")
 
         define = TypeDefine.from_str("#string")
         self.assertTrue(define.is_localization)
         self.assertEqual(define.type_name, "string")
-        self.assertEqual(define.params, "(args)")
+        self.assertEqual(define.params, "(args=[])")
 
         define = TypeDefine.from_str("#string(a,b,c=null)")
         self.assertTrue(define.is_localization)
@@ -24,4 +22,4 @@ class TestFieldParser(unittest.TestCase):
         define = TypeDefine.from_str("#string(a,b,c=null")
         self.assertTrue(define.is_localization)
         self.assertEqual(define.type_name, "string")
-        self.assertEqual(define.params, "(args)")
+        self.assertEqual(define.params, "(args=[])")

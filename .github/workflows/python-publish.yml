@@ -12,6 +12,21 @@ on:
   release:
     types: [published]
 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'version'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+
 jobs:
   deploy:
 
@@ -23,14 +38,39 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
+
+    - name: Poetry Install
+      # You may pin to the exact commit or the version.
+      # uses: knowsuchagency/poetry-install@7ed80d49910319d3e14ac262a5c81f681de48de0
+      uses: knowsuchagency/poetry-install@v2
+      with:
+        # Have poetry create a virtualenv for the project on installation.
+        create-virtualenv:  false
+
     - name: Install dependencies
+      # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
       run: |
         python -m pip install --upgrade pip
-        pip install build
-    - name: Build package
-      run: python -m build
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        poetry install
+    
+    - name: 如果是release触发，那么就用tag名
+      if: github.event_name == 'release'
+      run: |
+        echo "poetry version ${{github.ref}}"
+        # poetry version ${{ github.ref }}
+
+    - name: 如果是workflow触发，那么就用inputs.version
+      # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
+      if: github.event == 'workflow_dispatch'
+      run: |
+        echo "poetry version ${{ github.event.inputs.version }}"
+        # poetry version ${{ github.event.inputs.version }}
+
+    - name: Poetry publish
+      # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
+      env:
+        POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        echo "poetry publish --build"
+        # poetry publish --build
+
