@@ -38,6 +38,7 @@ def init():
         return
 
     os.mkdir(datatable_dir)
+    cwd_backup = os.getcwd()
     os.chdir(datatable_dir)
 
     input_dir = click.prompt(
@@ -65,6 +66,8 @@ def init():
     config.save()
 
     shutil.copytree(template, os.curdir, dirs_exist_ok=True)
+
+    os.chdir(cwd_backup)
     click.echo("配置表项目生成完毕，后续你可以通过修改export.toml调整配置。")
 
 
@@ -140,27 +143,26 @@ def extract(cwd):
     _find_config()
     config = Configuration.load()
     with Engine(config) as engine:
-        engine.extract_pot()
+        with engine.extract_lang():
+            babel_keywords = config.localization.babel_keywords
+            pot_file = config.localization.pot_file
 
-    babel_keywords = config.localization.babel_keywords
-    pot_file = config.localization.pot_file
+            keyword_args = [f"-k {kw} " for kw in babel_keywords]
 
-    keyword_args = [f"-k {kw} " for kw in babel_keywords]
+            cfg_file = os.path.abspath("babel.cfg")
 
-    cfg_file = os.path.abspath("babel.cfg")
-
-    CommandLineInterface().run(  # noqa
-        [
-            "pybabel",
-            "extract",
-            "-F",
-            cfg_file,
-            *keyword_args,
-            "-o",
-            pot_file,
-            config.project_root,
-        ]
-    )
+            CommandLineInterface().run(  # noqa
+                [
+                    "pybabel",
+                    "extract",
+                    "-F",
+                    cfg_file,
+                    *keyword_args,
+                    "-o",
+                    pot_file,
+                    config.project_root,
+                ]
+            )
 
 
 if __name__ == "__main__":

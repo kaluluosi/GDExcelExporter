@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import glob
 import os
 import sys
@@ -18,6 +19,9 @@ else:
 # 导表工具引擎
 
 logger = logging.getLogger(__name__)
+
+# 配置表抽取出来的多语言文本
+LANG_FILE = "lang/.settings"
 
 
 class IllegalFile(Exception):
@@ -208,12 +212,16 @@ class Engine(xw.App):
 
             return wb_data
 
-    def save_lang_file(self):
-        with open("language.gd", "w", encoding="utf-8", newline="\n") as f:
+    def save_lang_file(self, filename: str):
+        with open(filename, "w", encoding="utf-8", newline="\n") as f:
+            f.write("## 这是用于抽取代码中多语言的辅助文件，用来辅助生成POT用的\n")
             f.write("func localization():\n")
             lines = []
             for txt in self.localized_strs:
-                lines.append(f"  tr('{txt}')\n")
+                if txt:
+                    lines.append(f"  tr('{txt}')\n")
+                    # logger.info(f"抽出 {txt}")
+
             f.writelines(lines)
 
     def gen_one(self, filename: str):
@@ -236,7 +244,21 @@ class Engine(xw.App):
         if self.completed_hook:
             self.completed_hook(self.config)
 
-    def extract_pot(self):
+    @contextmanager
+    def extract_lang(self):
+        """
+        将配置表中的多语言字符串抽取出来，生成gd文件，用于提取。
+
+        配置表中的多语言字段要能够供Godot babel或者Babel提取需要先抽取到一个gd脚本。
+        这个函数就是用来生成这个gd脚本。当生成POT文件后就删除。
+
+        通过`with`来包裹让其使用完后自动清理。
+
+        ```
+        with engine.extract_lang():
+            ...
+        ```
+        """
         abs_input = os.path.abspath(self.config.input)
         exts = [".xlsx", ".xls"]
         for ext in exts:
@@ -247,5 +269,8 @@ class Engine(xw.App):
                     logger.warning(f"{filename} 不是配置表，跳过！")
                     continue
                 self._excel2dict(full_path)  # 直接读所有表，不做转换抽取翻译字符
-                logger.info(f"导出语言表: {full_path}")
-        self.save_lang_file()
+                logger.info(f"抽出多语言: {full_path}")
+        self.save_lang_file(LANG_FILE)
+        logger.info(f"生成配置语言辅助文件(跳过空字符): {LANG_FILE}")
+        yield
+        os.remove(LANG_FILE)
