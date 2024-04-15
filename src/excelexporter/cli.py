@@ -116,7 +116,7 @@ def gen_all(cwd):
         engine.gen_all()
 
 
-@main.command()
+@main.command
 @click.argument("file", type=click.Path(True))
 def gen_one(file: str):
     """

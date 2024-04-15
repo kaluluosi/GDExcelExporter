@@ -1,6 +1,7 @@
-from dataclasses import dataclass
 import logging
 
+# dataclass在这里我用来作为结构体用
+from dataclasses import dataclass
 from excelexporter.sheetdata import SheetData, TypeDefine
 from excelexporter.config import Configuration
 from typing import Any, Callable, Generic, List, TypeVar

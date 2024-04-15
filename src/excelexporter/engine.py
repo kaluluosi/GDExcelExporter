@@ -100,7 +100,7 @@ class Engine(xw.App):
 
             self.generator = getattr(module, "generator")
             self.completed_hook = getattr(module, "completed_hook")
-            self.extension = getattr(module, "extension")
+            self.extension = getattr(module, "EXTENSION")
 
     def _gen(self, excel_file: str):
         wb_abs_path: str = os.path.abspath(excel_file)

@@ -1,51 +1,66 @@
 import logging
+from typing import ClassVar
 import toml
-from dataclasses import dataclass, field, asdict
+from pydantic import BaseModel, ConfigDict, Field
 
 logger = logging.getLogger(__name__)
 
 
-builtin_kws = [
-    "tr",
-    "Label/text",
-    "Label/tooltip_text",
-    "Button/text",
-    "Button/tooltip_text",
-    "TextEdit/text",
-    "TextEdit/tooltip_text",
-    "TextEdit/placeholder_text",
-    "TextEdit/tooltip_text",
-    "LineEdit/text",
-    "LineEdit/tooltip_text",
-    "LineEdit/placeholder_text",
-    "RichTextLabel/text" "RichTextLabel/tooltip_text",
-]
-
-
-@dataclass
-class Localization:
-    babel_keywords: list = field(default_factory=lambda: builtin_kws)
+class Localization(BaseModel):
+    BUILTIN_KWS: ClassVar = [
+        "tr",
+        "Label/text",
+        "Label/tooltip_text",
+        "Button/text",
+        "Button/tooltip_text",
+        "TextEdit/text",
+        "TextEdit/tooltip_text",
+        "TextEdit/placeholder_text",
+        "TextEdit/tooltip_text",
+        "LineEdit/text",
+        "LineEdit/tooltip_text",
+        "LineEdit/placeholder_text",
+        "RichTextLabel/text" "RichTextLabel/tooltip_text",
+    ]
+    # 需要多语言提取的关键字
+    babel_keywords: list = BUILTIN_KWS
     pot_file: str = "lang/template.pot"
 
 
-@dataclass
-class Configuration:
-    ignore_sheet_mark: str = field(default="~")
-    ignore_field_mark: str = field(default="*")
-    custom_generator: str = field(default="GDS2.0")
-    input: str = field(default="data")
-    output: str = field(default="dist")
-    project_root: str = field(default="../")
-    localization: Localization = field(default_factory=Localization)
+class Configuration(BaseModel):
+    ignore_sheet_mark: str = "~"
+    ignore_field_mark: str = "*"
+    custom_generator: str = "GDS2.0"
+    input: str = "data"
+    output: str = "dist"
+    project_root: str = "../"
+    localization: Localization = Localization()
+
+    model_config = ConfigDict(populate_by_name=True)
 
     @classmethod
     def load(cls, filename: str = "export.toml") -> "Configuration":
+        """
+        加载配置文件
+
+        Args:
+            filename (str, optional): 配置文件. Defaults to "export.toml".
+
+        Returns:
+            Configuration: 返回配置实例
+        """
         with open(filename) as f:
             data = toml.load(f)
-            config = Configuration(**data)
+            config = cls(**data)
             return config
 
     def save(self, filename: str = "export.toml"):
+        """
+        保存配置文件
+
+        Args:
+            filename (str, optional): 配置文件. Defaults to "export.toml".
+        """
         with open(filename, "w") as f:
-            data = asdict(self)
+            data = self.model_dump()
             toml.dump(data, f)
