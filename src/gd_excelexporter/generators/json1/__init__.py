@@ -3,7 +3,7 @@ import json
 import os
 import logging
 import textwrap
-from gd_excelexporter.base.generator import Table, Generator
+from gd_excelexporter.core.generator import Table, Generator
 from gd_excelexporter.config import Configuration
 
 

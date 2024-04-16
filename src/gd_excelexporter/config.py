@@ -28,6 +28,7 @@ class Localization(BaseModel):
 
 
 class Configuration(BaseModel):
+    engine: str = "xlrd"
     ignore_sheet_mark: str = "~"
     ignore_field_mark: str = "*"
     custom_generator: str = "GDS2.0"

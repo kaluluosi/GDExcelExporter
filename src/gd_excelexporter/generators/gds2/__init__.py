@@ -4,10 +4,10 @@ import logging
 import jinja2
 import pkg_resources
 
-from gd_excelexporter.base.generator import Generator, Table
+from gd_excelexporter.core.generator import Generator, Table
 from gd_excelexporter.config import Configuration
 from gd_excelexporter.converter import Variant
-from gd_excelexporter.converter import Type
+from gd_excelexporter.converter import TypeName
 
 # jinja2 docs: http://doc.yonyoucloud.com/doc/jinja2-docs-cn/templates.html#id2
 
@@ -27,11 +27,11 @@ class GDS2Generator(Generator):
 
     def converter(self, var: Variant):
         type_define = var.type_define
-        if type_define.type_name == Type.STRING:
+        if type_define.type_name == TypeName.STRING:
             value = var.value.replace("\n", "\\n")
             return f"'{value}'"
 
-        if type_define.type_name == Type.FUNCTION:
+        if type_define.type_name == TypeName.FUNCTION:
             func_name = f"{var.field_name}_{var.id}"
             return f"Callable(self,'{func_name}')"
 

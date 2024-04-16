@@ -4,7 +4,7 @@ import pprint
 import logging
 import textwrap
 import re
-from gd_excelexporter.base.generator import Generator, Table
+from gd_excelexporter.core.generator import Generator, Table
 from gd_excelexporter.config import Configuration
 
 logger = logging.getLogger(__name__)

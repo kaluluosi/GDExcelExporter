@@ -5,18 +5,30 @@ Copyright © Kaluluosi All rights reserved
 """
 
 import abc
-from contextlib import contextmanager
 import glob
 import logging
 import os
-from typing import Optional
+import sys
+import importlib
+from typing import Type
 
-from gd_excelexporter.base.generator import Table
-from gd_excelexporter.exceptions import IllegalFile, IllegalGenerator
+from gd_excelexporter.core.models import (
+    Table,
+    TableMap,
+    RawTableMap,
+)
+from gd_excelexporter.exceptions import IllegalFile
 from gd_excelexporter.config import Configuration
-from gd_excelexporter.base import Generator
-from gd_excelexporter.utils import discover_generator
-from gd_excelexporter.converter import Converter
+from gd_excelexporter.core.generator import Generator
+from gd_excelexporter.core.type_define import TrTypeDefine, TypeDefine
+
+from babel.messages.frontend import CommandLineInterface
+
+if sys.version_info < (3, 10):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,50 +39,62 @@ class Engine(abc.ABC):
 
     def __init__(self, config: Configuration) -> None:
         self.config = config
-        self.generator: Optional[Generator] = self._get_generator()
 
-        # 本地化字符串，搜集所有配置表的本地化字符串
-        # 需要在 _excel2dict里面实现将多语言字段只添加进去
-        self.localized_strs = set()
-        # 类型转换器
-        self.cvt = Converter()
-
-    def _get_generator(self) -> Generator:
+    def _excel2tablemap(self, excel_filename: str) -> TableMap:
         """
-         根据toml配置获取导出器
-
-        Raises:
-            IllegalGenerator: 不合法导出器异常
-
-        Raises:
-            IllegalGenerator: _description_
-
-        Returns:
-           Generator: 导出器
-        """
-        generators = discover_generator()
-
-        if self.config.custom_generator in generators.names:
-            module = generators[self.config.custom_generator].load()
-            logger.info(
-                f"使用插件导出器 {self.config.custom_generator} :{module.__name__}"
-            )  # noqa
-        else:
-            raise IllegalGenerator(self.config.custom_generator, generators.names)
-
-        return module()
-
-    @abc.abstractmethod
-    def _excel2dict(self, excel_filename: str) -> "dict[str, Table]":
-        """
-        将excel转成字典。
-        需要具体实现，因为Mac不支持xlwings，需要用xlrd等别的实现
+        将excel转成table map。
 
         Args:
             excel_file (str): excel文件路径
 
         Returns:
             dict[str, Table]: 返回sheet名->Table的字典
+        """
+        rawtablemap = self._excel2rawtablemap(excel_filename)
+
+        tablemap: TableMap = {}
+
+        for sheet_name, rawtable in rawtablemap.items():
+            # 如果sheet名以ignore_sheet_mark开头就跳过
+            # NOTE: 在这里做sheet的忽略
+            if sheet_name.startswith(self.config.ignore_sheet_mark):
+                continue
+
+            table: Table = {}
+            # 先遍历构抽取头三行字段定义define
+            field_types = rawtable[0]
+            field_names = rawtable[2]
+
+            for row in rawtable[3:]:
+                id_type: TypeDefine = TypeDefine.from_str(field_types[0])
+                id_value = id_type.convert(row[0])
+
+                row_data = {}
+                for index, value in enumerate(row):
+                    field_name: str = field_names[index]
+
+                    # 如果字段名以ignore_field_mark开头就跳过
+                    # NOTE: 在这里做字段的忽略
+                    if field_name.startswith(self.config.ignore_field_mark):
+                        continue
+
+                    field_type: TypeDefine = TypeDefine.from_str(field_types[index])
+                    row_data[field_name] = field_type.convert(value, id_value)
+
+                table[id_value] = row_data
+
+            tablemap[sheet_name] = table
+
+        return tablemap
+
+    @abc.abstractmethod
+    def _excel2rawtablemap(self, excel_filename: str) -> RawTableMap:
+        """
+        将sheet转换成原始字典数据
+
+        本方法需要具体的Engine实现去实现
+
+        以行号为key，行数组list为value。
         """
         pass
 
@@ -80,23 +104,26 @@ class Engine(abc.ABC):
 
         # 输入目录的绝对路径
         abs_input_path = os.path.abspath(self.config.input)
-        # 暑促目录的绝对路径
+        # 输出目录的绝对路径
         abs_output_path = os.path.abspath(self.config.output)
 
         # excel文件路径（无扩展名）
         excel_abs_path_without_ext: str = os.path.splitext(excel_abs_path)[0]
 
-        if self.generator is None:
+        generator = Generator.get_generator(self.config.custom_generator)
+
+        if generator is None:
             raise RuntimeError("没有加载任何导出器！")
 
         if not excel_abs_path.startswith(abs_input_path):
             # 如果输入目录不是输入文件所在目录，则抛出异常
             raise IllegalFile(excel_abs_path, abs_input_path)
 
-        sheet_tables = self._excel2dict(excel_abs_path)
+        tablemap = self._excel2tablemap(excel_abs_path)
 
-        for sheet_name, table in sheet_tables.items():
+        for sheet_name, table in tablemap.items():
             try:
+                # 处理sheet名与导出文件名
                 if "-" in sheet_name:
                     org_name, rename = sheet_name.split("-")
                 else:
@@ -113,10 +140,9 @@ class Engine(abc.ABC):
                 if not os.path.exists(output_dirname):
                     os.makedirs(output_dirname)
 
-                code = self.generator.generate(table, self.config)
+                code = generator.generate(table, self.config)
 
-                # code = "# 本文件由代码生成，不要手动修改\n"+code
-                output = f"{output}.{self.generator.__extension__}"
+                output = f"{output}.{generator.__extension__}"
                 with open(output, "w", encoding="utf-8", newline="\n") as f:
                     f.write(code)
                     logger.info(f"导出：{excel_abs_path}:{sheet_name} => {output}")
@@ -128,7 +154,7 @@ class Engine(abc.ABC):
             f.write("## 这是用于抽取代码中多语言的辅助文件，用来辅助生成POT用的\n")
             f.write("func localization():\n")
             lines = []
-            for txt in self.localized_strs:
+            for txt in TrTypeDefine.__tr_strs__:
                 if txt:
                     lines.append(f"  tr('{txt}')\n")
                     # logger.info(f"抽出 {txt}")
@@ -137,8 +163,8 @@ class Engine(abc.ABC):
 
     def gen_one(self, excel_filename: str):
         self._generate(excel_filename)
-        if self.generator:
-            self.generator.completed_hook(self.config)
+        generator = Generator.get_generator(self.config.custom_generator)
+        generator.completed_hook(self.config)
 
     def gen_all(self):
         abs_input_path = os.path.abspath(self.config.input)
@@ -152,10 +178,9 @@ class Engine(abc.ABC):
                     continue
                 self._generate(full_path)
 
-        if self.generator:
-            self.generator.completed_hook(self.config)
+        generator = Generator.get_generator(self.config.custom_generator)
+        generator.completed_hook(self.config)
 
-    @contextmanager
     def extract_lang(self):
         """
         将配置表中的多语言字符串抽取出来，生成gd文件，用于提取。
@@ -179,9 +204,53 @@ class Engine(abc.ABC):
                 if filename.startswith("~$"):
                     logger.warning(f"{filename} 不是配置表，跳过！")
                     continue
-                self._excel2dict(full_path)  # 直接读所有表，不做转换抽取翻译字符
+                self._excel2tablemap(full_path)  # 直接读所有表，抽取翻译字符
                 logger.info(f"抽出多语言: {full_path}")
         self._save_lang_file(self.LANG_FILE)
         logger.info(f"生成配置语言辅助文件(跳过空字符): {self.LANG_FILE}")
-        yield
+
+        babel_keywords = self.config.localization.babel_keywords
+        pot_file = self.config.localization.pot_file
+
+        keyword_args = [f"-k {kw} " for kw in babel_keywords]
+
+        cfg_file = os.path.abspath("babel.cfg")
+
+        CommandLineInterface().run(  # noqa
+            [
+                "pybabel",
+                "extract",
+                "-F",
+                cfg_file,
+                *keyword_args,
+                "-o",
+                pot_file,
+                self.config.project_root,
+            ]
+        )
+
+        logger.info("生成POT文件: %s" % pot_file)
+
         os.remove(self.LANG_FILE)
+
+    @staticmethod
+    def get_register_engines():
+        engines = entry_points(group="gd_excelexporter.engine")
+        installed_engines = []
+        for engine in engines:
+            try:
+                engine.load()
+                installed_engines.append(engine.name)
+            except ImportError:
+                pass
+
+        return installed_engines
+
+    @staticmethod
+    def get_engine_cls(name: str) -> Type["Engine"]:
+        engines = entry_points(group="gd_excelexporter.engine")
+        if name in engines.names:
+            engine_cls = engines[name].load()
+            return engine_cls
+        else:
+            raise RuntimeError(f"没有找到名为 {name} 的引擎！")

@@ -1,22 +1,18 @@
+import enum
 import logging
+import abc
 
-# dataclass在这里我用来作为结构体用
-from pydantic import BaseModel
-from gd_excelexporter.models import SheetData, TypeDefine
-from gd_excelexporter.config import Configuration
-from typing import Any, Callable, Generic, List, Set, TypeVar
+from pydantic import BaseModel, field_validator
+from gd_excelexporter.core.models import TypeDefine
+from typing import Any, Generic, List, Set, TypeVar, Type
 
-
-Generator = Callable[[SheetData, Configuration], str]
-CompletedHook = Callable[[Configuration], None]
 
 T = TypeVar("T")
-
 logger = logging.getLogger()
 
 
 # region 类型转换器定义
-class Variant(BaseModel, Generic[T]):
+class Variant(BaseModel, abc.ABC, Generic[T]):
     id: Any
     type_define: TypeDefine
     field_name: str
@@ -33,58 +29,52 @@ class Variant(BaseModel, Generic[T]):
         """
         return set()
 
+    @field_validator("value", mode="before")
+    @abc.abstractmethod
+    @classmethod
+    def convert_value(cls, v):
+        return ""
+
 
 class String(Variant[str]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        value = str(value) if value else ""
-        return String(
-            id=id, type_define=type_define, field_name=field_name, value=value
-        )
-
     def local_strs(self):
         localizeds = set()
         if self.type_define.is_localization:
             localizeds.add(self.value)
         return localizeds
 
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v):
+        return str(v) if v else ""
+
 
 class Int(Variant[int]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        _value = int(float(value or 0))
-        return Int(id=id, type_define=type_define, field_name=field_name, value=_value)
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v):
+        return int(float(v or 0))
 
 
 class Float(Variant[float]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        _value = float(value or 0)
-        return Float(
-            id=id, type_define=type_define, field_name=field_name, value=_value
-        )
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v):
+        return int(float(v or 0))
 
 
 class Bool(Variant[bool]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        if isinstance(value, str):  # 检查 value 是否为字符串
-            _value = (
-                value.lower() != "false"
-            )  # 如果是字符串，将 value 转换为小写后进行比较
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v):
+        if isinstance(v, str):  # 检查 value 是否为字符串
+            _value = v.lower() != "false"  # 如果是字符串，将 value 转换为小写后进行比较
         else:
-            _value = value is not False  # 如果不是字符串，直接与 False 进行比较
-        return Bool(id=id, type_define=type_define, field_name=field_name, value=_value)
+            _value = v is not False  # 如果不是字符串，直接与 False 进行比较
+        return _value
 
 
 class Array(Variant[list]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        _value = eval(f'[{value.replace("|",",")}]') if value else []
-        return Array(
-            id=id, type_define=type_define, field_name=field_name, value=_value
-        )
-
     def local_strs(self):
         localizeds = set()
         if self.type_define.is_localization:
@@ -92,16 +82,15 @@ class Array(Variant[list]):
                 if isinstance(e, str):
                     localizeds.add(e)
         return localizeds
+
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v: str):
+        _value = eval(f'[{v.replace("|",",")}]') if v else []
+        return _value
 
 
 class ArrayStr(Variant[List[str]]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        _value = ["%s" % e for e in value.split("|")] if value else []
-        return ArrayStr(
-            id=id, type_define=type_define, field_name=field_name, value=_value
-        )
-
     def local_strs(self):
         localizeds = set()
         if self.type_define.is_localization:
@@ -110,22 +99,22 @@ class ArrayStr(Variant[List[str]]):
                     localizeds.add(e)
         return localizeds
 
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v: str):
+        _value = ["%s" % e for e in v.split("|")] if v else []
+        return _value
+
 
 class ArrayBool(Variant[List[bool]]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        _value = [e != "FALSE" for e in value.split("|")] if value else []
-        return ArrayBool(
-            id=id, type_define=type_define, field_name=field_name, value=_value
-        )
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v: str):
+        _value = [e != "FALSE" for e in v.split("|")] if v else []
+        return _value
 
 
 class Dict(Variant[dict]):
-    @staticmethod
-    def make(id: Any, type_define: TypeDefine, field_name: str, value: str):
-        _value = eval(f'{{{value.replace("|",",")}}}') if value else {}
-        return Dict(id=id, type_define=type_define, field_name=field_name, value=_value)
-
     def local_strs(self):
         localizeds = set()
         if self.type_define.is_localization:
@@ -134,11 +123,17 @@ class Dict(Variant[dict]):
                     localizeds.add(e)
         return localizeds
 
+    @field_validator("value", mode="before")
+    @classmethod
+    def convert_value(cls, v: str):
+        _value = eval(f'{{{v.replace("|",",")}}}') if v else {}
+        return _value
+
 
 # endregion
 
 
-class Type:
+class TypeName(enum.Enum, str):
     ID = "id"
     STRING = "string"
     INT = "int"
@@ -157,35 +152,32 @@ class Converter:
     """
 
     def __init__(self) -> None:
-        self._map = {}
+        self._vaiant_map: dict[str, Type[Variant]] = {}
         self.functions: list[Variant] = []
 
-        self.register(Type.ID, Int.make)
-        self.register(Type.STRING, String.make)
-        self.register(Type.INT, Int.make)
-        self.register(Type.FLOAT, Float.make)
-        self.register(Type.BOOL, Bool.make)
-        self.register(Type.ARRAY, Array.make)
-        self.register(Type.ARRAY_STR, ArrayStr.make)
-        self.register(Type.ARRAY_BOOL, ArrayBool.make)
-        self.register(Type.DICT, Dict.make)
-        self.register(Type.FUNCTION, Variant)
+        self.register(TypeName.ID, Int)
+        self.register(TypeName.STRING, String)
+        self.register(TypeName.INT, Int)
+        self.register(TypeName.FLOAT, Float)
+        self.register(TypeName.BOOL, Bool)
+        self.register(TypeName.ARRAY, Array)
+        self.register(TypeName.ARRAY_STR, ArrayStr)
+        self.register(TypeName.ARRAY_BOOL, ArrayBool)
+        self.register(TypeName.DICT, Dict)
+        self.register(TypeName.FUNCTION, Variant)
 
-    def default(self, id, type_define, field_name, value):
-        return value or 0
-
-    def register(self, type: str, self_method: Callable):
-        self._map[type] = self_method
+    def register(self, type: str, variant_type: Type[Variant]):
+        self._vaiant_map[type] = variant_type
 
     def __call__(
         self,
-        id: int,
+        id: Any,
         type_define: TypeDefine,
         field_name: str,
         value: Any,
-        *args: Any,
-        **kwds: Any,
-    ) -> Any:
-        cvt = self._map.get(type_define.type_name, self.default)
-        result = cvt(id=id, type_define=type_define, field_name=field_name, value=value)
+    ) -> Variant:
+        variant = self._vaiant_map.get(type_define.type_name, Variant[str])
+        result = variant(
+            id=id, type_define=type_define, field_name=field_name, value=value
+        )
         return result

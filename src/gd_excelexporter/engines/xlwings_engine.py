@@ -10,11 +10,10 @@ import logging
 from typing import Iterable
 from xlwings.main import Sheet
 from win32com import client
-from gd_excelexporter.base.engine import Engine
-from gd_excelexporter.base.generator import Table
+from gd_excelexporter.core.engine import Engine
+from gd_excelexporter.core.models import RawTable, RawTableMap
 from gd_excelexporter.config import Configuration
-from gd_excelexporter.converter import Converter, TypeDefine, Variant
-from gd_excelexporter.models import SheetData
+
 
 logger = logging.getLogger(__name__)
 
@@ -49,67 +48,17 @@ class XlwingsEngine(xw.App, Engine):
             # xlwings支持mac，这样应该能够在mac上运行
             pass
 
-    def _excel2dict(self, excel_filename: str) -> "dict[str, Table]":
+    def _excel2rawtablemap(self, excel_filename: str) -> RawTableMap:
         with self.books.open(excel_filename) as book:
-            ignore_sheet_mark = self.config.ignore_sheet_mark
-            # 过滤掉打了忽略标志的sheet
-            sheets: Iterable[Sheet] = filter(
-                lambda sheet: not sheet.name.startswith(ignore_sheet_mark), book.sheets
-            )
+            rawtablemap: RawTableMap = {}
 
-            # sheetname->SheetData
-            excel_tables: dict[str, SheetData] = {}
+            sheets: Iterable[Sheet] = book.sheets
 
-            # 先讲sheet转sheet_data
             for sheet in sheets:
-                sheet_data = SheetData()
-                row_values = sheet.range("A1").expand().raw_value
+                sheet: Sheet
+                rawtable: RawTable = []
 
-                sheet_data.define.type = list(row_values[0])
-                sheet_data.define.desc = list(row_values[1])
-                sheet_data.define.name = list(row_values[2])
+                rawtable = sheet.range("A1").expand().raw_value
+                rawtablemap[sheet.name] = rawtable
 
-                sheet_data.table = list([list(row) for row in row_values[3:]])
-                # 找出所有被打了忽略标记的字段
-                for col, field in enumerate(sheet_data.define.name):
-                    # 跳过没命令的字段
-
-                    if field is None or field.startswith(self.config.ignore_field_mark):  # noqa
-                        del sheet_data.define.type[col]
-                        del sheet_data.define.desc[col]
-                        del sheet_data.define.name[col]
-                        for row in sheet_data.table:
-                            del row[col]
-
-                excel_tables[sheet.name] = sheet_data
-
-            cvt = Converter()
-
-            tables: dict[str, Table] = {}
-
-            for sheet_name, sheet_data in excel_tables.items():
-                field_names = sheet_data.define.name
-                field_types = sheet_data.define.type
-                table = {}
-
-                for row in sheet_data.table:
-                    id_type = TypeDefine.from_str(field_types[0])
-                    id_name = field_names[0]
-                    id_value = row[0]
-                    id = cvt(id_value, id_type, id_name, id_value)
-
-                    row_data = {}
-
-                    for index, value in enumerate(row):
-                        field_name: str = field_names[index]
-                        field_type = TypeDefine.from_str(field_types[index])
-                        variant: Variant = cvt(id.value, field_type, field_name, value)
-                        row_data[field_name] = variant
-                        self.localized_strs = self.localized_strs.union(
-                            variant.local_strs()
-                        )
-
-                    table[id.value] = row_data
-                tables[sheet_name] = table
-
-            return tables
+            return rawtablemap

@@ -17,26 +17,45 @@ ee = "gd_excelexporter.cli:cli"
 "JSON2.0" = "gd_excelexporter.generators.json2:JSON2Generator"
 "RESOURCE" = "gd_excelexporter.generators.resource:ResourceGenerator"
 
+[tool.poetry.plugins."gd_excelexporter.type_define"]
+"string" = "gd_excelexporter.type_defines.string:String"
+"int" = "gd_excelexporter.type_defines.int:Int"
+"float" = "gd_excelexporter.type_defines.float:Float"
+"dict" = "gd_excelexporter.type_defines.dict:Dict"
+"bool" = "gd_excelexporter.type_defines.bool:Bool"
+"array" = "gd_excelexporter.type_defines.array:Array"
+"array_str" = "gd_excelexporter.type_defines.array_str:ArrayStr"
+"array_bool" = "gd_excelexporter.type_defines.array_bool:ArrayBool"
+"function" = "gd_excelexporter.type_defines.function:Function"
+"tr_string" = "gd_excelexporter.type_defines.tr_string:TrString"
+"tr_array_str" = "gd_excelexporter.type_defines.tr_array_str:TrArrayStr"
+"tr_dict" = "gd_excelexporter.type_defines.tr_dict:TrDict"
+
+
 [tool.poetry.plugins."babel.extractors"]
 "godot_scene" = "gd_excelexporter.babel.godot:extract_godot_scene"
 "godot_resource" = "gd_excelexporter.babel.godot:extract_godot_resource"
 "godot_json" = "gd_excelexporter.babel.json:extract_godot_json"
 "godot_csharp" = "gd_excelexporter.babel.json:extract_godot_csharp"
 
-[tool.poetry.plugins."engine"]
+[tool.poetry.plugins."gd_excelexporter.engine"]
 "xlwings" = "gd_excelexporter.engine.xlwings_engine:XlwingsEngine"
+"xlrd" = "gd_excelexporter.engine.xlrd_engine:XlrdEngine"
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<3.12"
+python = ">=3.9,<=3.12"
 click = "^8.1.3"
-xlwings = "^0.31.1"
 toml = "^0.10.2"
 jinja2 = "^3.1.2"
 babel = "^2.12.1"
 importlib-metadata = { version = "^6.1.0", python = "38" }
 setuptools = "^67.6.1"
 pydantic = "^2.7.0"
-poetry = "^1.8.2"
+xlwings = { version = "^0.31.1", optional = true }
+xlrd = "1.2"
+
+[tool.poetry.extras]
+xlwings = ["xlwings"]
 
 
 [tool.poetry.group.test.dependencies]

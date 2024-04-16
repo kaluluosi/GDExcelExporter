@@ -21,3 +21,8 @@ def discover_generator():
     """
     generators = entry_points(group="gd_excelexporter.generator")
     return generators
+
+
+def discover_type_define():
+    tds = entry_points(group="gd_excelexporter.type_define")
+    return tds
