@@ -6,7 +6,6 @@ Copyright © Kaluluosi All rights reserved
 
 import unittest
 import unittest.mock
-import sys
 
 from gd_excelexporter.config import Configuration
 from gd_excelexporter.core.engine import Engine
