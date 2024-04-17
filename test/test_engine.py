@@ -46,7 +46,7 @@ class TestXlrdEngine(unittest.TestCase):
         ) as mock_config:
             engine = Engine.create_engine("xlrd", config=mock_config)
 
-            rawtablemap = engine._excel2rawtablemap(r"test\assets\示例.xlsx")
+            rawtablemap = engine._excel2rawtablemap(r"test/assets/示例.xlsx")
 
             self.assertGreater(len(rawtablemap), 0)
 
@@ -54,7 +54,7 @@ class TestXlrdEngine(unittest.TestCase):
         config = Configuration()
         engine = Engine.create_engine("xlrd", config)
 
-        tablemap = engine._excel2tablemap(r"test\assets\示例.xlsx")
+        tablemap = engine._excel2tablemap(r"test/assets/示例.xlsx")
 
         self.assertGreater(len(tablemap), 0)
 
