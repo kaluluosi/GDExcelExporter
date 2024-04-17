@@ -6,11 +6,13 @@ Copyright © Kaluluosi All rights reserved
 
 import unittest
 import unittest.mock
+import sys
 
 from gd_excelexporter.config import Configuration
 from gd_excelexporter.core.engine import Engine
 
 
+@unittest.skipIf(sys.platform.startswith("linux"), reason="跳过linux平台测试")
 class TestXlwingsEngine(unittest.TestCase):
     def test_excel2rawtablemap(self):
         with unittest.mock.patch(
