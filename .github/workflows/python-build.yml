@@ -14,7 +14,7 @@ jobs:
       matrix:
         python-version: [ "3.8" ]
         os: [ ubuntu-latest]
-    uses: kaluluosi/GDExcelexporter/.github/workflows/resuse-build-workflow.yml@main
+    uses: ./.github/workflows/resuse-build-workflow.yml
     with:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}
