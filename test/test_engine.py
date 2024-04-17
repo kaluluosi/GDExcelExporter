@@ -13,7 +13,7 @@ from gd_excelexporter.core.engine import Engine
 
 
 class TestXlwingsEngine(unittest.TestCase):
-    @unittest.skipIf(sys.platform.startswith("linux"), reason="跳过linux平台测试")
+    @unittest.skip(reason="需要office或者wps无法在ci/cd中测试")
     def test_excel2rawtablemap(self):
         with unittest.mock.patch(
             "gd_excelexporter.config.Configuration"
@@ -24,7 +24,7 @@ class TestXlwingsEngine(unittest.TestCase):
 
             self.assertGreater(len(rawtablemap), 0)
 
-    @unittest.skipIf(sys.platform.startswith("linux"), reason="跳过linux平台测试")
+    @unittest.skip(reason="需要office或者wps无法在ci/cd中测试")
     def test_excel2tablemap(self):
         config = Configuration()
         engine = Engine.create_engine("xlwings", config)
