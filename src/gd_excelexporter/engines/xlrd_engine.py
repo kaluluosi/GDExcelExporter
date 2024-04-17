@@ -19,22 +19,23 @@ class XlrdEngine(Engine):
         super().__init__(config)
 
     def _excel2rawtablemap(self, excel_filename: str) -> RawTableMap:
-        with xlrd.open_workbook(excel_filename) as book:
-            book: Book
+        book: Book = xlrd.open_workbook(excel_filename)
 
-            rawtablemap: RawTableMap = {}
+        rawtablemap: RawTableMap = {}
 
-            sheets: Iterable[Sheet] = book.sheets()
+        sheets: Iterable[Sheet] = book.sheets()
 
-            for sheet in sheets:
-                sheet: Sheet
+        for sheet in sheets:
+            sheet: Sheet
 
-                rawtable: RawTable = []
+            rawtable: RawTable = []
 
-                for row in range(sheet.nrows):
-                    row_values = sheet.row_values(row)
-                    rawtable.append(row_values)
+            for row in range(sheet.nrows):
+                row_values = sheet.row_values(row)
+                rawtable.append(row_values)
 
-                rawtablemap[sheet.name] = rawtable
+            rawtablemap[sheet.name] = rawtable
 
-            return rawtablemap
+        book.release_resources()
+        del book
+        return rawtablemap
