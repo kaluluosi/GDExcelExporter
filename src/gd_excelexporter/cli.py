@@ -5,7 +5,7 @@ import os
 import pkg_resources
 import gd_excelexporter
 
-from gd_excelexporter import utils
+from gd_excelexporter.core.generator import Generator
 from gd_excelexporter.core.engine import Engine
 
 # from babel import *  # noqa
@@ -51,7 +51,7 @@ def init():
 
     engine = click.prompt(
         "使用哪个内置excel引擎？",
-        type=click.Choice(list(Engine.get_register_engines())),
+        type=click.Choice(list(Engine.register_engines().names)),
         default="xlrd",
     )
 
@@ -66,7 +66,7 @@ def init():
 
     generator = click.prompt(
         "使用哪个内置导出器？",
-        type=click.Choice(list(utils.discover_generator().names)),
+        type=click.Choice(list(Generator.register_generators().names)),
         default="GDS2.0",
     )
 
@@ -97,12 +97,19 @@ def version():
 @cli.command(name="list")
 def _list():
     """
-    列出支持的导出器插件
+    列出支持的引擎和导出器
     """
-    generators = utils.discover_generator()
-    if generators.names:
-        for gen in generators.names:
-            print(gen)
+
+    print("Eingine:")
+    engines = Engine.register_engines()
+    for engine in engines.names:
+        print("-", engine)
+
+    print("")
+    print("Generator:")
+    generators = Generator.register_generators()
+    for gen in generators.names:
+        print("-", gen)
 
 
 @cli.command

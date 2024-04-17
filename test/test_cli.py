@@ -4,12 +4,12 @@ date:          2024-04-15 07:08:01
 Copyright © Kaluluosi All rights reserved
 """
 
-from contextlib import contextmanager
-from typing import Literal
 import unittest
 import os
 import shutil
 import tempfile
+from contextlib import contextmanager
+from typing import Literal
 from gd_excelexporter.cli import cli
 from click.testing import CliRunner
 
@@ -32,7 +32,7 @@ class GeneratorTest(unittest.TestCase):
         """
         测试项目初始化
         """
-        res = self.runner.invoke(cli, ["init"], input=f"\n\n\n{generator}\n")
+        res = self.runner.invoke(cli, ["init"], input=f"\n\n\n\n{generator}\n")
 
         self.assertFalse(res.exception)
 

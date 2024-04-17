@@ -52,11 +52,8 @@ babel = "^2.12.1"
 importlib-metadata = { version = "^6.1.0", python = "38" }
 setuptools = "^67.6.1"
 pydantic = "^2.7.0"
-xlwings = { version = "^0.31.1", optional = true }
 xlrd = "1.2"
-
-[tool.poetry.extras]
-xlwings = ["xlwings"]
+xlwings = "^0.31.1"
 
 
 [tool.poetry.group.test.dependencies]

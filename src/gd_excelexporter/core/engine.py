@@ -244,17 +244,9 @@ class Engine(abc.ABC):
         os.remove(self.LANG_FILE)
 
     @staticmethod
-    def get_register_engines():
+    def register_engines():
         engines = entry_points(group="gd_excelexporter.engine")
-        installed_engines = []
-        for engine in engines:
-            try:
-                engine.load()
-                installed_engines.append(engine.name)
-            except ImportError:
-                pass
-
-        return installed_engines
+        return engines
 
     @staticmethod
     def get_engine_cls(name: str) -> Type["Engine"]:
