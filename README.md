@@ -1,6 +1,6 @@
 # GDExcelExporter 2.1
 
-[![Test-测试](https://github.com/kaluluosi/GDExcelExporter/edit/main/.github/workflows/python-build.yml/badge.svg)](https://github.com/kaluluosi/GDExcelExporter/edit/main/.github/workflows/python-build.yml)
+[![Test-测试](https://github.com/kaluluosi/GDExcelExporter/actions/workflows/python-build.yml/badge.svg)](https://github.com/kaluluosi/GDExcelExporter/actions/workflows/python-build.yml)
 
 [English](README.en.md)
 
