@@ -44,7 +44,7 @@ class TestXlrdEngine(unittest.TestCase):
         with unittest.mock.patch(
             "gd_excelexporter.config.Configuration"
         ) as mock_config:
-            engine = Engine.create_engine("xlwings", config=mock_config)
+            engine = Engine.create_engine("xlrd", config=mock_config)
 
             rawtablemap = engine._excel2rawtablemap(r"test\assets\示例.xlsx")
 
