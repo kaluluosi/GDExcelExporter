@@ -8,6 +8,6 @@ from gd_excelexporter.core.type_define import TypeDefine
 
 
 class ArrayStr(TypeDefine):
-    def convert(self, raw_value: str, id=None):
+    def _convert(self, raw_value: str, id=None):
         _value = ["%s" % e for e in raw_value.split("|")] if raw_value else []
         return _value

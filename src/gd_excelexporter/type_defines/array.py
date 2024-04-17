@@ -8,6 +8,6 @@ from gd_excelexporter.core.type_define import TypeDefine
 
 
 class Array(TypeDefine):
-    def convert(self, raw_value: str, id=None):
+    def _convert(self, raw_value: str, id=None):
         _value = eval(f'[{raw_value.replace("|",",")}]') if raw_value else []
         return _value

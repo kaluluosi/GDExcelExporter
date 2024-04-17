@@ -18,6 +18,7 @@ ee = "gd_excelexporter.cli:cli"
 "RESOURCE" = "gd_excelexporter.generators.resource:ResourceGenerator"
 
 [tool.poetry.plugins."gd_excelexporter.type_define"]
+"id" = "gd_excelexporter.type_defines.int:Int"
 "string" = "gd_excelexporter.type_defines.string:String"
 "int" = "gd_excelexporter.type_defines.int:Int"
 "float" = "gd_excelexporter.type_defines.float:Float"
@@ -39,8 +40,8 @@ ee = "gd_excelexporter.cli:cli"
 "godot_csharp" = "gd_excelexporter.babel.json:extract_godot_csharp"
 
 [tool.poetry.plugins."gd_excelexporter.engine"]
-"xlwings" = "gd_excelexporter.engine.xlwings_engine:XlwingsEngine"
-"xlrd" = "gd_excelexporter.engine.xlrd_engine:XlrdEngine"
+"xlwings" = "gd_excelexporter.engines.xlwings_engine:XlwingsEngine"
+"xlrd" = "gd_excelexporter.engines.xlrd_engine:XlrdEngine"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<=3.12"

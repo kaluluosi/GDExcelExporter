@@ -9,7 +9,7 @@ from gd_excelexporter.core.type_define import TrTypeDefine
 
 
 class TrString(TrTypeDefine):
-    def convert(self, raw_value: str, id=None):
+    def _convert(self, raw_value: str, id=None):
         _value = str(raw_value) if raw_value else ""
         self.__tr_strs__.add(_value)
         return _value

@@ -41,8 +41,13 @@ class TypeDefine(BaseModel, abc.ABC):
             return is_localized, type_name, params
         raise ValueError(f"{type_txt} 不是有效的类型定义格式")
 
+    def convert(self, raw_value, id=None) -> Any:
+        if raw_value:
+            raw_value = str(raw_value)
+        return self._convert(raw_value, id)
+
     @abc.abstractmethod
-    def convert(self, raw_value: str, id=None) -> Any: ...
+    def _convert(self, raw_value: str, id=None) -> Any: ...
 
     @staticmethod
     def register_type_defines():
@@ -53,7 +58,7 @@ class TypeDefine(BaseModel, abc.ABC):
         return tds
 
     @classmethod
-    def from_str(cls, type_txt: str):
+    def from_str(cls, type_txt: str) -> "TypeDefine":
         """
         从类型定义字符串中创建类型定义
 
@@ -70,7 +75,10 @@ class TypeDefine(BaseModel, abc.ABC):
         if type_name in type_defines.names:
             type_define_cls = type_defines[type_name].load()
             return type_define_cls(
-                type_txt=type_txt, is_localized=is_localized, params=params
+                type_txt=type_txt,
+                type_name=type_name,
+                is_localized=is_localized,
+                params=params,
             )
         raise ValueError(f"{type_txt} {type_name} 没有适合的类型定义解析器")
 

@@ -11,6 +11,7 @@ class TestConfig(unittest.TestCase):
         config = Configuration()
 
         config = Configuration(
+            engine="xlrd",
             ignore_sheet_mark="!",
             ignore_field_mark="*",
             custom_generator="1",

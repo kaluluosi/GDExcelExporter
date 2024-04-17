@@ -14,7 +14,8 @@ class JSON1Generator(Generator):
     # 导出格式
     __extension__ = "json"
 
-    def generate(self, table: Table, config: Configuration):
+    @classmethod
+    def generate(cls, table: Table, config: Configuration):
         # 表格数据脚本模板
 
         # 由于json不支持int做key，所以这里需要转换一下
@@ -32,7 +33,8 @@ class JSON1Generator(Generator):
 
         return code
 
-    def completed_hook(self, config: Configuration):
+    @classmethod
+    def completed_hook(cls, config: Configuration):
         output = config.output
         settings_file_path = os.path.join(output, "settings.gd")
         project_root = config.project_root
@@ -49,7 +51,7 @@ class JSON1Generator(Generator):
             return data
         """)
 
-        for path in glob.glob(f"{output}/**/*.{self.__extension__}", recursive=True):
+        for path in glob.glob(f"{output}/**/*.{cls.__extension__}", recursive=True):
             if path == settings_file_path:
                 continue  # 跳过 settings.gd
             basename = os.path.basename(path)

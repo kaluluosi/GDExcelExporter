@@ -8,7 +8,7 @@ from gd_excelexporter.core.type_define import TypeDefine
 
 
 class ArrayBool(TypeDefine):
-    def convert(self, raw_value: str, id=None):
+    def _convert(self, raw_value: str, id=None):
         _value = (
             [e.upper() not in ["FALSE", "否"] for e in raw_value.split("|")]
             if raw_value

@@ -8,7 +8,7 @@ from gd_excelexporter.core.type_define import TrTypeDefine
 
 
 class TrDict(TrTypeDefine):
-    def convert(self, raw_value: str, id=None):
+    def _convert(self, raw_value: str, id=None):
         _value = eval(f'{{{raw_value.replace("|",",")}}}') if raw_value else {}
         for k, v in _value.items():
             if isinstance(v, str):

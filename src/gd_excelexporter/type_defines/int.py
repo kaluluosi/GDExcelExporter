@@ -8,5 +8,5 @@ from gd_excelexporter.core.type_define import TypeDefine
 
 
 class Int(TypeDefine):
-    def convert(self, raw_value: str, id=None):
+    def _convert(self, raw_value: str, id=None):
         return int(float(raw_value or 0))

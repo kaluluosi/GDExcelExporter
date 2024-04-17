@@ -21,7 +21,8 @@ class ResourceGenerator(Generator):
     var data = {}
     """
 
-    def generate(self, table: Table, config: Configuration):
+    @classmethod
+    def generate(cls, table: Table, config: Configuration):
         # 表格数据脚本模板
         abs_output = os.path.abspath(config.output)
         relpath = os.path.relpath(abs_output, config.project_root).replace("\\", "/")
@@ -48,7 +49,7 @@ class ResourceGenerator(Generator):
 
         code = template.format(
             data=pprint.pformat(
-                table, indent=4, width=1000000000, compact=True, sort_dicts=True
+                new_table, indent=4, width=1000000000, compact=True, sort_dicts=True
             ),
             relpath=relpath,
         )
@@ -58,7 +59,8 @@ class ResourceGenerator(Generator):
         code = code.replace("'", '"')
         return code
 
-    def completed_hook(self, config: Configuration):
+    @classmethod
+    def completed_hook(cls, config: Configuration):
         output = config.output
         settings_file_path = os.path.join(output, "settings.gd")
         data_class_file_path = os.path.join(output, "ee_data_table.gd")
@@ -66,7 +68,7 @@ class ResourceGenerator(Generator):
 
         lines = []
 
-        for path in glob.glob(f"{output}/**/*.{self.__extension__}", recursive=True):
+        for path in glob.glob(f"{output}/**/*.{cls.__extension__}", recursive=True):
             if path == settings_file_path:
                 continue  # 跳过 settings.gd
             if path == data_class_file_path:
@@ -94,5 +96,5 @@ class ResourceGenerator(Generator):
             logger.info("创建setting.gd")
 
         with open(data_class_file_path, "w", encoding="utf-8", newline="\n") as f:
-            f.write(self.__datatable_class__)
+            f.write(cls.__datatable_class__)
             logger.info("创建DataTable类")

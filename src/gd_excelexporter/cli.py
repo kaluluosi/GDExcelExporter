@@ -6,7 +6,7 @@ import pkg_resources
 import gd_excelexporter
 
 from gd_excelexporter import utils
-from gd_excelexporter.engines import XlwingsEngine
+from gd_excelexporter.core.engine import Engine
 
 # from babel import *  # noqa
 from babel.messages.frontend import CommandLineInterface
@@ -35,6 +35,8 @@ def init():
     """
     config = Configuration()
 
+    # 询问使用的excel引擎
+
     # 询问数据表存放目录
     datatable_dir = click.prompt(
         "输出数据表目录名", default="settings", show_default=True
@@ -46,6 +48,12 @@ def init():
     os.mkdir(datatable_dir)
     cwd_backup = os.getcwd()
     os.chdir(datatable_dir)
+
+    engine = click.prompt(
+        "使用哪个内置excel引擎？",
+        type=click.Choice(list(Engine.get_register_engines())),
+        default="xlrd",
+    )
 
     input_dir = click.prompt(
         "输入存放excel表格目录名称", default=config.input, show_default=True
@@ -62,6 +70,7 @@ def init():
         default="GDS2.0",
     )
 
+    config.engine = engine
     config.input = input_dir
     config.output = output_dir
 
@@ -128,9 +137,8 @@ def gen_all(cwd):
     _find_config()
 
     config = Configuration.load()
-
-    with XlwingsEngine(config) as engine:
-        engine.gen_all()
+    engine = Engine.create_engine(config.engine, config)
+    engine.gen_all()
 
 
 @cli.command
@@ -143,8 +151,8 @@ def gen_one(file: str):
     _find_config()
 
     config = Configuration.load()
-    with XlwingsEngine(config) as engine:
-        engine.gen_one(abs_filepath)
+    engine = Engine.create_engine(config.engine, config)
+    engine.gen_one(abs_filepath)
 
 
 @cli.command
@@ -156,27 +164,29 @@ def extract(cwd):
     os.chdir(cwd)
     _find_config()
     config = Configuration.load()
-    with XlwingsEngine(config) as engine:
-        with engine.extract_lang():
-            babel_keywords = config.localization.babel_keywords
-            pot_file = config.localization.pot_file
+    engine = Engine.create_engine(config.engine, config)
+    engine.extract_lang()
 
-            keyword_args = [f"-k {kw} " for kw in babel_keywords]
+    # 生成POT
+    babel_keywords = config.localization.babel_keywords
+    pot_file = config.localization.pot_file
 
-            cfg_file = os.path.abspath("babel.cfg")
+    keyword_args = [f"-k {kw} " for kw in babel_keywords]
 
-            CommandLineInterface().run(  # noqa
-                [
-                    "pybabel",
-                    "extract",
-                    "-F",
-                    cfg_file,
-                    *keyword_args,
-                    "-o",
-                    pot_file,
-                    config.project_root,
-                ]
-            )
+    cfg_file = os.path.abspath("babel.cfg")
+
+    CommandLineInterface().run(  # noqa
+        [
+            "pybabel",
+            "extract",
+            "-F",
+            cfg_file,
+            *keyword_args,
+            "-o",
+            pot_file,
+            config.project_root,
+        ]
+    )
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ from gd_excelexporter.core.type_define import TypeDefine
 
 
 class Bool(TypeDefine):
-    def convert(self, raw_value: str, id=None):
+    def _convert(self, raw_value: str, id=None):
         if raw_value:
             if isinstance(raw_value, str):  # 检查 value 是否为字符串
                 _value = (

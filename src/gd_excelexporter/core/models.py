@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, NamedTuple
+
+from gd_excelexporter.core.type_define import TypeDefine
 
 # 已经导出成dict的表数据
 Table = Dict[int, Dict[str, Any]]
@@ -8,6 +10,13 @@ TableMap = Dict[str, Table]
 RawTable = List[List[str]]
 # 原始表map，sheet名为key，原始表数据为value
 RawTableMap = Dict[str, RawTable]
+
+
+class Variant(NamedTuple):
+    type_define: TypeDefine
+    field_name: str
+    value: str
+    id: str
 
 
 class Defines(BaseModel):

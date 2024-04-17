@@ -9,7 +9,6 @@ import glob
 import logging
 import os
 import sys
-import importlib
 from typing import Type
 
 from gd_excelexporter.core.models import (
@@ -17,6 +16,7 @@ from gd_excelexporter.core.models import (
     TableMap,
     RawTableMap,
 )
+from gd_excelexporter.core.models import Variant
 from gd_excelexporter.exceptions import IllegalFile
 from gd_excelexporter.config import Configuration
 from gd_excelexporter.core.generator import Generator
@@ -73,13 +73,23 @@ class Engine(abc.ABC):
                 for index, value in enumerate(row):
                     field_name: str = field_names[index]
 
+                    # field_name 可能是空字符或者None，这时跳过
+                    if not field_name:
+                        continue
+
                     # 如果字段名以ignore_field_mark开头就跳过
                     # NOTE: 在这里做字段的忽略
                     if field_name.startswith(self.config.ignore_field_mark):
                         continue
 
-                    field_type: TypeDefine = TypeDefine.from_str(field_types[index])
-                    row_data[field_name] = field_type.convert(value, id_value)
+                    type_define: TypeDefine = TypeDefine.from_str(field_types[index])
+                    variant: Variant = Variant(
+                        type_define=type_define,
+                        field_name=field_name,
+                        value=type_define.convert(value),
+                        id=id_value,
+                    )
+                    row_data[field_name] = variant
 
                 table[id_value] = row_data
 
@@ -254,3 +264,7 @@ class Engine(abc.ABC):
             return engine_cls
         else:
             raise RuntimeError(f"没有找到名为 {name} 的引擎！")
+
+    @classmethod
+    def create_engine(cls, name: str, config: Configuration):
+        return cls.get_engine_cls(name)(config)
