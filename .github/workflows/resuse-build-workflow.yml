@@ -1,0 +1,66 @@
+name: 可复用的build工作流
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: '运行在哪个操作系统镜像上'
+        type: string
+        required: true
+        default: ubuntue-latest
+      python-version:
+        description: 'python的版本'
+        type: string
+        required: true
+        default: "3.8"
+jobs:
+
+  test:
+    runs-on: ${{ inputs.os }}
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: 安装python环境 ${{ inputs.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Poetry setup
+        uses: ClementWalter/poetry-action@v1
+        with:
+          os: ${{ inputs.os }}
+          python-version: ${{ inputs.python-version }} 
+      - name: Unittest单元测试
+        run: |
+          poetry run coverage run -m unittest discover test
+          poetry run coverage report
+          poetry run coverage html
+
+      - name: 上传测试报告产物
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: htmlcov
+
+  build:
+    runs-on: ${{ inputs.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: 安装python环境 ${{ inputs.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Poetry setup
+        uses: ClementWalter/poetry-action@v1
+        with:
+          os: ${{ inputs.os }}
+          python-version: ${{ inputs.python-version }}
+      - name: 构建项目
+        run: |
+          poetry build
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: ./dist
