@@ -15,7 +15,7 @@ RawTableMap = Dict[str, RawTable]
 class Variant(NamedTuple):
     type_define: TypeDefine
     field_name: str
-    value: str
+    value: Any
     id: str
 
 

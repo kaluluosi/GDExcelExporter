@@ -13,6 +13,5 @@ class TrDict(TrTypeDefine):
         for k, v in _value.items():
             if isinstance(v, str):
                 self.__tr_strs__.add(v)
-                _value[k] = v
 
         return _value

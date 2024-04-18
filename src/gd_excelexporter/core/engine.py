@@ -191,7 +191,7 @@ class Engine(abc.ABC):
         generator = Generator.get_generator(self.config.custom_generator)
         generator.completed_hook(self.config)
 
-    def extract_lang(self):
+    def extract_pot(self):
         """
         将配置表中的多语言字符串抽取出来，生成gd文件，用于提取。
 

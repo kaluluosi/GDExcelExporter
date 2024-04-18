@@ -1,0 +1,12 @@
+version = "2.1.5"
+engine = "xlrd"
+ignore_sheet_mark = "~"
+ignore_field_mark = "*"
+custom_generator = "GDS2.0"
+input = "data"
+output = "dist"
+project_root = "../"
+
+[localization]
+babel_keywords = [ "tr", "Label/text", "Label/tooltip_text", "Button/text", "Button/tooltip_text", "TextEdit/text", "TextEdit/tooltip_text", "TextEdit/placeholder_text", "TextEdit/tooltip_text", "LineEdit/text", "LineEdit/tooltip_text", "LineEdit/placeholder_text", "RichTextLabel/textRichTextLabel/tooltip_text",]
+pot_file = "lang/template.pot"

@@ -281,3 +281,87 @@ static def function_1(a,b=null,c=null):
 
 !!! note
     显式参数函数类型，参数列表是显式定义的，Godot编辑器语法检查的时候可以会约束参数列表。相对于泛用参数列表，显式参数可以更容易约束和看出函数参数。
+
+------------------------------
+
+!!! info
+    下面是本地化字段类型，这些字段类型的配置值会抽取到POT文件中用于多语言翻译。
+    POT是Godot支持的多语言翻译文件格式/方案--[使用gettext进行本地化](https://docs.godotengine.org/zh-cn/4.x/tutorials/i18n/localization_using_gettext.html#advantages)。
+
+!!! note
+    Godot支持两种本地化多语言方案
+    - 翻译表（.translation）基于csv键值对的那种传统多语言表 -- [是游戏国际化](https://docs.godotengine.org/zh-cn/4.x/tutorials/i18n/internationalizing_games.html#)
+    - POT文件（.pot）基于gettext的POT文件。 --[使用gettext进行本地化](https://docs.godotengine.org/zh-cn/4.x/tutorials/i18n/localization_using_gettext.html#advantages)
+
+    前者是先在多语言表录入`key`和`文本`，然后代码中用`tr()`读取。也就是说是需要先录入，再使用。
+    后者是相反的，是先在代码中使用，通过`babel`之类的工具抽取到POT语言表中。
+
+    POT比传统多语言表有以下优势：
+    1. 研发期间不需要先添加翻译key，直接代码中正常开发即可，用`tr()`将需要翻译的字符串包起来。
+    2. Godot会自动抽取场景、tres等文件中文本字段到POT。
+    3. 自动除重，相同的字符串会合并成一条翻译。
+    4. 差异更新，不用像语言表那样手动管理增删。
+    5. 翻译工具更先进完备，`Poedit`编辑器或者Transifex 和 Weblate 等翻译平台来进行本地化翻译，然后导出成`.po`文件。
+
+
+### tr_string
+
+本地化字符串，例如：
+
+| id  | tr_string    |
+| --- | ------------- |
+| id  | tr_string    |
+| 1   | name|
+
+会被导出成:
+```go
+{
+    '1':{'id':1,'tr_string':"name"}
+}
+```
+
+!!! note
+    `tr_string`和`string`的区别在于`tr_string`会被抽取到POT文件中用于多语言翻译。
+
+
+### tr_dict
+
+本地化字典，例如：
+
+| id  | tr_dict          |
+| --- | ----------------- |
+| id  | tr_dict          |
+| 1   | "name":"Tom"\|"age":10 |
+
+会被导出成:
+```go
+{
+    '1':{'id':1,'tr_dict':{'name':'Tom','age':10}}
+}
+```
+
+!!! note
+    `tr_dict`和`dict`的区别在于`tr_dict`会被抽取到POT文件中用于多语言翻译。
+    **只会抽取string类型value。**
+
+
+### tr_array_str
+
+本地化数组字符串，例如：
+
+| id  | tr_array_str           |
+| --- | ---------------------- |
+| id  | tr_array_str           |
+| 1   | "a"\|"b"\|"c" |
+
+会被导出成:
+```go
+{
+    '1':{'id':1,'tr_array_str':['a','b','c']}
+}
+```
+
+!!! note
+    `str_array_str`和`array_str`的区别在于`str_array_str`会被抽取到POT文件中用于多语言翻译。
+
+
