@@ -43,6 +43,7 @@ pot_file = "lang/template.pot"
 * project_root： 指定项目根目录，默认为../。一般来讲我们的Settings目录会放置在游戏项目根目录下，而Settings目录的上级目录`../`就是项目根目录。这个参数用来辅助计算导出文件的相对路径。
 
 **localization** （POT本地化功能配置）
+
 * babel_keywords： 指定需要进行翻译抽取的字段，目前涵盖了大部分文本控件的静态文本字段。你如果看明白怎么添加你可以自己修改添加。
 * pot_file： 指定导出的pot文件路径。
 
