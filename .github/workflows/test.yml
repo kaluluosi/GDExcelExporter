@@ -34,19 +34,28 @@ jobs:
           poetry run coverage report
           poetry run coverage xml
 
-      - name: Upload coverage.xml
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: ./coverage.xml
+
   coverage:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
+      - uses: actions/checkout@v4
+      - name: Setup Poetry
+        uses: ./.github/actions/setup-poetry
+      - name: setup python 3.8
+        uses: actions/setup-python@v5
         with:
-          name: coverage
+          python-version: 3.8
+          cache: "poetry"
+          
+      - name: Install dependencies
+        run: poetry install
+        - name: Coverage
+        run: |
+          poetry run coverage run -m unittest discover test -v
+          poetry run coverage report
+          poetry run coverage xml
+
       - name: coverage report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
