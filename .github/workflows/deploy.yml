@@ -61,7 +61,7 @@ jobs:
 
     - name: 如果是workflow触发，那么就用inputs.version
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
-      if: github.event == 'workflow_dispatch'
+      if: github.event_name == 'workflow_dispatch'
       run: |
         echo "poetry version ${{ inputs.version }}"
         # poetry version ${{ inputs.version }}
