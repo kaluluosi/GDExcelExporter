@@ -2,14 +2,10 @@ name: 安装poetry
 description: 安装并设置好poetry和其缓存
 
 inputs:
-  os: 
-    description: 'The operating system'
+  cache-name:
+    description: '缓存名称'
     required: true
-    default: ubuntu-latest
-  python-version: 
-    description: 'The version of Python'
-    required: true
-    default: '3.8'
+
 
 runs:
   using: "composite"
@@ -20,7 +16,7 @@ runs:
       shell: bash
 
     - name: Cache venv
-      uses: actions/cache@v1
+      uses: actions/cache@v4.0.2
       with:
         path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ inputs.os }}-${{ inputs.python-version }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        key: ${{ inputs.cache-name }}-${{ hashFiles('**/poetry.lock') }}
