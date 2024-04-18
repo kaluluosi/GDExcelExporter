@@ -34,6 +34,8 @@ jobs:
       - name: Unittest单元测试
         run: |
           poetry run coverage run -m unittest discover test -v
+          peotry run coverage report
+          poetry run coverage html
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.3.1
@@ -41,4 +43,4 @@ jobs:
           # Artifact name
           name: report
           path: htmlcov
-
+          if-no-files-found: ignore
