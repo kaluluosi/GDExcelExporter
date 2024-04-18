@@ -13,3 +13,4 @@ runs:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
     - run: poetry --version
+      shell: bash

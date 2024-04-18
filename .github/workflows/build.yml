@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
       - name: Setup Poetry
-        uses: kaluluosi/GDExcelexporter/.github/actions/setup-poetry
+        uses: ./.github/actions/setup-poetry
 
       - name: 构建项目
         run: |
