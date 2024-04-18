@@ -23,6 +23,10 @@ def cli():
 
     Godot Excel表导出工具
 
+    联系
+    mail: kaluluosi111@qq.com
+    QQ群: 118258918
+
     ===============================
     """
     pass
