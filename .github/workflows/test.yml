@@ -29,13 +29,22 @@ jobs:
                   
       - name: Unittest
         run: |
-          poetry run python -m unittest discover test -v
+          poetry run coverage -m unittest discover test -v
+          poetry run coverage report
+          poetry run coverage xml
 
-  coverage:
-    needs: [ test ]
-    with:
-      python-version:  3.8
-      os: ubuntu-latest
+      - name: coverage report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: coverage.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: false
+          indicators: true
+          output: both
+          thresholds: '60 80'
 
  
 
