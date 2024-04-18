@@ -30,7 +30,7 @@ jobs:
                   
       - name: Unittest
         run: |
-          poetry run coverage -m unittest discover test -v
+          poetry run coverage run -m unittest discover test -v
           poetry run coverage report
           poetry run coverage xml
 
