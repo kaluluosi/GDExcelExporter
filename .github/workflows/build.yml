@@ -13,10 +13,20 @@ jobs:
       matrix:
         os: [ubuntu-latest,windows-latest,macos-latest]
         python-version: [ "3.8","3.9", "3.10", "3.11.3", "3.12" ]
-    uses: ./.github/workflows/reuse/build.yml
-    with:
-      python-version: ${{ matrix.python-version }}
-      os: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Poetry
+        uses: ./.github/actions/setup-poetry
+      - name: setup python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "poetry"
+
+      - name: 构建项目
+        run: |
+          poetry build
 
 
  
