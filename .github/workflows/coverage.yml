@@ -26,8 +26,6 @@ jobs:
           python-version: ${{ inputs.python-version }}
       - name: Setup Poetry
         uses: ./.github/actions/setup-poetry
-        with:
-          cache-name: ${{inputs.os}}-${{inputs.python-version}}
 
       - name: Install dependencies
         run: poetry install
