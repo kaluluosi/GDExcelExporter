@@ -17,14 +17,10 @@ from click.testing import CliRunner
 class GeneratorTest(unittest.TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
-        self.tmpdir = tempfile.TemporaryDirectory()
         self.cwd_backup = os.getcwd()
-        os.chdir(self.tmpdir.name)  # 将工作目录切换到临时目录
-        print("工作目录", os.getcwd())
 
     def tearDown(self) -> None:
         os.chdir(self.cwd_backup)
-        self.tmpdir.cleanup()  # 清理临时目录
 
     @contextmanager
     def _init(
@@ -33,21 +29,23 @@ class GeneratorTest(unittest.TestCase):
         """
         测试项目初始化
         """
-        res = self.runner.invoke(cli, ["init"], input=f"\n\n\n\n{generator}\n")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            os.chdir(tmpdir)
+            print("tempdir:", os.getcwd())
+            res = self.runner.invoke(cli, ["init"], input=f"\n\n\n\n{generator}\n")
 
-        self.assertFalse(res.exception)
+            self.assertFalse(res.exception)
 
-        self.assertTrue(os.path.exists("settings"), "settings not exists")
-        self.assertTrue(
-            os.path.exists("settings/export.toml"), "export.toml not exists"
-        )
-        cwd_backup = os.getcwd()
+            self.assertTrue(os.path.exists("settings"), "settings not exists")
+            self.assertTrue(
+                os.path.exists("settings/export.toml"), "export.toml not exists"
+            )
 
-        os.chdir("settings")
-        shutil.copy("sample/示例.xlsx", "data/示例.xlsx")
+            os.chdir("settings")
+            shutil.copy("sample/示例.xlsx", "data/示例.xlsx")
 
-        yield
-        os.chdir(cwd_backup)
+            yield
+            os.chdir(self.cwd_backup)
 
     def test_gen_gds1(self):
         """
