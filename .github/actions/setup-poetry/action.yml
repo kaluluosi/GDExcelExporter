@@ -1,12 +1,6 @@
 name: 安装poetry
 description: 安装并设置好poetry和其缓存
 
-inputs:
-  cache-name:
-    description: '缓存名称'
-    required: true
-
-
 runs:
   using: "composite"
   steps:
