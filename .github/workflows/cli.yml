@@ -1,6 +1,10 @@
 name: Python Build
 
-on: [push, pull_request]
+on: 
+  push
+  pull_request
+  workflow_dispatch:
+
 
 jobs:
   test:
@@ -13,6 +17,7 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}
+      
   
   # build:
   #   needs: [ test ]
