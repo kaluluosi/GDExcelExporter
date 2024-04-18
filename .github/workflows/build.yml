@@ -35,3 +35,4 @@ jobs:
         with:
           name: dist
           path: ./dist
+          ignore: true
