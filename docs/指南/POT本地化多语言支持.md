@@ -5,7 +5,7 @@
 要使用`gd-excelexporter`的多语言你首先要理解Godot的多语言方案。
 
 Godot支持两种本地化多语言方案
-- 翻译表（.translation）基于csv键值对的那种传统多语言表 -- [是游戏国际化](https://docsgodotengine.org/zh-cn/4.x/tutorials/i18n/internationalizing_games.html#)
+- 翻译表（.translation）基于csv键值对的那种传统多语言表 -- [使游戏国际化](https://docsgodotengine.org/zh-cn/4.x/tutorials/i18n/internationalizing_games.html#)
 - POT文件（.pot）基于gettext的POT文件。 --[使用gettext进行本地化](https://docs.godotengine.orgzh-cn/4.x/tutorials/i18n/localization_using_gettext.html#advantages)
 前者是先在多语言表录入`key`和`文本`，然后代码中用`tr()`读取。也就是说是需要先录入，再使用。
 后者是相反的，是先在代码中使用，通过`babel`之类的工具抽取到POT语言表中。
