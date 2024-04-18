@@ -23,6 +23,12 @@ Godot内置的POT功能可以将项目所有资源文件，比如场景（.tscn�
 
 但是Godot无法抽取`excel`配置表文件。因此`excel`配置表中的字符串需要用`ee extract`命令来导出到`lang\template.pot`中。
 
+`ee extract`通过参考Godot的实现方式，实现导出`excel`配置表本地化字段的同时也顺便将Godot游戏项目中所有能够导出本地化的资源都抽到了`lang\template.pot`文件中。因此你甚至可以不使用Godot的POT功能来导出POT，直接用`ee extract`即可。
+
+!!! note
+    Godot的POT功能其实还是太繁琐了点，需要手动将所有要翻译抽取的资源、脚本添加到列表里，非常麻烦。
+    `ee extract`则比较粗暴，直接编译了整个游戏项目，将所有能抽的都给你抽到同一个POT文件里，不需要在Godot中操作。
+
 ## 使用Poedit来翻译POT
 
 `Poedit`是一个跨平台的翻译工具，支持多种语言。
