@@ -173,28 +173,7 @@ def extract(cwd):
     _find_config()
     config = Configuration.load()
     engine = Engine.create_engine(config.engine, config)
-    engine.extract_lang()
-
-    # 生成POT
-    babel_keywords = config.localization.babel_keywords
-    pot_file = config.localization.pot_file
-
-    keyword_args = [f"-k {kw} " for kw in babel_keywords]
-
-    cfg_file = os.path.abspath("babel.cfg")
-
-    CommandLineInterface().run(  # noqa
-        [
-            "pybabel",
-            "extract",
-            "-F",
-            cfg_file,
-            *keyword_args,
-            "-o",
-            pot_file,
-            config.project_root,
-        ]
-    )
+    engine.extract_pot()
 
 
 if __name__ == "__main__":

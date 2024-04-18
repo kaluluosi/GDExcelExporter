@@ -21,12 +21,9 @@ class TypeDefine(BaseModel, abc.ABC):
     类型定义解析基类
     """
 
-    TYPE_DEFINE_PATTERN: ClassVar[str] = (
-        r"(?P<local>#?)(?P<type_name>\w+)(?P<params>\(.*\))?"
-    )
+    TYPE_DEFINE_PATTERN: ClassVar[str] = r"(?P<type_name>\w+)(?P<params>\(.*\))?"
 
     type_txt: str = Field(description="配置表中类型字符串，比如#string array_str这些")
-    is_localized: bool
     type_name: str
     params: str
 
@@ -34,11 +31,10 @@ class TypeDefine(BaseModel, abc.ABC):
     def _get_type_info(cls, type_txt: str):
         m = re.match(cls.TYPE_DEFINE_PATTERN, type_txt)
         if m:
-            is_localized = m.group("local") == "#"
             type_name = m.group("type_name")
             params = m.group("params") or "(args=[])"
 
-            return is_localized, type_name, params
+            return type_name, params
         raise ValueError(f"{type_txt} 不是有效的类型定义格式")
 
     def convert(self, raw_value, id=None) -> Any:
@@ -70,16 +66,15 @@ class TypeDefine(BaseModel, abc.ABC):
         Returns:
             TypeDefine: 类型定义
         """
-        is_localized, type_name, params = cls._get_type_info(type_txt)
+        type_name, params = cls._get_type_info(type_txt)
         type_defines = cls.register_type_defines()
         if type_name in type_defines.names:
             type_define_cls = type_defines[type_name].load()
             return type_define_cls(
                 type_txt=type_txt,
                 type_name=type_name,
-                is_localized=is_localized,
                 params=params,
-            )
+            )  # type: ignore
         raise ValueError(f"{type_txt} {type_name} 没有适合的类型定义解析器")
 
 

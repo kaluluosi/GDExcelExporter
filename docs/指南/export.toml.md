@@ -3,6 +3,8 @@
 `export.toml`配置文件定义了Settings目录的导出参数。
 
 ```toml
+version = "1.0.0"
+engine = "xlrd"
 ignore_sheet_mark = "~" 
 ignore_field_mark = "*"
 custom_generator = "GDS2.0"
@@ -11,6 +13,8 @@ output = "dist"
 project_root = "../"
 ```
 
+* version： 指定gd-excelexporter版本。
+* engine： 指定数据源解析器，默认为xlrd。
 * ignore_sheet_mark： 忽略的sheet名称前缀，默认为~，如果sheet名称以~开头，则不会被导出。
 * ignore_field_mark： 忽略的字段名称前缀，默认为*，如果字段名称以*开头，则不会被导出。
 * custom_generator： 指定自定义导出器，默认为GDS2.0，如果指定了自定义导出器，则使用。
