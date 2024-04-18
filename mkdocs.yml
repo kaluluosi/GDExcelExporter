@@ -12,7 +12,7 @@ nav:
       - 导出器说明: 指南/导出器说明.md
       - excel表规范: 指南/excel表规范.md
       - export.toml配置文件: 指南/export.toml.md
-      - 多语言支持: 指南/多语言支持.md
+      - 多语言支持: 指南/POT本地化多语言支持.md
 
 markdown_extensions:
   - admonition
