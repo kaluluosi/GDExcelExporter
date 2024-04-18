@@ -45,8 +45,8 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
-          with:
-            name: coverage
+        with:
+          name: coverage
       - name: coverage report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
