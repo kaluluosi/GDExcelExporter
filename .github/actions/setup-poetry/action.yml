@@ -11,6 +11,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup Poetry
-      uses: pipx install poetry
+      run: pipx install poetry
+      shell: bash
     - run: poetry --version
       shell: bash
