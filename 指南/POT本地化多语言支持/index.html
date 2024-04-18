@@ -124,17 +124,21 @@
 <h1 id="pot">POT本地化多语言支持</h1>
 <h2 id="_1">简介</h2>
 <p>要使用<code>gd-excelexporter</code>的多语言你首先要理解Godot的多语言方案。</p>
-<p>Godot支持两种本地化多语言方案
-- 翻译表（.translation）基于csv键值对的那种传统多语言表 -- <a href="https://docsgodotengine.org/zh-cn/4.x/tutorials/i18n/internationalizing_games.html#">使游戏国际化</a>
-- POT文件（.pot）基于gettext的POT文件。 --<a href="https://docs.godotengine.orgzh-cn/4.x/tutorials/i18n/localization_using_gettext.html#advantages">使用gettext进行本地化</a>
+<p>Godot支持两种本地化多语言方案</p>
+<ul>
+<li>翻译表（.translation）基于csv键值对的那种传统多语言表 -- <a href="https://docsgodotengine.org/zh-cn/4.x/tutorials/i18n/internationalizing_games.html#">使游戏国际化</a></li>
+<li>POT文件（.pot）基于gettext的POT文件。 --<a href="https://docs.godotengine.orgzh-cn/4.x/tutorials/i18n/localization_using_gettext.html#advantages">使用gettext进行本地化</a>
 前者是先在多语言表录入<code>key</code>和<code>文本</code>，然后代码中用<code>tr()</code>读取。也就是说是需要先录入，再使用。
-后者是相反的，是先在代码中使用，通过<code>babel</code>之类的工具抽取到POT语言表中。</p>
-<p>POT比传统多语言表有以下优势：
-1. 研发期间不需要先添加翻译key，直接代码中正常开发即可，用<code>tr()</code>将需要翻译的字符串包起来。
-2. Godot会自动抽取场景、tres等文件中文本字段到POT。
-3. 自动除重，相同的字符串会合并成一条翻译。
-4. 差异更新，不用像语言表那样手动管理增删。
-5. 翻译工具更先进完备，<code>Poedit</code>编辑器或者<code>Transifex</code>（收费） 和 <code>Weblate</code>（Godot自己的多语言也是用这个，开源可以自己部署）等翻译平台来进行本地化翻译，然后导出<code>.po</code>文件。</p>
+后者是相反的，是先在代码中使用，通过<code>babel</code>之类的工具抽取到POT语言表中。</li>
+</ul>
+<p>POT比传统多语言表有以下优势：</p>
+<ol>
+<li>研发期间不需要先添加翻译key，直接代码中正常开发即可，用<code>tr()</code>将需要翻译的字符串包起来。</li>
+<li>Godot会自动抽取场景、tres等文件中文本字段到POT。</li>
+<li>自动除重，相同的字符串会合并成一条翻译。</li>
+<li>差异更新，不用像语言表那样手动管理增删。</li>
+<li>翻译工具更先进完备，<code>Poedit</code>编辑器或者<code>Transifex</code>（收费） 和 <code>Weblate</code>（Godot自己的多语言也是用这个，开源可以自己部署）等翻译平台来进行本地化翻译，然后导出<code>.po</code>文件。</li>
+</ol>
 <p>Godot内置的POT功能可以将项目所有资源文件，比如场景（.tscn）、资源（.tres）中的一些字段（写死Godot里的）、还有<code>GDScript</code>里用<code>tr()</code>方法包裹的字符串都抽取到一个POT文件中用于本地化翻译。</p>
 <p>而<code>gd-excelexporter</code>是使用第二种方案来将配置表中需要多语言支持的字符串抽取导出成POT文件的。</p>
 <p>但是Godot无法抽取<code>excel</code>配置表文件。因此<code>excel</code>配置表中的字符串需要用<code>ee extract</code>命令来导出到<code>lang\template.pot</code>中。</p>
