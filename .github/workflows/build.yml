@@ -1,4 +1,4 @@
-name: 可复用的代码覆盖率工作流
+name: build
 
 on:
   workflow_call:
@@ -15,9 +15,9 @@ on:
         default: "3.8"
 jobs:
 
-  coverage:
+  build:
     runs-on: ${{ inputs.os }}
-    
+
     steps:
       - uses: actions/checkout@v3
       - name: 安装python环境 ${{ inputs.python-version }}
@@ -27,10 +27,12 @@ jobs:
       - name: Setup Poetry
         uses: kaluluosi/GDExcelexporter/.github/actions/setup-poetry
 
-      - name: Install dependencies
-        run: poetry install
-                  
-      - name: Unittest单元测试
+      - name: 构建项目
         run: |
-          poetry run coverage run -m unittest discover test -v
+          poetry build
 
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: ./dist

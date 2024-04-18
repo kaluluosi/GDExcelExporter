@@ -1,4 +1,4 @@
-name: 可复用的测试工作流
+name: test
 
 on:
   workflow_call:
