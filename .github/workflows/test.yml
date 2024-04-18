@@ -25,6 +25,7 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
           cache: "poetry"
+          
       - name: Install dependencies
         run: poetry install
                   
