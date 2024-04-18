@@ -1,7 +1,10 @@
 import logging
-from typing import ClassVar
 import toml
+from packaging.version import Version, parse
+from typing import ClassVar
 from pydantic import BaseModel, ConfigDict
+
+import gd_excelexporter
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +31,7 @@ class Localization(BaseModel):
 
 
 class Configuration(BaseModel):
+    version: str = ""
     engine: str = "xlrd"
     ignore_sheet_mark: str = "~"
     ignore_field_mark: str = "*"
@@ -53,6 +57,16 @@ class Configuration(BaseModel):
         with open(filename) as f:
             data = toml.load(f)
             config = cls(**data)
+
+            # 检查版本更新
+            old_version = Version(config.version or "0.0.0")
+            cur_version = parse(gd_excelexporter.__version__)
+
+            if old_version < cur_version:
+                logger.warning(f"检测到版本更新，更新配置文件到最新版本 {cur_version}")
+                config.version = gd_excelexporter.__version__
+                config.save()
+
             return config
 
     def save(self, filename: str = "export.toml"):

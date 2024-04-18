@@ -10,8 +10,12 @@ import shutil
 import tempfile
 from contextlib import contextmanager
 from typing import Literal
+import unittest.mock
+import gd_excelexporter
 from gd_excelexporter.cli import cli
 from click.testing import CliRunner
+
+from gd_excelexporter.config import Configuration
 
 
 class GeneratorTest(unittest.TestCase):
@@ -127,3 +131,12 @@ class GeneratorTest(unittest.TestCase):
             self.assertTrue(
                 os.path.exists("lang/template.pot"), "template.pot not exists"
             )
+
+    def test_upgrade_config(self):
+        with self._init("GDS1.0"):
+            res = self.runner.invoke(cli, ["gen-all"])
+
+            self.assertFalse(res.exception)
+
+            config = Configuration.load()
+            self.assertEqual(config.version, gd_excelexporter.__version__)

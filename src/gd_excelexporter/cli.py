@@ -144,6 +144,7 @@ def gen_all(cwd):
     _find_config()
 
     config = Configuration.load()
+
     engine = Engine.create_engine(config.engine, config)
     engine.gen_all()
 
