@@ -20,6 +20,7 @@ class GeneratorTest(unittest.TestCase):
         self.tmpdir = tempfile.TemporaryDirectory()
         self.cwd_backup = os.getcwd()
         os.chdir(self.tmpdir.name)  # 将工作目录切换到临时目录
+        print("工作目录", os.getcwd())
 
     def tearDown(self) -> None:
         os.chdir(self.cwd_backup)
@@ -41,6 +42,7 @@ class GeneratorTest(unittest.TestCase):
             os.path.exists("settings/export.toml"), "export.toml not exists"
         )
         cwd_backup = os.getcwd()
+
         os.chdir("settings")
         shutil.copy("sample/示例.xlsx", "data/示例.xlsx")
 
