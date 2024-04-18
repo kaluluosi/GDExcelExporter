@@ -45,8 +45,6 @@ jobs:
         python-version: '3.8'
 
     - name: Poetry Install
-      # You may pin to the exact commit or the version.
-      # uses: knowsuchagency/poetry-install@7ed80d49910319d3e14ac262a5c81f681de48de0
       run: |
         pipx install poetry
 
@@ -73,8 +71,8 @@ jobs:
       env:
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        echo "poetry publish --build"
-        # poetry publish --build
+        poetry build
+        # poetry publish
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4.3.1
