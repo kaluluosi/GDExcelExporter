@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: Publish Python Package
 
 on:
   release:
@@ -42,15 +42,12 @@ jobs:
     - name: Poetry Install
       # You may pin to the exact commit or the version.
       # uses: knowsuchagency/poetry-install@7ed80d49910319d3e14ac262a5c81f681de48de0
-      uses: knowsuchagency/poetry-install@v2
-      with:
-        # Have poetry create a virtualenv for the project on installation.
-        create-virtualenv:  false
+      run: |
+        pipx install poetry
 
     - name: Install dependencies
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
       run: |
-        python -m pip install --upgrade pip
         poetry install
     
     - name: 如果是release触发，那么就用tag名
@@ -63,8 +60,8 @@ jobs:
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
       if: github.event == 'workflow_dispatch'
       run: |
-        echo "poetry version ${{ github.event.inputs.version }}"
-        # poetry version ${{ github.event.inputs.version }}
+        echo "poetry version ${{ inputs.version }}"
+        # poetry version ${{ inputs.version }}
 
     - name: Poetry publish
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
