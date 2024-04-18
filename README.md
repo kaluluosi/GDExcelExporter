@@ -1,4 +1,4 @@
-# GDExcelExporter 2.1
+# GD-ExcelExporter 2.1
 
 [![Build](https://github.com/kaluluosi/GDExcelExporter/actions/workflows/build.yml/badge.svg)](https://github.com/kaluluosi/GDExcelExporter/actions/workflows/build.yml)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-92%25-success?style=flat)
@@ -15,16 +15,12 @@ GDExcelExpoter 是为Godot设计的Excel表格导出数据资源的工具。
 
 ## 更新日志
 
-2.1版本
-
-> **Warning** 
-> 2.0 开始导出格式已经不兼容1.0，如果你的项目里已经大量使用1.0导出的数据表，可能会导致你要修改代码的地方非常多。
-
-1. 重构导出器
-2. 通过`entry_points`支持导出器插件，现在可以开发自己的导出器插件
-3. 多语言支持，集成了pybabel多语言方案，直接支持配置表、gd脚本、tscn、tres整个godot项目的多语言文本提取。以后出一个文档单独讲解。
-4. 单元测试用例补充
-5. ~~悲报：因为pyinstaller不支持 `entry_points` 因此2.1版本之后不提供独立`exe`了。~~ 2.1.4开始重新提供'ee.exe'
+**3.0版本**
+1. 重构框架，类型转换器、导出器、引擎全部面向接口编程，而且都`entry_points`插件化，以后可以自己写插件自定义。
+2. 默认采用xlrd读取excel，以此支持linux、macos、windows全平台的导出，而且速度更快。用户仍然可以选择用xlwings作为excel读取库（由xlrd其实已经不需要了）。
+3. 修改多语言字段类型，原本是`#`开头，比如`#string`，现在改为`tr_string`。
+4. 包改名为`gd_excelexporter`，因为之前包名`gd-excelexporter`和`src\excelexporter`不一致，整出很多麻烦，现在统一了。因此你需要卸载原来的`gd-excelexporter`包，重新安装这个包。
+5. 其他的没有任何改变，兼容原来的`settings`项目目录。但是安全起见建议重新`ee init`一个目录，然后将`data`下的表迁移过去重新导出。
 
 ## 为什么需要这个工具？
 
@@ -50,7 +46,7 @@ GDExcelExporter只是个搬运工，他把按照他的规格设计的表格读�
 5. 你不需要学习别的工具去编辑维护数据，会用excel就可以，你可以用上你excel中所有的技巧去编辑数据
 
 
-## 快速开始
+## 快速上手
 
 ### 系统要求
 Python:^3.8.1
@@ -66,9 +62,6 @@ pip install gd-gd_excelexporter
 ```
 
 或者直接去右边release里下载已经打包好的可执行文件（ee.exe，你需要将这个exe加到环境变量）。
-
-> **Note** 
-> 2.1.4 版本开始exe的打包问题已经解决，后续版本会继续提供`ee.exe`命令行程序。
 
 ### 创建配置表项目
 
@@ -256,3 +249,5 @@ json方案并没有什么优点，唯一的优点就是json文件打开来后是
 ## 最后
 希望这个工具能够给一些独立游戏人或者业余自娱自乐的人一些帮助。
 如果你用上了我的工具，有什么问题最好直接提issue。
+
+如果你在你的独立游戏项目中使用了我的工具，希望你能够在游戏结尾员工名单或者开源证书页面中特别鸣谢加上我的名字，让我也占个光，谢谢。
