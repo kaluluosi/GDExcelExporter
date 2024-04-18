@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [ubuntu-latest,windows-latest,macos-latest]
         python-version: [ "3.8","3.9", "3.10", "3.11", "3.12" ]
-    uses: kaluluosi/GDExcelexporter/.github/workflows/test.yml@main
+    uses: ./.github/workflows/test.yml
     with:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}
@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-latest,windows-latest,macos-latest]
         python-version: [ "3.8","3.9", "3.10", "3.11", "3.12" ]
-    uses: kaluluosi/GDExcelexporter/.github/workflows/build.yml@main
+    uses: ./.github/workflows/build.yml
     with:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}
@@ -32,7 +32,7 @@ jobs:
       matrix:
         os: [ubuntu-latest,windows-latest,macos-latest]
         python-version: [ "3.8","3.9", "3.10", "3.11", "3.12" ]
-    uses: kaluluosi/GDExcelexporter/.github/workflows/coverage.yml@main
+    uses: ./.github/workflows/coverage.yml
     with:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}
