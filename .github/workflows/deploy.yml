@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Publish Python Package
+name: Deploy
 
 on:
   release:
@@ -34,7 +34,7 @@ jobs:
       matrix:
         os: [ubuntu-latest,windows-latest,macos-latest]
         python-version: [ "3.8","3.9", "3.10","3.11.3","3.12" ]
-    uses: ./.github/workflows/test.yml
+    uses: ./.github/workflows/reuse/test.yml
     with:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}

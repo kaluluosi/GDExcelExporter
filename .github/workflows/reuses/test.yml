@@ -1,0 +1,35 @@
+name: test
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: '运行在哪个操作系统镜像上'
+        type: string
+        required: true
+      python-version:
+        description: 'python的版本'
+        type: string
+        required: true
+jobs:
+
+  test:
+    runs-on: ${{ inputs.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Poetry
+        uses: ./.github/actions/setup-poetry
+      - name: setup python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: "poetry"
+          
+      - name: Install dependencies
+        run: poetry install
+                  
+      - name: Unittest
+        run: |
+          poetry run python -m unittest discover test -v
+
