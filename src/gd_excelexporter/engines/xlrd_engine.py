@@ -6,7 +6,6 @@ Copyright © Kaluluosi All rights reserved
 
 from typing import Iterable
 import xlrd
-from xlrd import Book
 from xlrd.sheet import Sheet
 
 from gd_excelexporter.core.engine import Engine
@@ -35,6 +34,4 @@ class XlrdEngine(Engine):
 
                 rawtablemap[sheet.name] = rawtable
 
-            book.release_resources()
-            del book
-            return rawtablemap
+        return rawtablemap

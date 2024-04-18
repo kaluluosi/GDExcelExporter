@@ -253,7 +253,7 @@ class Engine(abc.ABC):
         engines = entry_points(group="gd_excelexporter.engine")
         if name in engines.names:
             engine_cls = engines[name].load()
-            return engine_cls
+            return engine_cls  # type: ignore
         else:
             raise RuntimeError(f"没有找到名为 {name} 的引擎！")
 
