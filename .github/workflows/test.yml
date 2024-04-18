@@ -21,7 +21,7 @@ jobs:
       - name: Setup Poetry
         uses: ./.github/actions/setup-poetry
       - name: 安装python环境 ${{ inputs.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ inputs.python-version }}
           cache: "poetry"
