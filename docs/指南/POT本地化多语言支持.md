@@ -36,7 +36,7 @@ Godot内置的POT功能可以将项目所有资源文件，比如场景（.tscn�
 `Poedit`是一个跨平台的翻译工具，支持多种语言。
 这是最简单的使用POT文件做多语言的方案。
 
-![alt text](image-2.png)
+![alt text](../images/image-2.png)
 ### 安装
 
 [下载地址](https://poedit.net/download)
@@ -44,13 +44,13 @@ Godot内置的POT功能可以将项目所有资源文件，比如场景（.tscn�
 
 ### 导出PO文件
 打开项目中的POT文件然后添加不同语言的翻译
-![alt text](image-1.png)
+![alt text](../images/image-1.png)
 
 翻译编辑完+保存成PO文件即可。
 
 ### 导入PO文件
 将PO文件添加到Godot本地化的翻译分页里面即可
-![alt text](image.png)
+![alt text](../images/image.png)
 
 
 ## Weblate工作流
