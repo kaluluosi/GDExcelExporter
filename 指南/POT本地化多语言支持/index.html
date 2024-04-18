@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://kaluluosi.github.io/GDExcelExporter/%E6%8C%87%E5%8D%97/%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81/">
+        <link rel="canonical" href="https://kaluluosi.github.io/GDExcelExporter/%E6%8C%87%E5%8D%97/POT%E6%9C%AC%E5%9C%B0%E5%8C%96%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>多语言支持 - GDExcelExporter</title>
+        <title>POT本地化多语言支持 - GDExcelExporter</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -36,7 +36,7 @@
                             <li class="navitem">
                                 <a href="../../%E5%85%A5%E9%97%A8/" class="nav-link">入门</a>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">指南 <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
@@ -57,7 +57,7 @@
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active">多语言支持</a>
+    <a href="../../指南/多语言支持.md" class="dropdown-item">多语言支持</a>
 </li>
                                 </ul>
                             </li>
@@ -70,17 +70,7 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../export.toml/" class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://github.com/kaluluosi/GDExcelExporter/edit/master/docs/指南/多语言支持.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/kaluluosi/GDExcelExporter/edit/master/docs/指南/POT本地化多语言支持.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -100,8 +90,20 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#_1" class="nav-link">多语言支持</a>
+            <li class="nav-item" data-level="1"><a href="#pot" class="nav-link">POT本地化多语言支持</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#_1" class="nav-link">简介</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#poedit" class="nav-link">Poedit工作流（推荐入门）</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#weblate" class="nav-link">Weblate工作流</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -109,7 +111,44 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="_1">多语言支持</h1></div>
+<h1 id="pot">POT本地化多语言支持</h1>
+<h2 id="_1">简介</h2>
+<p>要使用<code>gd-excelexporter</code>的多语言你首先要理解Godot的多语言方案。</p>
+<p>Godot支持两种本地化多语言方案
+- 翻译表（.translation）基于csv键值对的那种传统多语言表 -- <a href="https://docsgodotengine.org/zh-cn/4.x/tutorials/i18n/internationalizing_games.html#">使游戏国际化</a>
+- POT文件（.pot）基于gettext的POT文件。 --<a href="https://docs.godotengine.orgzh-cn/4.x/tutorials/i18n/localization_using_gettext.html#advantages">使用gettext进行本地化</a>
+前者是先在多语言表录入<code>key</code>和<code>文本</code>，然后代码中用<code>tr()</code>读取。也就是说是需要先录入，再使用。
+后者是相反的，是先在代码中使用，通过<code>babel</code>之类的工具抽取到POT语言表中。</p>
+<p>POT比传统多语言表有以下优势：
+1. 研发期间不需要先添加翻译key，直接代码中正常开发即可，用<code>tr()</code>将需要翻译的字符串包起来。
+2. Godot会自动抽取场景、tres等文件中文本字段到POT。
+3. 自动除重，相同的字符串会合并成一条翻译。
+4. 差异更新，不用像语言表那样手动管理增删。
+5. 翻译工具更先进完备，<code>Poedit</code>编辑器或者<code>Transifex</code>（收费） 和 <code>Weblate</code>（Godot自己的多语言也是用这个，开源可以自己部署）等翻译平台来进行本地化翻译，然后导出<code>.po</code>文件。</p>
+<p>Godot内置的POT功能可以将项目所有资源文件，比如场景（.tscn）、资源（.tres）中的一些字段（写死Godot里的）、还有<code>GDScript</code>里用<code>tr()</code>方法包裹的字符串都抽取到一个POT文件中用于本地化翻译。</p>
+<p>而<code>gd-excelexporter</code>是使用第二种方案来将配置表中需要多语言支持的字符串抽取导出成POT文件的。</p>
+<p>但是Godot无法抽取<code>excel</code>配置表文件。因此<code>excel</code>配置表中的字符串需要用<code>ee extract</code>命令来导出到<code>lang\template.pot</code>中。</p>
+<p><code>ee extract</code>通过参考Godot的实现方式，实现导出<code>excel</code>配置表本地化字段的同时也顺便将Godot游戏项目中所有能够导出本地化的资源都抽到了<code>lang\template.pot</code>文件中。因此你甚至可以不使用Godot的POT功能来导出POT，直接用<code>ee extract</code>即可。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Godot的POT功能其实还是太繁琐了点，需要手动将所有要翻译抽取的资源、脚本添加到列表里，非常麻烦。
+<code>ee extract</code>则比较粗暴，直接遍历了整个游戏项目，将所有能抽的都给你抽到同一个POT文件里，不需要在Godot中操作。</p>
+</div>
+<h2 id="poedit">Poedit工作流（推荐入门）</h2>
+<p><code>Poedit</code>是一个跨平台的翻译工具，支持多种语言。
+这是最简单的使用POT文件做多语言的方案。</p>
+<p><img alt="alt text" src="../image-2.png" /></p>
+<h3 id="_2">安装</h3>
+<p><a href="https://poedit.net/download">下载地址</a></p>
+<h3 id="po">导出PO文件</h3>
+<p>打开项目中的POT文件然后添加不同语言的翻译
+<img alt="alt text" src="../image-1.png" /></p>
+<p>翻译编辑完+保存成PO文件即可。</p>
+<h3 id="po_1">导入PO文件</h3>
+<p>将PO文件添加到Godot本地化的翻译分页里面即可
+<img alt="alt text" src="../image.png" /></p>
+<h2 id="weblate">Weblate工作流</h2>
+<p>敬请期待...</p></div>
             </div>
         </div>
 

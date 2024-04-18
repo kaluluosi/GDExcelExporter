@@ -57,7 +57,7 @@
 </li>
                                     
 <li>
-    <a href="../%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81/" class="dropdown-item">多语言支持</a>
+    <a href="../../指南/多语言支持.md" class="dropdown-item">多语言支持</a>
 </li>
                                 </ul>
                             </li>
@@ -75,7 +75,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -111,14 +111,38 @@
 
 <h1 id="exporttoml">export.toml配置文件</h1>
 <p><code>export.toml</code>配置文件定义了Settings目录的导出参数。</p>
-<pre><code class="language-toml">ignore_sheet_mark = &quot;~&quot; 
+<pre><code class="language-toml">version = &quot;1.0.0&quot;
+engine = &quot;xlrd&quot;
+ignore_sheet_mark = &quot;~&quot; 
 ignore_field_mark = &quot;*&quot;
 custom_generator = &quot;GDS2.0&quot;
 input = &quot;data&quot;
 output = &quot;dist&quot;
 project_root = &quot;../&quot;
+
+[localization]
+babel_keywords = [
+    &quot;tr&quot;,
+    &quot;Label/text&quot;,
+    &quot;Label/tooltip_text&quot;,
+    &quot;Button/text&quot;,
+    &quot;Button/tooltip_text&quot;,
+    &quot;TextEdit/text&quot;,
+    &quot;TextEdit/tooltip_text&quot;,
+    &quot;TextEdit/placeholder_text&quot;,
+    &quot;TextEdit/tooltip_text&quot;,
+    &quot;LineEdit/text&quot;,
+    &quot;LineEdit/tooltip_text&quot;,
+    &quot;LineEdit/placeholder_text&quot;,
+    &quot;RichTextLabel/textRichTextLabel/tooltip_text&quot;,
+]
+pot_file = &quot;lang/template.pot&quot;
+
+
 </code></pre>
 <ul>
+<li>version： 指定gd-excelexporter版本。</li>
+<li>engine： 指定数据源解析器，默认为xlrd。</li>
 <li>ignore_sheet_mark： 忽略的sheet名称前缀，默认为~，如果sheet名称以~开头，则不会被导出。</li>
 <li>ignore_field_mark： 忽略的字段名称前缀，默认为<em>，如果字段名称以</em>开头，则不会被导出。</li>
 <li>custom_generator： 指定自定义导出器，默认为GDS2.0，如果指定了自定义导出器，则使用。</li>
@@ -126,6 +150,9 @@ project_root = &quot;../&quot;
 <li>output： 指定导出目录，默认为dist目录。</li>
 <li>project_root： 指定项目根目录，默认为../。一般来讲我们的Settings目录会放置在游戏项目根目录下，而Settings目录的上级目录<code>../</code>就是项目根目录。这个参数用来辅助计算导出文件的相对路径。</li>
 </ul>
+<p><strong>localization</strong> （POT本地化功能配置）
+* babel_keywords： 指定需要进行翻译抽取的字段，目前涵盖了大部分文本控件的静态文本字段。你如果看明白怎么添加你可以自己修改添加。
+* pot_file： 指定导出的pot文件路径。</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>一般情况下，我们不需要修改<code>export.toml</code>配置文件，除非你的项目结构与默认的有所不同。比如你的Settings目录不在项目根目录下，是独立放在别的目录，然后你又想要把数据导出到项目目录，那么你就需要修改<code>input</code> <code>output</code> <code>project</code>。</p>
