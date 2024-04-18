@@ -7,12 +7,10 @@ on:
         description: '运行在哪个操作系统镜像上'
         type: string
         required: true
-        default: ubuntue-latest
       python-version:
         description: 'python的版本'
         type: string
         required: true
-        default: "3.8"
 jobs:
 
   test:
@@ -26,6 +24,12 @@ jobs:
           python-version: ${{ inputs.python-version }}
       - name: Setup Poetry
         uses: ./.github/actions/setup-poetry
+      
+      - name: Cache venv
+        uses: actions/cache@v4.0.2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ inputs.cache-name }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
         run: poetry install
