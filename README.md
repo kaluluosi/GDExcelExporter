@@ -1,4 +1,4 @@
-# GD-ExcelExporter 2.1
+# GD-ExcelExporter
 
 [![Build](https://github.com/kaluluosi/GDExcelExporter/actions/workflows/build.yml/badge.svg)](https://github.com/kaluluosi/GDExcelExporter/actions/workflows/build.yml)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-92%25-success?style=flat)

@@ -1,4 +1,4 @@
-# GDExcelExporter 2.1
+# GDExcelExporter
 
 > **Note**
 > Translated by chat-gpt3.5
