@@ -36,9 +36,9 @@ jobs:
 
       - name: Upload coverage.xml
         uses: actions/upload-artifact@v4
-          with:
-            name: coverage
-            path: ./coverage.xml
+        with:
+          name: coverage
+          path: ./coverage.xml
   coverage:
     needs: test
     runs-on: ubuntu-latest
