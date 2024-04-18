@@ -17,9 +17,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Poetry
-      - name: setup python ${{ inputs.python-version }}
+      - name: setup python ${{ matrix.python-version }}
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ matrix.python-version }}
           cache: "poetry"
           
       - name: Install dependencies
