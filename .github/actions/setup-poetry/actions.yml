@@ -1,0 +1,15 @@
+name: 安装poetry
+description: 安装并设置好poetry和其缓存
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Poetry
+      uses: Gr1N/setup-poetry@v9
+    - name: Cache Poetry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+    - run: poetry --version
