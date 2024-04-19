@@ -232,3 +232,5 @@ As Godot's file I/O interface changes in Godot 4.0, two JSON exporters are provi
 ## Conclusion
 
 I hope this tool will help some independent game developers or amateur enthusiasts. If you use my tool and encounter any issues, it's best to open an issue.
+
+![Snipaste_2024-04-19_17-01-18](/assets/Snipaste_2024-04-19_17-01-18.png)
