@@ -26,9 +26,8 @@ jobs:
           poetry install
       - name: Create settings
         run: |
+          cp test_gd4/settings/sample/示例.xlsx test_gd4/settings/data/
           cd test_gd4
-          cp settings/sample/示例.xlsx settings/data/
-      - name: Setup gdunit
-        run: |
           export GODOT_BIN=godot
-          ./addons/runtest.sh -a ./test
+          bash ./addons/gdUnit4/runtest.sh -a ./test
+
