@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Poetry
-        uses: ./.github/actions/setup-poetry
+        uses: ClementWalter/poetry-action@v1
       - name: Install dependencies
         run: |
           poetry install
