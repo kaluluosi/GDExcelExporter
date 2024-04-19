@@ -71,9 +71,11 @@ jobs:
     - name: 自动提交toml
       uses: stefanzweifel/git-auto-commit-action@v5.0.1
       with:
+        branch: deploy
         commit_message: 版本号变更
         file_pattern: pyproject.toml
         push_options: --force
+        cteate_branch: true
 
 
     - name: Poetry publish
