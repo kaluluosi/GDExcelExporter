@@ -9,7 +9,8 @@ on:
 
 jobs:
   test-gdunit:
-    runs-on: godot-cli
+    runs-on: ubuntu-latest
+    image: godot-ci
     steps:
       - uses: actions/checkout@v4
       - name: Setup Poetry
@@ -25,4 +26,3 @@ jobs:
         run: |
           export GODOT_BIN=godot
           ./addons/runtest.sh -a ./test
-
