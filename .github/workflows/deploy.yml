@@ -71,6 +71,7 @@ jobs:
       with:
         commit_message: 版本号变更
         file_pattern: pyproject.toml
+        push_options: --force
 
     - name: Poetry publish
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
