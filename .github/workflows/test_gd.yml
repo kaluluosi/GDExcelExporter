@@ -10,7 +10,8 @@ on:
 jobs:
   test-gdunit:
     runs-on: ubuntu-latest
-    image: godot-ci
+    container:
+      image: godot-ci
     steps:
       - uses: actions/checkout@v4
       - name: Setup Poetry
