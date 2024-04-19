@@ -28,7 +28,7 @@ jobs:
         run: |
           cd test_gd4
           cp settings/sample/示例.xlsx settings/data/
-      - name: Setup gdunit
-        run: |
+          cd ..
           export GODOT_BIN=godot
           ./addons/gdUnit4/runtest.sh -a ./test
+
