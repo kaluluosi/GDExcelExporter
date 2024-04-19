@@ -34,6 +34,8 @@ jobs:
 
   deploy:
     needs: [test]
+    permissions:
+      contents: write
 
     runs-on: ubuntu-latest
 
@@ -56,15 +58,15 @@ jobs:
     - name: 如果是release触发，那么就用tag名
       if: github.event_name == 'release'
       run: |
-        echo "poetry version ${{github.ref}}"
-        # poetry version ${{ github.ref }}
+        # echo "poetry version ${{ github.event.release.tag_name }}"
+        poetry version ${{ github.event.release.tag_name }}
 
     - name: 如果是workflow触发，那么就用inputs.version
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
       if: github.event_name == 'workflow_dispatch'
       run: |
-        echo "poetry version ${{ inputs.version }}"
-        # poetry version ${{ inputs.version }}
+        # echo "poetry version ${{ inputs.version }}"
+        poetry version ${{ inputs.version }}
 
     - name: Poetry publish
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
@@ -72,7 +74,7 @@ jobs:
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         poetry build
-        # poetry publish
+        poetry publish
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4.3.1
