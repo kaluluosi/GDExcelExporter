@@ -27,6 +27,7 @@ jobs:
       - name: Create settings
         run: |
           cp test_gd4/settings/sample/示例.xlsx test_gd4/settings/data/
+          cd test_gd4
           export GODOT_BIN=godot
-          bash test_gd4/addons/gdUnit4/runtest.sh -a test_gd4/test
+          bash test_gd4/addons/gdUnit4/runtest.sh -a ./test_gd4/test
 
