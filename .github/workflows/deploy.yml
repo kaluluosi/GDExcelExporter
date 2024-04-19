@@ -58,8 +58,8 @@ jobs:
     - name: 如果是release触发，那么就用tag名
       if: github.event_name == 'release'
       run: |
-        # echo "poetry version ${{github.ref}}"
-        poetry version ${{ github.ref }}
+        # echo "poetry version ${{ github.event.release.tag_name }}"
+        poetry version ${{ github.event.release.tag_name }}
 
     - name: 如果是workflow触发，那么就用inputs.version
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
@@ -71,9 +71,9 @@ jobs:
     - name: 自动提交toml
       uses: stefanzweifel/git-auto-commit-action@v5.0.1
       with:
+        tagging_message: ${{ github.event.release.tag_name||inputs.version }}
         commit_message: 版本号变更
         file_pattern: pyproject.toml
-        cteate_branch: true
 
     - name: Poetry publish
       # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
