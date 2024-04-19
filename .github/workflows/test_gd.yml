@@ -20,10 +20,7 @@ jobs:
           python-version: 3.8
           
       - name: Setup Poetry
-        uses: ClementWalter/poetry-action@v1
-        with:
-          os: ubuntu-latest
-          python-version: 3.8
+        uses: Gr1N/setup-poetry@v9
       - name: Install dependencies
         run: |
           poetry install
