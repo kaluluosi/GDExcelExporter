@@ -14,8 +14,16 @@ jobs:
       image: barichello/godot-ci
     steps:
       - uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v5.1.0
+        with: 
+          python-version: 3.8
+          
       - name: Setup Poetry
         uses: ClementWalter/poetry-action@v1
+        with:
+          os: ubuntu-latest
+          python-version: 3.8
       - name: Install dependencies
         run: |
           poetry install
