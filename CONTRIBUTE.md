@@ -36,7 +36,7 @@ poetry install
 当你看到下面这样命令行前有个括号写着虚拟环境名就可以了。
 
 ```shell
-(gd-gd_excelexporter-py3.11) PS H:\projects\GDExcelExporter\test>
+(gd_excelexporter-py3.11) PS H:\projects\GDExcelExporter\test>
 ```
 
 `poetry`相关教程请去他们官网看文档。
