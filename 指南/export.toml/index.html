@@ -150,9 +150,11 @@ pot_file = &quot;lang/template.pot&quot;
 <li>output： 指定导出目录，默认为dist目录。</li>
 <li>project_root： 指定项目根目录，默认为../。一般来讲我们的Settings目录会放置在游戏项目根目录下，而Settings目录的上级目录<code>../</code>就是项目根目录。这个参数用来辅助计算导出文件的相对路径。</li>
 </ul>
-<p><strong>localization</strong> （POT本地化功能配置）
-* babel_keywords： 指定需要进行翻译抽取的字段，目前涵盖了大部分文本控件的静态文本字段。你如果看明白怎么添加你可以自己修改添加。
-* pot_file： 指定导出的pot文件路径。</p>
+<p><strong>localization</strong> （POT本地化功能配置）</p>
+<ul>
+<li>babel_keywords： 指定需要进行翻译抽取的字段，目前涵盖了大部分文本控件的静态文本字段。你如果看明白怎么添加你可以自己修改添加。</li>
+<li>pot_file： 指定导出的pot文件路径。</li>
+</ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>一般情况下，我们不需要修改<code>export.toml</code>配置文件，除非你的项目结构与默认的有所不同。比如你的Settings目录不在项目根目录下，是独立放在别的目录，然后你又想要把数据导出到项目目录，那么你就需要修改<code>input</code> <code>output</code> <code>project</code>。</p>
