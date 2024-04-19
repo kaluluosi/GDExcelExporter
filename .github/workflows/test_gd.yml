@@ -28,5 +28,5 @@ jobs:
         run: |
           cp test_gd4/settings/sample/示例.xlsx test_gd4/settings/data/
           export GODOT_BIN=godot
-          test_gd4/addons/gdUnit4/runtest.sh -a test_gd4/test
+          sudo test_gd4/addons/gdUnit4/runtest.sh -a test_gd4/test
 
