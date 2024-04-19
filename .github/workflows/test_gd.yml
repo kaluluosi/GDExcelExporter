@@ -1,0 +1,28 @@
+name: Test Godot
+
+on: 
+  push:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+
+jobs:
+  test-gdunit:
+    runs-on: godot-cli
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Poetry
+        uses: ./.github/actions/setup-poetry
+      - name: Install dependencies
+        run: |
+          poetry install
+      - name: Create settings
+        run: |
+          cd test_gd4
+          cp settings/sample/示例.xlsx settings/data/
+      - name: Setup gdunit
+        run: |
+          export GODOT_BIN=godot
+          ./addons/runtest.sh -a ./test
+

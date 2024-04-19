@@ -1,4 +1,4 @@
-version = "3.0.0a1"
+version = ""
 engine = "xlrd"
 ignore_sheet_mark = "~"
 ignore_field_mark = "*"
