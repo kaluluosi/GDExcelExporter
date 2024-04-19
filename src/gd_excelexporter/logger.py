@@ -3,7 +3,7 @@ import sys
 
 FORMAT = "%(name)s-%(levelname)s:%(message)s"
 
-fh = logging.FileHandler("log.txt", "w")
+fh = logging.FileHandler("log.txt", "w", encoding="utf-8")
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(logging.Formatter(FORMAT))
 

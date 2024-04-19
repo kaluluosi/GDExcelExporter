@@ -8,8 +8,6 @@ import gd_excelexporter
 from gd_excelexporter.core.generator import Generator
 from gd_excelexporter.core.engine import Engine
 
-# from babel import *  # noqa
-from babel.messages.frontend import CommandLineInterface
 from gd_excelexporter.config import Configuration
 
 
