@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites id="2024-04-19" name="report_2" tests="1" failures="0" time="0.024">
+	<testsuite id="0" name="test_data" package="test" timestamp="2024-04-19T05:12:31" hostname="localhost" tests="1" failures="0" errors="0" skipped="0" time="0.024">
+		<testcase name="test_data" classname="test_data" time="0.021">
+		</testcase>
+	</testsuite>
+</testsuites>

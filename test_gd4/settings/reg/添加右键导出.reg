@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Excel.Sheet.12\shell\export]
+@="EEµ¼³ö"
+
+[HKEY_CLASSES_ROOT\Excel.Sheet.12\shell\export\command]
+@="cmd /c ee gen-one %V"
