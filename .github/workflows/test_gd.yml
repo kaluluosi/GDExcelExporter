@@ -31,4 +31,4 @@ jobs:
       - name: Setup gdunit
         run: |
           export GODOT_BIN=godot
-          ./addons/runtest.sh -a ./test
+          ./addons/gdUnit4/runtest.sh -a ./test
