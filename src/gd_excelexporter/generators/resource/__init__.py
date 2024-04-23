@@ -96,5 +96,5 @@ class ResourceGenerator(Generator):
             logger.info("创建setting.gd")
 
         with open(data_class_file_path, "w", encoding="utf-8", newline="\n") as f:
-            f.write(cls.__datatable_class__)
+            f.write(textwrap.dedent(cls.__datatable_class__))
             logger.info("创建DataTable类")
