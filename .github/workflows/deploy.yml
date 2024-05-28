@@ -32,7 +32,7 @@ jobs:
     uses: ./.github/workflows/test.yml
 
 
-  deploy:
+  publish-pypi:
     needs: [test]
     permissions:
       contents: write
@@ -75,9 +75,40 @@ jobs:
       run: |
         poetry build
         poetry publish
+  
+  build:
+    runs-on: windows-latest
+    needs: [test]
 
-    - name: 上传构建产物
-      uses: actions/upload-artifact@v4.3.1
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        name: dist
-        path: ./dist/*
+        python-version: '3.8'
+    - name: Poetry Install
+      run: |
+        pipx install poetry
+
+    - name: Install dependencies
+      # 设置POETRY_PYPI_TOKEN_PYPI 环境变量
+      run: |
+        poetry install
+    - name: Build
+      run: |
+        poetry shell
+        .\build.bat
+
+    - name: Upload to Release Action
+      # You may pin to the exact commit or the version.
+      # uses: Shopify/upload-to-release@c77c9b3e5d288adaef98a7007bf92340ec6ce03b
+      uses: Shopify/upload-to-release@v2.0.0
+      with:
+        # Artifact name
+        name: ee.exe
+        # Path to the file to upload
+        path: dist\ee.exe
+        # secrets.GITHUB_TOKEN
+        repo-token: ${{secrets.GITHUB_TOKEN}}
+          
+      
